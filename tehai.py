@@ -92,7 +92,7 @@ class Tehai:
     @classmethod
     def from_string(cls, tehai_string=""):
         """
-        文字列からTehaiクラスのインスタンスを生成する
+        牌姿からTehaiクラスのインスタンスを生成する
         """
         furo = tehai_string.split(",")
         juntehai = furo.pop(0)
@@ -125,3 +125,51 @@ class Tehai:
         tehai.tsumo = tehai.tsumo or tsumo or None
         tehai.richi = juntehai[-1] == "*"
         return tehai
+
+    def to_string(self):
+        """
+        牌姿を返す
+        """
+        tsumo_offset = -1 if self.tsumo == "_" else 0
+        tehai_string = "_" * (self.juntehai["_"] + tsumo_offset)
+
+        for s in ["m", "p", "s", "z"]:
+            suit_string = s
+            juntehai = self.juntehai[s]
+            n_akahai = 0 if s == "z" else juntehai[0]
+
+            for n in range(1, len(juntehai)):
+                n_hai = juntehai[n]
+
+                if self.tsumo:
+                    if s + str(n) == self.tsumo:
+                        n_hai -= 1
+
+                    if n == 5 and s + "0" == self.tsumo:
+                        n_hai -= 1
+                        n_akahai -= 1
+
+                for _ in range(n_hai):
+                    if n == 5 and n_akahai > 0:
+                        suit_string += "0"
+                        n_akahai -= 1
+
+                    else:
+                        suit_string += str(n)
+
+            if len(suit_string) > 1:
+                tehai_string += suit_string
+
+        if self.tsumo and len(self.tsumo) <= 2:
+            tehai_string += self.tsumo
+
+        if self.richi:
+            tehai_string += "*"
+
+        for mentsu in self.furo:
+            tehai_string += "," + mentsu
+
+        if self.tsumo and len(self.tsumo) > 2:
+            tehai_string += ","
+
+        return tehai_string
