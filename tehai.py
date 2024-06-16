@@ -86,3 +86,39 @@ class Tehai:
             return re.sub(r"5", "0", black_mentsu) if akahai else black_mentsu
 
         return None
+
+    def from_string(self, tehai_string=""):
+        """
+        文字列からTehaiクラスのインスタンスを生成する
+        """
+        furo = tehai_string.split(",")
+        juntehai = furo.pop(0)
+        haipai = re.findall(r"_", juntehai) or []
+
+        for suit_string in re.findall(r"[mpsz]\d+", juntehai) or []:
+            s = suit_string[0]
+
+            for n in re.findall(r"\d", suit_string):
+                if s == "z" and (int(n) < 1 or 7 < int(n)):
+                    continue
+                haipai.append(s + n)
+
+        haipai = haipai[: 14 - len([x for x in furo if x]) * 3]
+        tsumo = (len(haipai) - 2) % 3 == 0 and haipai[-1] or None
+        tehai = Tehai(haipai)
+        last = None
+
+        for mentsu in furo:
+            if not mentsu:
+                tehai.tsumo = last
+                break
+
+            mentsu = self.valid_mentsu(mentsu)
+
+            if mentsu:
+                tehai.furo.append(mentsu)
+                last = mentsu
+
+        tehai.tsumo = tehai.tsumo or tsumo or None
+        tehai.richi = juntehai[-1] == "*"
+        return tehai
