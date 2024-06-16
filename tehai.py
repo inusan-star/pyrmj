@@ -39,7 +39,8 @@ class Tehai:
             if s != "z" and n == 0:
                 self.juntehai[s][5] += 1
 
-    def valid_hai(self, hai):
+    @staticmethod
+    def valid_hai(hai):
         """
         牌として有効かどうかを判定する
         """
@@ -48,7 +49,8 @@ class Tehai:
 
         return None
 
-    def valid_mentsu(self, mentsu):
+    @staticmethod
+    def valid_mentsu(mentsu):
         """
         面子として有効かどうかを判定する
         """
@@ -87,7 +89,8 @@ class Tehai:
 
         return None
 
-    def from_string(self, tehai_string=""):
+    @classmethod
+    def from_string(cls, tehai_string=""):
         """
         文字列からTehaiクラスのインスタンスを生成する
         """
@@ -105,7 +108,7 @@ class Tehai:
 
         haipai = haipai[: 14 - len([x for x in furo if x]) * 3]
         tsumo = (len(haipai) - 2) % 3 == 0 and haipai[-1] or None
-        tehai = Tehai(haipai)
+        tehai = cls(haipai)
         last = None
 
         for mentsu in furo:
@@ -113,7 +116,7 @@ class Tehai:
                 tehai.tsumo = last
                 break
 
-            mentsu = self.valid_mentsu(mentsu)
+            mentsu = cls.valid_mentsu(mentsu)
 
             if mentsu:
                 tehai.furo.append(mentsu)
