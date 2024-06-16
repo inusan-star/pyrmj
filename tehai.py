@@ -6,8 +6,38 @@ class Tehai:
     手牌を表すクラス
     """
 
-    def __init__(self):
-        self.tehai = []
+    def __init__(self, haipai=None):
+        if haipai is None:
+            haipai = []
+
+        self.juntehai = {
+            "_": 0,
+            "m": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            "p": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            "s": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            "z": [0, 0, 0, 0, 0, 0, 0, 0],
+        }
+        self.furo = []
+        self.tsumo = None
+        self.richi = False
+
+        for hai in haipai:
+            if hai == "_":
+                self.juntehai["_"] += 1
+                continue
+
+            if not (hai := self.valid_hai(hai)):
+                raise ValueError("Invalid")
+
+            s, n = hai[0], int(hai[1])
+
+            if self.juntehai[s][n] == 4:
+                raise ValueError("Too many")
+
+            self.juntehai[s][n] += 1
+
+            if s != "z" and n == 0:
+                self.juntehai[s][5] += 1
 
     def valid_hai(self, hai):
         """
