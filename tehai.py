@@ -17,9 +17,9 @@ class Tehai:
             "s": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             "z": [0, 0, 0, 0, 0, 0, 0, 0],
         }
-        self.furo = []
+        self.fuuro = []
         self.tsumo = None
-        self.richi = False
+        self.riichi = False
 
         for hai in haipai:
             if hai == "_":
@@ -94,8 +94,8 @@ class Tehai:
         """
         牌姿からTehaiクラスのインスタンスを生成する
         """
-        furo = tehai_string.split(",")
-        juntehai = furo.pop(0)
+        fuuro = tehai_string.split(",")
+        juntehai = fuuro.pop(0)
         haipai = re.findall(r"_", juntehai) or []
 
         for suit_string in re.findall(r"[mpsz]\d+", juntehai) or []:
@@ -106,12 +106,12 @@ class Tehai:
                     continue
                 haipai.append(s + n)
 
-        haipai = haipai[: 14 - len([x for x in furo if x]) * 3]
+        haipai = haipai[: 14 - len([x for x in fuuro if x]) * 3]
         tsumo = (len(haipai) - 2) % 3 == 0 and haipai[-1] or None
         tehai = cls(haipai)
         last = None
 
-        for mentsu in furo:
+        for mentsu in fuuro:
             if not mentsu:
                 tehai.tsumo = last
                 break
@@ -119,11 +119,11 @@ class Tehai:
             mentsu = cls.valid_mentsu(mentsu)
 
             if mentsu:
-                tehai.furo.append(mentsu)
+                tehai.fuuro.append(mentsu)
                 last = mentsu
 
         tehai.tsumo = tehai.tsumo or tsumo or None
-        tehai.richi = juntehai[-1] == "*"
+        tehai.riichi = juntehai[-1] == "*"
         return tehai
 
     def to_string(self):
@@ -163,10 +163,10 @@ class Tehai:
         if self.tsumo and len(self.tsumo) <= 2:
             tehai_string += self.tsumo
 
-        if self.richi:
+        if self.riichi:
             tehai_string += "*"
 
-        for mentsu in self.furo:
+        for mentsu in self.fuuro:
             tehai_string += "," + mentsu
 
         if self.tsumo and len(self.tsumo) > 2:
