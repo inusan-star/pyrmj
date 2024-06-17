@@ -337,6 +337,71 @@ class TestTehai:
         with pytest.raises(ValueError):
             Tehai.from_string("m123p406s789z34567").dahai("p5")
 
+    def test_action_fuuro(self):
+        """
+        action_fuuro(self, mentsu, check=True)のテスト
+        """
+        print("▶︎ action_fuuro(self, mentsu, check=True)のテスト")
+
+        tehai = Tehai.from_string("m23p456s789z34567")
+        assert tehai.action_fuuro("m1-23").to_string() == "p456s789z34567,m1-23,"
+
+        tehai = Tehai.from_string("m123p46s789z34567")
+        assert tehai.action_fuuro("p45-6").to_string() == "m123s789z34567,p45-6,"
+
+        tehai = Tehai.from_string("m123p456s99z34567")
+        assert tehai.action_fuuro("s999+").to_string() == "m123p456z34567,s999+,"
+
+        tehai = Tehai.from_string("m123p456s789z1167")
+        assert tehai.action_fuuro("z111=").to_string() == "m123p456s789z67,z111=,"
+
+        tehai = Tehai.from_string("m123p500s789z4567")
+        assert tehai.action_fuuro("p5005-").to_string() == "m123s789z4567,p5005-"
+
+        tehai = Tehai.from_string("m123p456s789z4567*")
+        assert tehai.action_fuuro("m1-23").to_string() == "m1p456s789z4567*,m1-23,"
+
+        tehai = Tehai.from_string("_____________")
+        assert tehai.action_fuuro("m1-23").to_string() == "___________,m1-23,"
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z4567").action_fuuro("z3-45")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z4567").action_fuuro("m231-")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("_____________").action_fuuro("m1111")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("_____________").action_fuuro("m111+1")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z11567").action_fuuro("z111=")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z22,z111=,").action_fuuro("z222=")
+
+        tehai = Tehai.from_string("m123p456s789z11567")
+        assert (
+            tehai.action_fuuro("z111=", False).to_string() == "m123p456s789z567,z111=,"
+        )
+
+        tehai = Tehai.from_string("m123p456s789z22,z111=,")
+        assert (
+            tehai.action_fuuro("z222=", False).to_string()
+            == "m123p456s789,z111=,z222=,"
+        )
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z2,z111=").action_fuuro("z333=")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p40s789z22,z111=").action_fuuro("p456-")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p45s789z22,z111=").action_fuuro("p406-")
+
 
 if __name__ == "__main__":
     pytest.main()
