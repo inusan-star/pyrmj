@@ -190,3 +190,20 @@ class Tehai:
         tehai.tsumo = self.tsumo
         tehai.riichi = self.riichi
         return tehai
+
+    def update_from_string(self, tehai_string):
+        """
+        牌姿からインスタンスを更新する
+        """
+        tehai = self.from_string(tehai_string)
+        self.juntehai = {
+            "_": tehai.juntehai["_"],
+            "m": tehai.juntehai["m"][:],
+            "p": tehai.juntehai["p"][:],
+            "s": tehai.juntehai["s"][:],
+            "z": tehai.juntehai["z"][:],
+        }
+        self.fuuro = tehai.fuuro[:]
+        self.tsumo = tehai.tsumo
+        self.riichi = tehai.riichi
+        return self
