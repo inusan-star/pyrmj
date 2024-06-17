@@ -92,7 +92,7 @@ class Tehai:
     @classmethod
     def from_string(cls, tehai_string=""):
         """
-        牌姿からTehaiクラスのインスタンスを生成する
+        牌姿からインスタンスを作成する
         """
         fuuro = tehai_string.split(",")
         juntehai = fuuro.pop(0)
@@ -173,3 +173,22 @@ class Tehai:
             tehai_string += ","
 
         return tehai_string
+
+    def clone(self):
+        """
+        インスタンスのクローンを作成する
+        """
+        tehai = Tehai()
+
+        tehai.juntehai = {
+            "_": self.juntehai["_"],
+            "m": self.juntehai["m"][:],
+            "p": self.juntehai["p"][:],
+            "s": self.juntehai["s"][:],
+            "z": self.juntehai["z"][:],
+        }
+        tehai.fuuro = self.fuuro[:]
+        tehai.tsumo = self.tsumo
+        tehai.riichi = self.riichi
+
+        return tehai
