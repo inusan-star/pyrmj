@@ -208,7 +208,7 @@ class Tehai:
         self.riichi = tehai.riichi
         return self
 
-    def draw_hai(self, hai, check=True):
+    def action_tsumo(self, hai, check=True):
         """
         ツモる
         """
@@ -275,5 +275,33 @@ class Tehai:
 
         if hai[-1] == "*":
             self.riichi = True
+
+        return self
+
+    def action_fuuro(self, mentsu, check=True):
+        """
+        鳴く
+        """
+        if check and self.tsumo:
+            raise ValueError("Invalid")
+
+        if self.valid_mentsu(mentsu):
+            raise ValueError("Invalid")
+
+        if re.search(r"\d{4}$", mentsu):
+            raise ValueError("Invalid")
+
+        if re.search(r"\d{3}[\+\=\-]\d$", mentsu):
+            raise ValueError("Invalid")
+
+        s = mentsu[0]
+
+        for n in re.findall(r"\d(?![\+\=\-])", mentsu):
+            self.decrease(s, n)
+
+        self.fuuro.append(mentsu)
+
+        if not re.search(r"\d{4}", mentsu):
+            self.tsumo = mentsu
 
         return self
