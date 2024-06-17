@@ -123,7 +123,7 @@ class Tehai:
                 last = mentsu
 
         tehai.tsumo = tehai.tsumo or tsumo or None
-        tehai.riichi = juntehai[-1] == "*"
+        tehai.riichi = juntehai[-1:] == "*"
         return tehai
 
     def to_string(self):
