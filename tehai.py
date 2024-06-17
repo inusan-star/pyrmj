@@ -179,7 +179,6 @@ class Tehai:
         インスタンスのクローンを作成する
         """
         tehai = Tehai()
-
         tehai.juntehai = {
             "_": self.juntehai["_"],
             "m": self.juntehai["m"][:],
@@ -190,5 +189,4 @@ class Tehai:
         tehai.fuuro = self.fuuro[:]
         tehai.tsumo = self.tsumo
         tehai.riichi = self.riichi
-
         return tehai
