@@ -165,9 +165,9 @@ class TestTehai:
 
     def test_clone(self):
         """
-        clone(selfのテスト
+        clone(self)のテスト
         """
-        print("▶︎ clone(selfのテスト")
+        print("▶︎ clone(self)のテスト")
 
         tehai = Tehai()
         assert tehai != tehai.clone()
@@ -201,6 +201,22 @@ class TestTehai:
 
         tehai = Tehai.from_string("m123p456s789z11223")
         assert tehai.to_string() != tehai.clone().dahai("z3*").to_string()
+
+    def test_update_from_string(self):
+        """
+        update_from_string(self, tehai_string)のテスト
+        """
+        print("▶︎ update_from_string(self, tehai_string)のテスト")
+
+        test_cases = [
+            ("m123p456s789z1122z2", "m123p456s789z1122z2"),
+            ("m123p456s789z2,z111=", "m123p456s789z2,z111="),
+            ("m123p456s789z1122*", "m123p456s789z1122*"),
+            ("__________,z111=", "__________,z111="),
+        ]
+
+        for tehai_string, expected in test_cases:
+            assert Tehai().update_from_string(tehai_string).to_string() == expected
 
 
 if __name__ == "__main__":
