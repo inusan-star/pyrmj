@@ -868,9 +868,9 @@ class TestTehai:
 
     def test_get_kan_mentsu(self):
         """
-        get_kan_mentsu(self, hai)のテスト
+        get_kan_mentsu(self, hai=None)のテスト
         """
-        print("▶︎ get_kan_mentsu(self, hai)のテスト")
+        print("▶︎ get_kan_mentsu(self, hai=None)のテスト")
 
         invalid_test_cases = [
             ("m111p456s789z12345", "m1+"),
