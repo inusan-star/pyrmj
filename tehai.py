@@ -57,7 +57,7 @@ class Tehai:
         if re.match(r"^z.*[089]", mentsu):
             return None
 
-        black_mentsu = re.sub(r"0", "5", mentsu)
+        black_mentsu = mentsu.replace("0", "5")
 
         if re.match(r"^[mpsz](\d)\1\1[\+\=\-]\1?$", black_mentsu):
             return re.sub(r"([mps])05", r"\g<1>" + "50", mentsu)
@@ -85,7 +85,7 @@ class Tehai:
             black_mentsu = black_mentsu[0] + "".join(
                 sorted(re.findall(r"\d[\+\=\-]?", black_mentsu))
             )
-            return re.sub(r"5", "0", black_mentsu) if akahai else black_mentsu
+            return black_mentsu.replace("5", "0") if akahai else black_mentsu
 
         return None
 
@@ -510,5 +510,76 @@ class Tehai:
 
             if n != 5 or juntehai[5] - juntehai[0] >= 2:
                 mentsu.append(f"{s}{str(n)}{str(n)}{hai[1]}{d.group()}")
+
+        return mentsu
+
+    def get_kan_mentsu(self, hai=None):
+        """
+        カン可能な面子の一覧を返す
+        """
+        mentsu = []
+
+        if hai:
+            if self.tsumo:
+                return None
+
+            if not self.valid_hai(hai):
+                raise ValueError("Invalid")
+
+            s, n = hai[0], int(hai[1]) if int(hai[1]) != 0 else 5
+            d = re.search(r"[\+\=\-]$", hai)
+
+            if not d:
+                raise ValueError("Invalid")
+
+            if self.riichi:
+                return mentsu
+
+            juntehai = self.juntehai[s]
+
+            if juntehai[n] == 3:
+                if n == 5:
+                    mentsu = [f"{s}{"5" * (3 - juntehai[0])}{"0" * juntehai[0]}{hai[1]}{d.group()}"]
+
+                else:
+                    mentsu = [f"{s}{str(n) * 4}{d.group()}"]
+
+        else:
+            if not self.tsumo:
+                return None
+
+            if len(self.tsumo) > 2:
+                return None
+
+            hai = self.tsumo.replace("0", "5")
+
+            for s in ["m", "p", "s", "z"]:
+                juntehai = self.juntehai[s]
+
+                for n in range(1, len(juntehai)):
+                    if juntehai[n] == 0:
+                        continue
+
+                    if juntehai[n] == 4:
+                        if self.riichi and s + str(n) != hai:
+                            continue
+
+                        if n == 5:
+                            mentsu.append(f"{s}{"5" * (4 - juntehai[0])}{"0" * juntehai[0]}")
+
+                        else:
+                            mentsu.append(f"{s}{str(n) * 4}")
+
+                    else:
+                        if self.riichi:
+                            continue
+
+                        for m in self.fuuro:
+                            if m.replace("0", "5")[:4] == f"{s}{str(n) * 3}":
+                                if n == 5 and juntehai[0] > 0:
+                                    mentsu.append(m + "0")
+
+                                else:
+                                    mentsu.append(m + str(n))
 
         return mentsu

@@ -866,6 +866,94 @@ class TestTehai:
                 with pytest.raises(expected):
                     tehai.get_pon_mentsu(hai)
 
+    def test_get_kan_mentsu(self):
+        """
+        get_kan_mentsu(self, hai)のテスト
+        """
+        print("▶︎ get_kan_mentsu(self, hai)のテスト")
+
+        invalid_test_cases = [
+            ("m111p456s789z12345", "m1+"),
+            ("m111p456s789z12,z333=,", "m1+"),
+            ("______________", "m1-"),
+        ]
+
+        for tehai_string, hai in invalid_test_cases:
+            tehai = Tehai.from_string(tehai_string)
+            assert tehai.get_kan_mentsu(hai) is None
+
+        test_cases = [
+            ("m123p456s789z1122", "z1+", []),
+            ("_____________", "z1=", []),
+            ("m111p456s789z1234", "m1+", ["m1111+"]),
+            ("m123p444s789z1234", "p4=", ["p4444="]),
+            ("m123p456s777z1234", "s7-", ["s7777-"]),
+            ("m123p555s789z1234", "p0+", ["p5550+"]),
+            ("m123p055s789z1234", "p5+", ["p5505+"]),
+            ("m123p005s789z1234", "p5+", ["p5005+"]),
+            ("m123p000s789z1234", "p5+", ["p0005+"]),
+            ("m111p456s789z1234", "m1_+", ["m1111+"]),
+            ("m111p456s789z1234", "m1*+", ["m1111+"]),
+            ("m111p456s789z1234", "m1_*+", ["m1111+"]),
+            ("m111p456s789z1234*", "m1+", []),
+            ("m111p555s999z1234", "mm+", ValueError),
+            ("m111p555s999z1234", "m1", ValueError),
+        ]
+
+        for tehai_string, hai, expected in test_cases:
+            tehai = Tehai.from_string(tehai_string)
+            if isinstance(expected, list):
+                assert tehai.get_kan_mentsu(hai) == expected
+            else:
+                with pytest.raises(expected):
+                    tehai.get_kan_mentsu(hai)
+
+        invalid_test_cases = [
+            ("m1111p555s999z123"),
+            ("m1111p555s999,z333="),
+            ("m11112p555s999,z333=,"),
+            ("_____________"),
+            ("m1p555s999z123,m111-"),
+            ("m1p555s999,z333=,m111-"),
+            ("m12p555s999,z333=,m111-,"),
+            ("__________,m111-,"),
+        ]
+
+        for tehai_string in invalid_test_cases:
+            tehai = Tehai.from_string(tehai_string)
+            assert tehai.get_kan_mentsu() is None
+
+        test_cases = [
+            ("m123p456s789z12345", []),
+            ("______________", []),
+            ("m1111p456s789z1234", ["m1111"]),
+            ("m123p4444s789z1234", ["p4444"]),
+            ("m123p456s7777z1234", ["s7777"]),
+            ("m123p456s789z11112", ["z1111"]),
+            ("m123p0555s789z1234", ["p5550"]),
+            ("m123p0055s789z1234", ["p5500"]),
+            ("m123p0005s789z1234", ["p5000"]),
+            ("m123p0000s789z1234", ["p0000"]),
+            ("m111p456s789z1122m1*", ["m1111"]),
+            ("m111123p456s78z11m4*", []),
+            ("m1111p456s789z1111", ["m1111", "z1111"]),
+            ("m123p456s789z12,z777+", []),
+            ("___________,z777+", []),
+            ("m1p456s789z1234,m111+", ["m111+1"]),
+            ("m123p4s789z1234,p444=", ["p444=4"]),
+            ("m123p456s7z1234,s777-", ["s777-7"]),
+            ("m123p456s789z12,z111+", ["z111+1"]),
+            ("m123p0s789z1234,p555=", ["p555=0"]),
+            ("m123p5s789z1234,p550-", ["p550-5"]),
+            ("p456s789z1234m1*,m111+", []),
+            ("m1p4s789z123,m111+,p444=", ["m111+1", "p444=4"]),
+            ("m1p456s789z1111,m111+", ["m111+1", "z1111"]),
+        ]
+
+        for tehai_string, expected in test_cases:
+            tehai = Tehai.from_string(tehai_string)
+            assert tehai.get_kan_mentsu() == expected
+
 
 if __name__ == "__main__":
     pytest.main()
