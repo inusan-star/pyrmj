@@ -26,7 +26,7 @@ class Tehai:
                 self.juntehai["_"] += 1
                 continue
 
-            if not (hai := self.valid_hai(hai)):
+            if not self.valid_hai(hai):
                 raise ValueError("Invalid")
 
             s, n = hai[0], int(hai[1])
