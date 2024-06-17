@@ -822,6 +822,50 @@ class TestTehai:
                 with pytest.raises(expected):
                     tehai.get_chii_mentsu(hai, *args)
 
+    def test_get_pon_mentsu(self):
+        """
+        get_pon_mentsu(self, hai)のテスト
+        """
+        print("▶︎ get_pon_mentsu(self, hai)のテスト")
+
+        invalid_test_cases = [
+            ("m112p456s789z12345", "m1+"),
+            ("m112p456s789z12,z333=,", "m1="),
+            ("______________", "m1-"),
+        ]
+
+        for tehai_string, hai in invalid_test_cases:
+            tehai = Tehai.from_string(tehai_string)
+            assert tehai.get_pon_mentsu(hai) is None
+
+        test_cases = [
+            ("m123p456s789z1234", "m1+", []),
+            ("_____________", "m1=", []),
+            ("m112p456s789z1234", "m1+", ["m111+"]),
+            ("m123p445s789z1234", "p4=", ["p444="]),
+            ("m123p345s778z1234", "s7-", ["s777-"]),
+            ("m123p455s789z1234", "p0+", ["p550+"]),
+            ("m123p405s789z1234", "p0+", ["p500+"]),
+            ("m123p400s789z1234", "p0+", ["p000+"]),
+            ("m123p055s789z1234", "p5=", ["p505=", "p555="]),
+            ("m123p005s789z1234", "p5=", ["p005=", "p505="]),
+            ("m123p000s789z1234", "p5=", ["p005="]),
+            ("m112p456s789z1234", "m1_+", ["m111+"]),
+            ("m112p456s789z1234", "m1*+", ["m111+"]),
+            ("m112p456s789z1234", "m1_*+", ["m111+"]),
+            ("m112p456s789z1234*", "m1+", []),
+            ("m123p456s789z1234", "mm+", ValueError),
+            ("m112p456s789z1234", "m1", ValueError),
+        ]
+
+        for tehai_string, hai, expected in test_cases:
+            tehai = Tehai.from_string(tehai_string)
+            if isinstance(expected, list):
+                assert tehai.get_pon_mentsu(hai) == expected
+            else:
+                with pytest.raises(expected):
+                    tehai.get_pon_mentsu(hai)
+
 
 if __name__ == "__main__":
     pytest.main()

@@ -478,3 +478,37 @@ class Tehai:
                     mentsu.append(f"{s}{hai[1]}{d.group()}{n+1}{n+2}")
 
         return mentsu
+
+    def get_pon_mentsu(self, hai):
+        """
+        ポン可能な面子の一覧を返す
+        """
+        if self.tsumo:
+            return None
+
+        if not self.valid_hai(hai):
+            raise ValueError("Invalid")
+
+        mentsu = []
+        s, n = hai[0], int(hai[1]) if int(hai[1]) != 0 else 5
+        d = re.search(r"[\+\=\-]$", hai)
+
+        if not d:
+            raise ValueError("Invalid")
+
+        if self.riichi:
+            return mentsu
+
+        juntehai = self.juntehai[s]
+
+        if juntehai[n] >= 2:
+            if n == 5 and juntehai[0] >= 2:
+                mentsu.append(f"{s}00{hai[1]}{d.group()}")
+
+            if n == 5 and juntehai[0] >= 1 and juntehai[5] - juntehai[0] >= 1:
+                mentsu.append(f"{s}50{hai[1]}{d.group()}")
+
+            if n != 5 or juntehai[5] - juntehai[0] >= 2:
+                mentsu.append(f"{s}{str(n)}{str(n)}{hai[1]}{d.group()}")
+
+        return mentsu
