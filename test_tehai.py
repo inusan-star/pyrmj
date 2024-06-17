@@ -118,9 +118,9 @@ class TestTehai:
 
     def test_from_string(self):
         """
-        from_string(cls, tehai_string="")とto_string(self)のテスト
+        from_string(cls, tehai_string="")のテスト
         """
-        print("▶︎ from_string(cls, tehai_string='')とto_string(self)のテスト")
+        print("▶︎ from_string(cls, tehai_string='')のテスト")
 
         assert Tehai.from_string().to_string() == ""
 
@@ -162,6 +162,45 @@ class TestTehai:
 
         for tehai_string, expected in test_cases:
             assert Tehai.from_string(tehai_string).to_string() == expected
+
+    def test_clone(self):
+        """
+        clone(selfのテスト
+        """
+        print("▶︎ clone(selfのテスト")
+
+        tehai = Tehai()
+        assert tehai != tehai.clone()
+
+        tehai = Tehai.from_string("m123p456s789z4567")
+        assert tehai.to_string() == tehai.clone().to_string()
+
+        tehai = Tehai.from_string("m1,p123-,s555=,z777+7,m9999")
+        assert tehai.to_string() == tehai.clone().to_string()
+
+        tehai = Tehai.from_string("m11123456789991")
+        assert tehai.to_string() == tehai.clone().to_string()
+
+        tehai = Tehai.from_string("m123p456s789z1112*")
+        assert tehai.to_string() == tehai.clone().to_string()
+
+        tehai = Tehai.from_string("___________,m123-")
+        assert tehai.to_string() == tehai.clone().to_string()
+
+        tehai = Tehai.from_string("m123p456s789z4567")
+        assert tehai.to_string() != tehai.clone().action_tsumo("m1").to_string()
+
+        tehai = Tehai.from_string("m123p456s789z34567")
+        assert tehai.to_string() != tehai.clone().dahai("m1").to_string()
+
+        tehai = Tehai.from_string("m123p456s789z1167")
+        assert tehai.to_string() != tehai.clone().action_fuuro("z111=").to_string()
+
+        tehai = Tehai.from_string("m123p456s789z11112")
+        assert tehai.to_string() != tehai.clone().kan("z1111").to_string()
+
+        tehai = Tehai.from_string("m123p456s789z11223")
+        assert tehai.to_string() != tehai.clone().dahai("z3*").to_string()
 
 
 if __name__ == "__main__":
