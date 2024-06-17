@@ -285,7 +285,7 @@ class Tehai:
         if check and self.tsumo:
             raise ValueError("Invalid")
 
-        if mentsu is not self.valid_mentsu(mentsu):
+        if mentsu != self.valid_mentsu(mentsu):
             raise ValueError("Invalid")
 
         if re.search(r"\d{4}$", mentsu):
@@ -297,7 +297,7 @@ class Tehai:
         s = mentsu[0]
 
         for n in re.findall(r"\d(?![\+\=\-])", mentsu):
-            self.decrease(s, n)
+            self.decrease(s, int(n))
 
         self.fuuro.append(mentsu)
 
@@ -316,14 +316,14 @@ class Tehai:
         if check and len(self.tsumo) > 2:
             raise ValueError("Invalid")
 
-        if mentsu is not self.valid_mentsu(mentsu):
+        if mentsu != self.valid_mentsu(mentsu):
             raise ValueError("Invalid")
 
         s = mentsu[0]
 
         if re.search(r"\d{4}$", mentsu):
             for n in re.findall(r"\d", mentsu):
-                self.decrease(s, n)
+                self.decrease(s, int(n))
 
             self.fuuro.append(mentsu)
 
