@@ -337,6 +337,7 @@ class Tehai:
 
             self.fuuro[target_index] = mentsu
             self.decrease(s, mentsu[-1])
+
         else:
             raise ValueError("Invalid")
 
@@ -348,3 +349,62 @@ class Tehai:
         門前かどうかを判定する
         """
         return len([m for m in self.fuuro if re.search(r"[\+\=\-]", m)]) == 0
+
+    def get_dahai(self, check=True):
+        """
+        打牌可能な牌の一覧を返す
+        """
+        if not self.tsumo:
+            return None
+
+        deny = {}
+
+        if check and len(self.tsumo) > 2:
+            mentsu = self.tsumo
+            s = mentsu[0]
+            n = (
+                int(re.search(r"\d(?=[\+\=\-])", mentsu).group())
+                if re.search(r"\d(?=[\+\=\-])", mentsu)
+                else 5
+            )
+            deny[s + str(n)] = True
+
+            if not re.match(r"^[mpsz](\d)\1\1", mentsu.replace("0", "5")):
+                if n < 7 and re.match(r"^[mps]\d\-\d\d$", mentsu):
+                    deny[s + str(n + 3)] = True
+
+                if 3 < n and re.match(r"^[mps]\d\d\d\-$", mentsu):
+                    deny[s + str(n - 3)] = True
+
+        dahai = []
+
+        if not self.riichi:
+            for s in ["m", "p", "s", "z"]:
+                juntehai = self.juntehai[s]
+
+                for n in range(1, len(juntehai)):
+                    if juntehai[n] == 0:
+                        continue
+
+                    if s + str(n) in deny:
+                        continue
+
+                    if s + str(n) == self.tsumo and juntehai[n] == 1:
+                        continue
+
+                    if s == "z" or n != 5:
+                        dahai.append(s + str(n))
+
+                    else:
+                        if juntehai[0] > 0 and (
+                            s + "0" != self.tsumo or juntehai[0] > 1
+                        ):
+                            dahai.append(s + "0")
+
+                        if juntehai[0] < juntehai[5]:
+                            dahai.append(s + str(n))
+
+        if len(self.tsumo) == 2:
+            dahai.append(self.tsumo + "_")
+
+        return dahai
