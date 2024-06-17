@@ -207,3 +207,36 @@ class Tehai:
         self.tsumo = tehai.tsumo
         self.riichi = tehai.riichi
         return self
+
+    def draw_hai(self, hai, check=True):
+        """
+        ツモる
+        """
+        if check and self.tsumo:
+            raise ValueError("Invalid")
+
+        if hai == "_":
+            self.juntehai["_"] += 1
+            self.tsumo = hai
+
+        else:
+            if not self.valid_hai(hai):
+                raise ValueError("Invalid")
+
+            s, n = hai[0], int(hai[1])
+            juntehai = self.juntehai[s]
+
+            if juntehai[n] == 4:
+                raise ValueError("Too many")
+
+            juntehai[n] += 1
+
+            if n == 0:
+                if juntehai[5] == 4:
+                    raise ValueError("Too many")
+
+                juntehai[5] += 1
+
+            self.tsumo = s + str(n)
+
+        return self
