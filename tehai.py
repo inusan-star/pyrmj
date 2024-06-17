@@ -280,12 +280,12 @@ class Tehai:
 
     def action_fuuro(self, mentsu, check=True):
         """
-        鳴く
+        副露する
         """
         if check and self.tsumo:
             raise ValueError("Invalid")
 
-        if self.valid_mentsu(mentsu):
+        if mentsu is not self.valid_mentsu(mentsu):
             raise ValueError("Invalid")
 
         if re.search(r"\d{4}$", mentsu):
@@ -304,4 +304,41 @@ class Tehai:
         if not re.search(r"\d{4}", mentsu):
             self.tsumo = mentsu
 
+        return self
+
+    def kan(self, mentsu, check=True):
+        """
+        カン（暗槓/加槓）する
+        """
+        if check and not self.tsumo:
+            raise ValueError("Invalid")
+
+        if check and len(self.tsumo) > 2:
+            raise ValueError("Invalid")
+
+        if mentsu is not self.valid_mentsu(mentsu):
+            raise ValueError("Invalid")
+
+        s = mentsu[0]
+
+        if re.search(r"\d{4}$", mentsu):
+            for n in re.findall(r"\d", mentsu):
+                self.decrease(s, n)
+
+            self.fuuro.append(mentsu)
+
+        elif re.search(r"\d{3}[\+\=\-]\d$", mentsu):
+            m1 = mentsu[:5]
+            index = (i for i, m2 in enumerate(self.fuuro) if m1 == m2)
+            target_index = next(index, -1)
+
+            if target_index < 0:
+                raise ValueError("Invalid")
+
+            self.fuuro[target_index] = mentsu
+            self.decrease(s, mentsu[-1])
+        else:
+            raise ValueError("Invalid")
+
+        self.tsumo = None
         return self
