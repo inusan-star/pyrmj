@@ -240,3 +240,40 @@ class Tehai:
             self.tsumo = s + str(n)
 
         return self
+
+    def decrease(self, s, n):
+        """
+        指定された牌を減らす
+        """
+        juntehai = self.juntehai[s]
+
+        if juntehai[n] == 0 or (n == 5 and juntehai[0] == juntehai[5]):
+            if self.juntehai["_"] == 0:
+                raise ValueError("Invalid")
+
+            self.juntehai["_"] -= 1
+
+        else:
+            juntehai[n] -= 1
+
+            if n == 0:
+                juntehai[5] -= 1
+
+    def dahai(self, hai, check=True):
+        """
+        打牌する
+        """
+        if check and not self.tsumo:
+            raise ValueError("Invalid")
+
+        if not self.valid_hai(hai):
+            raise ValueError("Invalid")
+
+        s, n = hai[0], int(hai[1])
+        self.decrease(s, n)
+        self.tsumo = None
+
+        if hai[-1] == "*":
+            self.riichi = True
+
+        return self
