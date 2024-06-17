@@ -218,6 +218,62 @@ class TestTehai:
         for tehai_string, expected in test_cases:
             assert Tehai().update_from_string(tehai_string).to_string() == expected
 
+    def test_action_tsumo(self):
+        """
+        action_tsumo(self, hai, check=True)のテスト
+        """
+        print("▶︎ action_tsumo(self, hai, check=True)のテスト")
+
+        tehai = Tehai.from_string("m123p456s789z4567")
+        assert tehai.action_tsumo("m1").to_string() == "m123p456s789z4567m1"
+
+        tehai = Tehai.from_string("m123p456s789z4567")
+        assert tehai.action_tsumo("p1").to_string() == "m123p456s789z4567p1"
+
+        tehai = Tehai.from_string("m123p456s789z4567")
+        assert tehai.action_tsumo("s1").to_string() == "m123p456s789z4567s1"
+
+        tehai = Tehai.from_string("m123p456s789z4567")
+        assert tehai.action_tsumo("z1").to_string() == "m123p456s789z4567z1"
+
+        tehai = Tehai.from_string("m123p456s789z4567")
+        assert tehai.action_tsumo("m0").to_string() == "m123p456s789z4567m0"
+
+        tehai = Tehai.from_string("m123p456s789z4567")
+        assert tehai.action_tsumo("_").to_string() == "m123p456s789z4567_"
+
+        # with pytest.raises(ValueError):
+        # Tehai.from_string("m123p456s789z4567").action_tsumo()
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z4567").action_tsumo("z0")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z4567").action_tsumo("z8")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z4567").action_tsumo("mm")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z4567").action_tsumo("xx")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z34567").action_tsumo("m1")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456z34567,s789-,").action_tsumo("m1")
+
+        tehai = Tehai.from_string("m123p456s789z34567")
+        assert (
+            tehai.action_tsumo("m1", check=False).to_string() == "m123p456s789z34567m1"
+        )
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z1111").action_tsumo("z1")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m455556s789z1111").action_tsumo("m0")
+
 
 if __name__ == "__main__":
     pytest.main()
