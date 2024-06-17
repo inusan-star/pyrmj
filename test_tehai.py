@@ -402,6 +402,69 @@ class TestTehai:
         with pytest.raises(ValueError):
             Tehai.from_string("m123p45s789z22,z111=").action_fuuro("p406-")
 
+    def test_kan(self):
+        """
+        kan(self, mentsu, check=True)のテスト
+        """
+        print("▶︎ kan(self, mentsu, check=True)のテスト")
+
+        test_cases = [
+            ("m1111p456s789z4567", "m1111", "p456s789z4567,m1111"),
+            ("m1p456s789z4567,m111+", "m111+1", "p456s789z4567,m111+1"),
+            ("m123p5555s789z4567", "p5555", "m123s789z4567,p5555"),
+            ("m123p5s789z4567,p555=", "p555=5", "m123s789z4567,p555=5"),
+            ("m123p456s9999z4567", "s9999", "m123p456z4567,s9999"),
+            ("m123p456s9z4567,s999-", "s999-9", "m123p456z4567,s999-9"),
+            ("m123p456s789z67777", "z7777", "m123p456s789z6,z7777"),
+            ("m123p456s789z67,z777+", "z777+7", "m123p456s789z6,z777+7"),
+            ("m0055p456s789z4567", "m5500", "p456s789z4567,m5500"),
+            ("m123p5s789z4567,p505=", "p505=5", "m123s789z4567,p505=5"),
+            ("m123p0s789z4567,p555=", "p555=0", "m123s789z4567,p555=0"),
+            ("m1111p456s789z4567*", "m1111", "p456s789z4567*,m1111"),
+            ("m1p456s789z4567*,m111+", "m111+1", "p456s789z4567*,m111+1"),
+            ("______________", "m5550", "__________,m5550"),
+            ("___________,m555=", "m555=0", "__________,m555=0"),
+        ]
+
+        for tehai_string, mentsu, expected in test_cases:
+            tehai = Tehai.from_string(tehai_string)
+            assert tehai.kan(mentsu).to_string() == expected
+
+        invalid_test_cases = [
+            ("m1112456s789z4567", "m456-"),
+            ("m1112456s789z4567", "m111+"),
+            ("m1112456s789z4567", "m1112"),
+            ("m2456s789z4567,m111+", "m111+2"),
+            ("m1111p456s789z456", "m1111"),
+            ("m1111s789z4567,p456-,", "m1111"),
+            ("m1112p456s789z4567", "m1111"),
+            ("m13p456s789z567,m222=", "m2222"),
+            ("m10p456s789z567,m555=", "m5555"),
+            ("m15p456s789z567,m555=", "m5550"),
+            ("m12p456s789z567,m222=", "m111=1"),
+        ]
+
+        for tehai_string, mentsu in invalid_test_cases:
+            tehai = Tehai.from_string(tehai_string)
+            with pytest.raises(ValueError):
+                tehai.kan(mentsu)
+
+        tehai = Tehai.from_string("m1111p4444s789z567")
+        with pytest.raises(ValueError):
+            tehai.kan("m1111").kan("p4444")
+
+        tehai = Tehai.from_string("m1111p456s789z456")
+        assert tehai.kan("m1111", False).to_string() == "p456s789z456,m1111"
+
+        tehai = Tehai.from_string("m1111s789z4567,p456-,")
+        assert tehai.kan("m1111", False).to_string() == "s789z4567,p456-,m1111"
+
+        tehai = Tehai.from_string("m1111p4444s789z567")
+        assert (
+            tehai.kan("m1111", False).kan("p4444", False).to_string()
+            == "s789z567,m1111,p4444"
+        )
+
 
 if __name__ == "__main__":
     pytest.main()

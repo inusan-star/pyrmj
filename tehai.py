@@ -336,7 +336,7 @@ class Tehai:
                 raise ValueError("Invalid")
 
             self.fuuro[target_index] = mentsu
-            self.decrease(s, mentsu[-1])
+            self.decrease(s, int(mentsu[-1]))
 
         else:
             raise ValueError("Invalid")
