@@ -465,6 +465,22 @@ class TestTehai:
             == "s789z567,m1111,p4444"
         )
 
+    def test_menzen(self):
+        """
+        menzen(self)のテスト
+        """
+        print("▶︎ menzen(self)のテスト")
+
+        test_cases = [
+            ("m123p0s789z4567", True),
+            ("p0s789z4567,m123-", False),
+            ("m123p0s789,z1111", True),
+        ]
+
+        for tehai_string, expected in test_cases:
+            tehai = Tehai.from_string(tehai_string)
+            assert tehai.menzen() == expected
+
 
 if __name__ == "__main__":
     pytest.main()
