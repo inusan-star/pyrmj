@@ -493,6 +493,248 @@ class TestTehai:
         tehai = Tehai.from_string("_____________")
         assert tehai.action_tsumo("z7").dahai("z7_*").get_riichi()
 
+    def test_get_dahai(self):
+        """
+        get_dahai(self, check=True)のテスト
+        """
+        print("▶︎ get_dahai(self, check=True)のテスト")
+
+        invalid_test_cases = [
+            "m123p406s789z4567",
+            "m123p406s789z2,z111+",
+            "_____________",
+            "__________,z111+",
+        ]
+
+        for tehai_string in invalid_test_cases:
+            tehai = Tehai.from_string(tehai_string)
+            assert tehai.get_dahai() is None
+
+        tehai = Tehai.from_string("m123p406s789z11123")
+        assert tehai.get_dahai() == [
+            "m1",
+            "m2",
+            "m3",
+            "p4",
+            "p0",
+            "p6",
+            "s7",
+            "s8",
+            "s9",
+            "z1",
+            "z2",
+            "z3_",
+        ]
+
+        tehai = Tehai.from_string("m123p406s789z12,z111+")
+        assert tehai.get_dahai() == [
+            "m1",
+            "m2",
+            "m3",
+            "p4",
+            "p0",
+            "p6",
+            "s7",
+            "s8",
+            "s9",
+            "z1",
+            "z2_",
+        ]
+
+        tehai = Tehai.from_string("m123p456s789z1234m1*")
+        assert tehai.get_dahai() == ["m1_"]
+
+        tehai = Tehai.from_string("m123p405s789z11123")
+        assert tehai.get_dahai() == [
+            "m1",
+            "m2",
+            "m3",
+            "p4",
+            "p0",
+            "p5",
+            "s7",
+            "s8",
+            "s9",
+            "z1",
+            "z2",
+            "z3_",
+        ]
+
+        tehai = Tehai.from_string("m123p45s789z11123p0")
+        assert tehai.get_dahai() == [
+            "m1",
+            "m2",
+            "m3",
+            "p4",
+            "p5",
+            "s7",
+            "s8",
+            "s9",
+            "z1",
+            "z2",
+            "z3",
+            "p0_",
+        ]
+
+        tehai = Tehai.from_string("m123p45s789z11123p5")
+        assert tehai.get_dahai() == [
+            "m1",
+            "m2",
+            "m3",
+            "p4",
+            "p5",
+            "s7",
+            "s8",
+            "s9",
+            "z1",
+            "z2",
+            "z3",
+            "p5_",
+        ]
+
+        tehai = Tehai.from_string("m123p405s789z1112p0")
+        assert tehai.get_dahai() == [
+            "m1",
+            "m2",
+            "m3",
+            "p4",
+            "p0",
+            "p5",
+            "s7",
+            "s8",
+            "s9",
+            "z1",
+            "z2",
+            "p0_",
+        ]
+
+        tehai = Tehai.from_string("______________")
+        assert tehai.get_dahai() == []
+
+        tehai = Tehai.from_string("___________,m123-,")
+        assert tehai.get_dahai() == []
+
+        tehai = Tehai.from_string("m145p406s789z23,m1-23,")
+        assert tehai.get_dahai() == [
+            "m5",
+            "p4",
+            "p0",
+            "p6",
+            "s7",
+            "s8",
+            "s9",
+            "z2",
+            "z3",
+        ]
+
+        tehai = Tehai.from_string("m145p406s789z23,m234-,")
+        assert tehai.get_dahai() == [
+            "m5",
+            "p4",
+            "p0",
+            "p6",
+            "s7",
+            "s8",
+            "s9",
+            "z2",
+            "z3",
+        ]
+
+        tehai = Tehai.from_string("m123p258s789z23,p45-6,")
+        assert tehai.get_dahai() == [
+            "m1",
+            "m2",
+            "m3",
+            "p2",
+            "p8",
+            "s7",
+            "s8",
+            "s9",
+            "z2",
+            "z3",
+        ]
+
+        tehai = Tehai.from_string("m123p456s467z23,s7-89,")
+        assert tehai.get_dahai() == [
+            "m1",
+            "m2",
+            "m3",
+            "p4",
+            "p5",
+            "p6",
+            "s4",
+            "s6",
+            "z2",
+            "z3",
+        ]
+
+        tehai = Tehai.from_string("m123p456s789z12,z111+,")
+        assert tehai.get_dahai() == [
+            "m1",
+            "m2",
+            "m3",
+            "p4",
+            "p5",
+            "p6",
+            "s7",
+            "s8",
+            "s9",
+            "z2",
+        ]
+
+        tehai = Tehai.from_string("m256p456s789z12,m340-,")
+        assert tehai.get_dahai() == [
+            "m6",
+            "p4",
+            "p5",
+            "p6",
+            "s7",
+            "s8",
+            "s9",
+            "z1",
+            "z2",
+        ]
+
+        tehai = Tehai.from_string("m206p456s789z12,m345-,")
+        assert tehai.get_dahai() == [
+            "m6",
+            "p4",
+            "p5",
+            "p6",
+            "s7",
+            "s8",
+            "s9",
+            "z1",
+            "z2",
+        ]
+
+        tehai = Tehai.from_string("m25p1s12678,z666+,m550-,")
+        assert tehai.get_dahai() == ["m2", "p1", "s1", "s2", "s6", "s7", "s8"]
+
+        tehai = Tehai.from_string("m14,p456-,s789-,z111+,m234-,")
+        assert tehai.get_dahai() == []
+
+        tehai = Tehai.from_string("m14,p456-,s789-,z111+,m1-23,")
+        assert tehai.get_dahai() == []
+
+        tehai = Tehai.from_string("m22,p456-,s789-,z111+,m12-3,")
+        assert tehai.get_dahai() == []
+
+        tehai = Tehai.from_string("m145p406s789z23,m1-23,")
+        assert tehai.get_dahai(check=False) == [
+            "m1",
+            "m4",
+            "m5",
+            "p4",
+            "p0",
+            "p6",
+            "s7",
+            "s8",
+            "s9",
+            "z2",
+            "z3",
+        ]
+
 
 if __name__ == "__main__":
     pytest.main()

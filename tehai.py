@@ -368,11 +368,8 @@ class Tehai:
         if check and len(self.tsumo) > 2:
             mentsu = self.tsumo
             s = mentsu[0]
-            n = (
-                int(re.search(r"\d(?=[\+\=\-])", mentsu).group())
-                if re.search(r"\d(?=[\+\=\-])", mentsu)
-                else 5
-            )
+            match = re.search(r"\d(?=[\+\=\-])", mentsu)
+            n = int(match.group()) if match and int(match.group()) != 0 else 5
             deny[s + str(n)] = True
 
             if not re.match(r"^[mpsz](\d)\1\1", mentsu.replace("0", "5")):
