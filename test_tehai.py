@@ -481,6 +481,18 @@ class TestTehai:
             tehai = Tehai.from_string(tehai_string)
             assert tehai.menzen() == expected
 
+    def test_riichi(self):
+        """
+        get_riichi(self)のテスト
+        """
+        print("▶︎ get_riichi(self)のテスト")
+
+        tehai = Tehai.from_string("_____________")
+        assert not tehai.get_riichi()
+
+        tehai = Tehai.from_string("_____________")
+        assert tehai.action_tsumo("z7").dahai("z7_*").get_riichi()
+
 
 if __name__ == "__main__":
     pytest.main()

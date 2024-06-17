@@ -350,6 +350,12 @@ class Tehai:
         """
         return len([m for m in self.fuuro if re.search(r"[\+\=\-]", m)]) == 0
 
+    def get_riichi(self):
+        """
+        リーチしているかどうかを判定する
+        """
+        return self.riichi
+
     def get_dahai(self, check=True):
         """
         打牌可能な牌の一覧を返す
