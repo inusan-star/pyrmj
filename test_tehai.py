@@ -735,6 +735,93 @@ class TestTehai:
             "z3",
         ]
 
+    def test_get_chii_mentsu(self):
+        """
+        get_chii_mentsu(self, hai, check=True)のテスト
+        """
+        print("▶︎ get_chii_mentsu(self, hai, check=True)のテスト")
+
+        invalid_test_cases = [
+            ("m123p456s789z12345", "m1-"),
+            ("m123p456s789z12,z333=,", "m1-"),
+            ("______________", "m1-"),
+        ]
+
+        for tehai_string, hai in invalid_test_cases:
+            tehai = Tehai.from_string(tehai_string)
+            assert tehai.get_chii_mentsu(hai) is None
+
+        test_cases = [
+            ("m123p456s789z1234", "m5-", []),
+            ("_____________", "m5-", []),
+            ("m123p456s789z1234", "m3-", ["m123-"]),
+            (
+                "m1234p456s789z123",
+                "m3-",
+                ["m123-", "m23-4"],
+            ),
+            (
+                "m12345p456s789z12",
+                "m3-",
+                ["m123-", "m23-4", "m3-45"],
+            ),
+            ("m123p456s789z1234", "p0-", ["p40-6"]),
+            ("m123p34067s789z12", "p3-", ["p3-40"]),
+            ("m123p34067s789z12", "p4-", ["p34-0", "p4-06"]),
+            ("m123p34067s789z12", "p6-", ["p406-", "p06-7"]),
+            ("m123p34067s789z12", "p7-", ["p067-"]),
+            (
+                "m123p340567s789z1",
+                "p3-",
+                ["p3-40", "p3-45"],
+            ),
+            ("m123p340567s789z1", "p4-", ["p34-0", "p34-5", "p4-06", "p4-56"]),
+            ("m123p340567s789z1", "p6-", ["p406-", "p456-", "p06-7", "p56-7"]),
+            ("m123p340567s789z1", "p7-", ["p067-", "p567-"]),
+            ("m123p456s789z1234", "m3_-", ["m123-"]),
+            ("m123p456s789z1234", "m3*-", ["m123-"]),
+            (
+                "m123p456s789z1234",
+                "m3_*-",
+                ["m123-"],
+            ),
+            ("m123p456s789z1234*", "m3-", []),
+            (
+                "s6789,m123-,p456-,z111+",
+                "s6-",
+                [],
+            ),
+            ("s6789,m123-,p456-,z111+", "s9-", []),
+            ("s7889,m123-,p456-,z111+", "s8-", []),
+            ("s7899,m123-,p456-,z111+", "s9-", []),
+            ("s7789,m123-,p456-,z111+", "s7-", []),
+            ("s6678999,m123-,p456-", "s6-", []),
+            (
+                "s6789,m123-,p456-,z111+",
+                "s6-",
+                ["s6-78"],
+                False,
+            ),
+            ("s6789,m123-,p456-,z111+", "s9-", ["s789-"], False),
+            ("s7889,m123-,p456-,z111+", "s8-", ["s78-9"], False),
+            ("s7899,m123-,p456-,z111+", "s9-", ["s789-"], False),
+            ("s7789,m123-,p456-,z111+", "s7-", ["s7-89"], False),
+            ("s6678999,m123-,p456-", "s6-", ["s6-78"], False),
+            ("m123p456s789z1234", "mm-", ValueError),
+            ("m123p456s789z1234", "m1", ValueError),
+            ("m123p456s789z1234", "z1-", []),
+            ("m123p456s789z1234", "m1+", []),
+            ("m123p456s789z1234", "m1=", []),
+        ]
+
+        for tehai_string, hai, expected, *args in test_cases:
+            tehai = Tehai.from_string(tehai_string)
+            if isinstance(expected, list):
+                assert tehai.get_chii_mentsu(hai, *args) == expected
+            else:
+                with pytest.raises(expected):
+                    tehai.get_chii_mentsu(hai, *args)
+
 
 if __name__ == "__main__":
     pytest.main()

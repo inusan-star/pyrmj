@@ -411,3 +411,70 @@ class Tehai:
             dahai.append(self.tsumo + "_")
 
         return dahai
+
+    def get_chii_mentsu(self, hai, check=True):
+        """
+        チー可能な面子の一覧を返す
+        """
+
+        if self.tsumo:
+            return None
+
+        if not self.valid_hai(hai):
+            raise ValueError("Invalid")
+
+        mentsu = []
+        s, n = hai[0], int(hai[1]) if int(hai[1]) != 0 else 5
+        d = re.search(r"[\+\=\-]$", hai)
+
+        if not d:
+            raise ValueError("Invalid")
+
+        if s == "z" or d.group() != "-":
+            return mentsu
+
+        if self.riichi:
+            return mentsu
+
+        juntehai = self.juntehai[s]
+
+        if 3 <= n and 0 < juntehai[n - 2] and 0 < juntehai[n - 1]:
+            if not check or (
+                (juntehai[n] + (juntehai[n - 3] if n > 3 else 0))
+                < 14 - (len(self.fuuro) + 1) * 3
+            ):
+                if n - 2 == 5 and juntehai[0] > 0:
+                    mentsu.append(f"{s}067-")
+
+                if n - 1 == 5 and juntehai[0] > 0:
+                    mentsu.append(f"{s}406-")
+
+                if (n - 2 != 5 and n - 1 != 5) or juntehai[0] < juntehai[5]:
+                    mentsu.append(f"{s}{n-2}{n-1}{hai[1]}{d.group()}")
+
+        if 2 <= n <= 8 and 0 < juntehai[n - 1] and 0 < juntehai[n + 1]:
+            if not check or juntehai[n] < 14 - (len(self.fuuro) + 1) * 3:
+                if n - 1 == 5 and juntehai[0] > 0:
+                    mentsu.append(f"{s}06-7")
+
+                if n + 1 == 5 and juntehai[0] > 0:
+                    mentsu.append(f"{s}34-0")
+
+                if (n - 1 != 5 and n + 1 != 5) or juntehai[0] < juntehai[5]:
+                    mentsu.append(f"{s}{n-1}{hai[1]}{d.group()}{n+1}")
+
+        if n <= 7 and 0 < juntehai[n + 1] and 0 < juntehai[n + 2]:
+            if not check or (
+                (juntehai[n] + (juntehai[n + 3] if n < 7 else 0))
+                < 14 - (len(self.fuuro) + 1) * 3
+            ):
+                if n + 1 == 5 and juntehai[0] > 0:
+                    mentsu.append(f"{s}4-06")
+
+                if n + 2 == 5 and juntehai[0] > 0:
+                    mentsu.append(f"{s}3-40")
+
+                if (n + 1 != 5 and n + 2 != 5) or juntehai[0] < juntehai[5]:
+                    mentsu.append(f"{s}{hai[1]}{d.group()}{n+1}{n+2}")
+
+        return mentsu
