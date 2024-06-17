@@ -342,3 +342,9 @@ class Tehai:
 
         self.tsumo = None
         return self
+
+    def menzen(self):
+        """
+        門前かどうかを判定する
+        """
+        return len([m for m in self.fuuro if re.search(r"[\+\=\-]", m)]) == 0
