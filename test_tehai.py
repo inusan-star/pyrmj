@@ -274,6 +274,69 @@ class TestTehai:
         with pytest.raises(ValueError):
             Tehai.from_string("m455556s789z1111").action_tsumo("m0")
 
+    def test_dahai(self):
+        """
+        dahai(self, hai, check=True)のテスト
+        """
+        print("▶︎ dahai(self, hai, check=True)のテスト")
+
+        tehai = Tehai.from_string("m123p456s789z34567")
+        assert tehai.dahai("m1").to_string() == "m23p456s789z34567"
+
+        tehai = Tehai.from_string("m123p456s789z34567")
+        assert tehai.dahai("p4").to_string() == "m123p56s789z34567"
+
+        tehai = Tehai.from_string("m123p456s789z34567")
+        assert tehai.dahai("s7").to_string() == "m123p456s89z34567"
+
+        tehai = Tehai.from_string("m123p456s789z34567")
+        assert tehai.dahai("z3").to_string() == "m123p456s789z4567"
+
+        tehai = Tehai.from_string("m123p406s789z34567")
+        assert tehai.dahai("p0").to_string() == "m123p46s789z34567"
+
+        tehai = Tehai.from_string("m123p456s789z34567")
+        assert tehai.dahai("z7*").to_string() == "m123p456s789z3456*"
+
+        tehai = Tehai.from_string("m123p456s789z11223*")
+        assert tehai.dahai("z1").to_string() == "m123p456s789z1223*"
+
+        tehai = Tehai.from_string("______________")
+        assert tehai.dahai("m1").to_string() == "_____________"
+
+        # with pytest.raises(ValueError):
+        # Tehai.from_string("m123p456s789z34567").dahai()
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z34567").dahai("z0")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z34567").dahai("z8")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z34567").dahai("mm")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z34567").dahai("xx")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z4567").dahai("_")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z4567").dahai("m1")
+
+        tehai = Tehai.from_string("m123p456s789z4567")
+        assert tehai.dahai("m1", False).to_string() == "m23p456s789z4567"
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z34567").dahai("z1")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p456s789z34567").dahai("p0")
+
+        with pytest.raises(ValueError):
+            Tehai.from_string("m123p406s789z34567").dahai("p5")
+
 
 if __name__ == "__main__":
     pytest.main()
