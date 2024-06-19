@@ -1,6 +1,48 @@
 import re
 
 
+HAI_UNICODE = {
+    "m0": "\033[91m🀋\033[00m",
+    "m1": "🀇",
+    "m2": "🀈",
+    "m3": "🀉",
+    "m4": "🀊",
+    "m5": "🀋",
+    "m6": "🀌",
+    "m7": "🀍",
+    "m8": "🀎",
+    "m9": "🀏",
+    "p0": "\033[91m🀝\033[00m",
+    "p1": "🀙",
+    "p2": "🀚",
+    "p3": "🀛",
+    "p4": "🀜",
+    "p5": "🀝",
+    "p6": "🀞",
+    "p7": "🀟",
+    "p8": "🀠",
+    "p9": "🀡",
+    "s0": "\033[91m🀔\033[00m",
+    "s1": "🀐",
+    "s2": "🀑",
+    "s3": "🀒",
+    "s4": "🀓",
+    "s5": "🀔",
+    "s6": "🀕",
+    "s7": "🀖",
+    "s8": "🀗",
+    "s9": "🀘",
+    "z1": "🀀",
+    "z2": "🀁",
+    "z3": "🀂",
+    "z4": "🀃",
+    "z5": "🀆",
+    "z6": "🀅",
+    "z7": "🀄",
+    "_": "🀫",
+}
+
+
 class Tehai:
     """
     手牌を表すクラス
@@ -583,3 +625,142 @@ class Tehai:
                                     mentsu.append(m + str(n))
 
         return mentsu
+
+    def to_json(self):
+        """
+        牌姿をjsonで返す
+        """
+        json_output = {"tehai": {"juntehai": [], "fuuro": []}}
+        tsumo = self.tsumo
+
+        for s in ["m", "p", "s", "z"]:
+            juntehai = self.juntehai[s]
+            n_akahai = juntehai[0]
+
+            for n in range(1, len(juntehai)):
+                n_hai = juntehai[n]
+
+                if f"{s}{n}" == tsumo:
+                    n_hai -= 1
+
+                elif n == 5 and f"{s}{0}" == tsumo:
+                    n_akahai -= 1
+                    n_hai -= 1
+
+                for _ in range(n_hai):
+                    hai = s
+
+                    if n == 5 and n_akahai > 0:
+                        hai += "0"
+                        n_akahai -= 1
+
+                    else:
+                        hai += str(n)
+
+                    json_output["tehai"]["juntehai"].append(
+                        {
+                            "type": "normal",
+                            "hai": hai,
+                        }
+                    )
+
+        if tsumo and len(tsumo) == 2:
+            json_output["tehai"]["juntehai"].append(
+                {
+                    "type": "tsumo",
+                    "hai": tsumo,
+                }
+            )
+
+        for mentsu in self.fuuro:
+            s = mentsu[0]
+
+            if re.match(r"^[mpsz](\d)\1\1\1$", mentsu.replace("0", "5")):
+                nn = re.findall(r"\d", mentsu)
+                json_output["tehai"]["fuuro"].append(
+                    [
+                        {"type": "normal", "hai": "_"},
+                        {"type": "normal", "hai": f"{s}{nn[2]}"},
+                        {"type": "normal", "hai": f"{s}{nn[3]}"},
+                        {"type": "normal", "hai": "_"},
+                    ]
+                )
+
+            elif re.match(r"^[mpsz](\d)\1\1\1?[\+\=\-]\1?$", mentsu.replace("0", "5")):
+                not_fuuro = re.search(r"[\+\=\-]\d$", mentsu)
+                d = re.search(r"[\+\=\-]", mentsu).group()
+                hai = [f"{s}{n}" for n in re.findall(r"\d", mentsu)]
+                hai_r = [hai[2], hai[3]] if not_fuuro else [hai[-1]]
+                hai_l = (
+                    [hai[1], hai[2]] if not not_fuuro and len(hai) == 4 else [hai[1]]
+                )
+
+                if d == "+":
+                    json_output["tehai"]["fuuro"].append(
+                        [
+                            {"type": "normal", "hai": hai[0]},
+                            *[{"type": "normal", "hai": h} for h in hai_l],
+                            *[{"type": "rotate", "hai": h} for h in hai_r],
+                        ]
+                    )
+
+                elif d == "=":
+                    json_output["tehai"]["fuuro"].append(
+                        [
+                            {"type": "normal", "hai": hai[0]},
+                            *[{"type": "rotate", "hai": h} for h in hai_r],
+                            *[{"type": "normal", "hai": h} for h in hai_l],
+                        ]
+                    )
+
+                elif d == "-":
+                    json_output["tehai"]["fuuro"].append(
+                        [
+                            *[{"type": "rotate", "hai": h} for h in hai_r],
+                            {"type": "normal", "hai": hai[0]},
+                            *[{"type": "normal", "hai": h} for h in hai_l],
+                        ]
+                    )
+
+            else:
+                nn = [re.search(r"\d(?=\-)", mentsu).group()] + re.findall(
+                    r"\d(?!\-)", mentsu
+                )
+                json_output["tehai"]["fuuro"].append(
+                    [
+                        {"type": "rotate", "hai": f"{s}{nn[0]}"},
+                        {"type": "normal", "hai": f"{s}{nn[1]}"},
+                        {"type": "normal", "hai": f"{s}{nn[2]}"},
+                    ]
+                )
+
+        return json_output
+
+    def to_display(self, open_hand=True):
+        """
+        牌を引く
+        """
+        json_data = self.to_json()
+
+        for hai_data in json_data["tehai"]["juntehai"]:
+            if hai_data["type"] == "tsumo":
+                print(" ", end="")
+
+            if open_hand:
+                print(HAI_UNICODE[hai_data["hai"]], end="")
+
+            else:
+                print(HAI_UNICODE["_"], end="")
+
+        print("  ", end="")
+
+        for mentsu in json_data["tehai"]["fuuro"][::-1]:
+            for hai_data in mentsu:
+                if hai_data["type"] == "rotate":
+                    print("/", end="")
+
+                print(HAI_UNICODE[hai_data["hai"]], end="")
+
+            print(" ", end="")
+
+        print("\n")
