@@ -49,7 +49,7 @@ with open("./GL-MahjongTile.base64", "r", encoding="utf-8") as font_file:
 
 def view_tehai(
     tehai,
-    open_hand=False,
+    open_hand=True,
     font_size=50,
 ):
     """
@@ -81,7 +81,7 @@ def view_tehai(
         if hai_data["type"] == "tsumo":
             start_x += font_width * 0.5
 
-        if open_hand:
+        if not open_hand:
             hai_data["hai"] = "_"
 
         svg.add(
