@@ -47,6 +47,28 @@ with open("./GL-MahjongTile.base64", "r", encoding="utf-8") as font_file:
     base_font = font_file.read()
 
 
+def add_text(svg, text, x, y, font_size, red, rotate=False):
+    """
+    SVGにテキストを追加する
+    """
+
+    for i, t in enumerate([text, "🀆"] if red else [text]):
+        text_element = svg.text(
+            t,
+            insert=(x, y),
+            font_size=font_size,
+            font_family="GL-MahjongTile",
+            fill="red" if red and i == 0 else "black",
+        )
+
+        if rotate:
+            text_element["transform"] = (
+                f"rotate(-90, {x + 0.04 * font_size}, {y + 0.02 * font_size})"
+            )
+
+        svg.add(text_element)
+
+
 def view_tehai(tehai, font_size=50, open_hand=True):
     """
     手牌を表示する
@@ -54,7 +76,6 @@ def view_tehai(tehai, font_size=50, open_hand=True):
     font_width = font_size * 0.55
     font_height = font_size * 0.81
     margin = font_size * 0.1
-    thickness = font_size * 0.02
 
     svg = svgwrite.Drawing(
         size=(font_width * 20.5 + margin * 2, font_width * 2 + margin * 2),
@@ -63,10 +84,9 @@ def view_tehai(tehai, font_size=50, open_hand=True):
     svg.add(
         svg.style(
             f"""@font-face {{
-            font-family: 'GL-MahjongTile';
-            src: url(data:font/otf;base64,{base_font}) format('opentype');
-            }}
-        """
+                font-family: 'GL-MahjongTile';
+                src: url(data:font/otf;base64,{base_font}) format('opentype');
+            }}"""
         )
     )
 
@@ -77,17 +97,14 @@ def view_tehai(tehai, font_size=50, open_hand=True):
         if hai_data["type"] == "tsumo":
             start_x += font_width * 0.5
 
-        if not open_hand:
-            hai_data["hai"] = "_"
-
-        svg.add(
-            svg.text(
-                HAI_UNICODE[hai_data["hai"]],
-                insert=(start_x, font_width * 2 + margin),
-                font_size=font_size,
-                font_family="GL-MahjongTile",
-                fill="red" if re.match(r"^[mps]0", hai_data["hai"]) else "black",
-            )
+        text = HAI_UNICODE[hai_data["hai"]] if open_hand else "_"
+        add_text(
+            svg,
+            text,
+            start_x,
+            font_width * 2 + margin,
+            font_size,
+            re.match(r"^[mps]0", hai_data["hai"]),
         )
         start_x += font_width
 
@@ -95,56 +112,32 @@ def view_tehai(tehai, font_size=50, open_hand=True):
 
     for mentsu in tehai_json["tehai"]["fuuro"][::-1]:
         for hai_data in mentsu:
-            if hai_data["type"] == "rotate0":
-                svg.add(
-                    svg.text(
-                        HAI_UNICODE[hai_data["hai"]],
-                        insert=(start_x + font_height, font_width * 2 + margin),
-                        font_size=font_size,
-                        font_family="GL-MahjongTile",
-                        fill=(
-                            "red" if re.match(r"^[mps]0", hai_data["hai"]) else "black"
-                        ),
-                        transform=f"""rotate(
-                            -90,
-                            {start_x + font_height + 2 * thickness},
-                            {font_width * 2 + margin + thickness}
-                        )""",
-                    )
-                )
-                start_x += font_height
+            text = HAI_UNICODE[hai_data["hai"]]
+            rotate_type = re.match(r"^rotate([0-9])", hai_data["type"])
 
-            elif hai_data["type"] == "rotate1":
-                start_x -= font_height
-                svg.add(
-                    svg.text(
-                        HAI_UNICODE[hai_data["hai"]],
-                        insert=(start_x + font_height, font_width + margin),
-                        font_size=font_size,
-                        font_family="GL-MahjongTile",
-                        fill=(
-                            "red" if re.match(r"^[mps]0", hai_data["hai"]) else "black"
-                        ),
-                        transform=f"""rotate(
-                            -90,
-                            {start_x + font_height + 2 * thickness},
-                            {font_width + margin + thickness}
-                        )""",
-                    )
+            if rotate_type:
+                if rotate_type.group(1) == "1":
+                    start_x -= font_height
+
+                add_text(
+                    svg,
+                    text,
+                    start_x + font_height,
+                    font_width * (2 - int(rotate_type.group(1))) + margin,
+                    font_size,
+                    re.match(r"^[mps]0", hai_data["hai"]),
+                    True,
                 )
                 start_x += font_height
 
             else:
-                svg.add(
-                    svg.text(
-                        HAI_UNICODE[hai_data["hai"]],
-                        insert=(start_x, font_width * 2 + margin),
-                        font_size=font_size,
-                        font_family="GL-MahjongTile",
-                        fill=(
-                            "red" if re.match(r"^[mps]0", hai_data["hai"]) else "black"
-                        ),
-                    )
+                add_text(
+                    svg,
+                    text,
+                    start_x,
+                    font_width * 2 + margin,
+                    font_size,
+                    re.match(r"^[mps]0", hai_data["hai"]),
                 )
                 start_x += font_width
 
