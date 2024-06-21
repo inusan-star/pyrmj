@@ -1,7 +1,7 @@
 import json
 import pytest
 from tehai import Tehai
-from shanten import shanten_kokushi, shanten_chiitoi
+from shanten import shanten_kokushi, shanten_chiitoi, shanten_ippan
 
 with open("./data/shanten_1.json", encoding="utf-8") as f:
     data1 = json.load(f)
@@ -105,6 +105,54 @@ def test_shanten_chiitoi():
     for data in data4:
         tehai = Tehai(data["h"])
         assert shanten_chiitoi(tehai) == data["s"][2]
+
+
+def test_shanten_ippan():
+    """
+    shanten_ippan(tehai)のテスト
+    """
+    print("▶︎ shanten_ippan(tehai))のテスト")
+
+    assert shanten_ippan(Tehai.from_string()) == 13
+
+    tehai = Tehai.from_string("m123,p123-,s456-,m789-")
+    tehai.fuuro.append("z555=")
+    assert shanten_ippan(tehai) == 0
+
+    test_cases = [
+        ("m123p406s789z1122", 0),
+        ("m123p456s789z11222", -1),
+        ("m123p456s789z2,z111=", 0),
+        ("m12389p456s12789z1", 1),
+        ("m12389p456s1289z11", 1),
+        ("m133345568z23677", 2),
+        ("p234s567,m222=,p0-67", 1),
+        ("p222345z1234567", 4),
+        ("p2344456z123456", 4),
+        ("p11222345z12345", 3),
+        ("p2234556788z123", 2),
+        ("m11122,p123-,s12-3,z111=,", 0),
+    ]
+
+    for tehai_string, expected in test_cases:
+        tehai = Tehai.from_string(tehai_string)
+        assert shanten_ippan(tehai) == expected
+
+    for data in data1:
+        tehai = Tehai(data["h"])
+        assert shanten_ippan(tehai) == data["s"][0]
+
+    for data in data2:
+        tehai = Tehai(data["h"])
+        assert shanten_ippan(tehai) == data["s"][0]
+
+    for data in data3:
+        tehai = Tehai(data["h"])
+        assert shanten_ippan(tehai) == data["s"][0]
+
+    for data in data4:
+        tehai = Tehai(data["h"])
+        assert shanten_ippan(tehai) == data["s"][0]
 
 
 if __name__ == "__main__":
