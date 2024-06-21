@@ -208,3 +208,11 @@ def shanten_ippan(tehai):
         return 0
 
     return min_shanten
+
+
+def shanten(tehai):
+    """
+    向聴数を計算する
+    """
+
+    return min(shanten_kokushi(tehai), shanten_chiitoi(tehai), shanten_ippan(tehai))
