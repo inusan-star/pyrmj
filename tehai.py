@@ -1,48 +1,6 @@
 import re
 
 
-HAI_UNICODE = {
-    "m0": "\033[91m🀋\033[00m",
-    "m1": "🀇",
-    "m2": "🀈",
-    "m3": "🀉",
-    "m4": "🀊",
-    "m5": "🀋",
-    "m6": "🀌",
-    "m7": "🀍",
-    "m8": "🀎",
-    "m9": "🀏",
-    "p0": "\033[91m🀝\033[00m",
-    "p1": "🀙",
-    "p2": "🀚",
-    "p3": "🀛",
-    "p4": "🀜",
-    "p5": "🀝",
-    "p6": "🀞",
-    "p7": "🀟",
-    "p8": "🀠",
-    "p9": "🀡",
-    "s0": "\033[91m🀔\033[00m",
-    "s1": "🀐",
-    "s2": "🀑",
-    "s3": "🀒",
-    "s4": "🀓",
-    "s5": "🀔",
-    "s6": "🀕",
-    "s7": "🀖",
-    "s8": "🀗",
-    "s9": "🀘",
-    "z1": "🀀",
-    "z2": "🀁",
-    "z3": "🀂",
-    "z4": "🀃",
-    "z5": "🀆",
-    "z6": "🀅",
-    "z7": "🀄",
-    "_": "🀫",
-}
-
-
 class Tehai:
     """
     手牌を表すクラス
@@ -700,7 +658,7 @@ class Tehai:
                         [
                             {"type": "normal", "hai": hai[0]},
                             *[{"type": "normal", "hai": h} for h in hai_l],
-                            *[{"type": "rotate", "hai": h} for h in hai_r],
+                            *[{"type": f"rotate{i}", "hai": h} for i, h in enumerate(hai_r)],
                         ]
                     )
 
@@ -708,7 +666,7 @@ class Tehai:
                     json_output["tehai"]["fuuro"].append(
                         [
                             {"type": "normal", "hai": hai[0]},
-                            *[{"type": "rotate", "hai": h} for h in hai_r],
+                            *[{"type": f"rotate{i}", "hai": h} for i, h in enumerate(hai_r)],
                             *[{"type": "normal", "hai": h} for h in hai_l],
                         ]
                     )
@@ -716,7 +674,7 @@ class Tehai:
                 elif d == "-":
                     json_output["tehai"]["fuuro"].append(
                         [
-                            *[{"type": "rotate", "hai": h} for h in hai_r],
+                            *[{"type": f"rotate{i}", "hai": h} for i, h in enumerate(hai_r)],
                             {"type": "normal", "hai": hai[0]},
                             *[{"type": "normal", "hai": h} for h in hai_l],
                         ]
@@ -728,39 +686,10 @@ class Tehai:
                 )
                 json_output["tehai"]["fuuro"].append(
                     [
-                        {"type": "rotate", "hai": f"{s}{nn[0]}"},
+                        {"type": "rotate0", "hai": f"{s}{nn[0]}"},
                         {"type": "normal", "hai": f"{s}{nn[1]}"},
                         {"type": "normal", "hai": f"{s}{nn[2]}"},
                     ]
                 )
 
         return json_output
-
-    def to_display(self, open_hand=True):
-        """
-        牌を引く
-        """
-        json_data = self.to_json()
-
-        for hai_data in json_data["tehai"]["juntehai"]:
-            if hai_data["type"] == "tsumo":
-                print(" ", end="")
-
-            if open_hand:
-                print(HAI_UNICODE[hai_data["hai"]], end="")
-
-            else:
-                print(HAI_UNICODE["_"], end="")
-
-        print("  ", end="")
-
-        for mentsu in json_data["tehai"]["fuuro"][::-1]:
-            for hai_data in mentsu:
-                if hai_data["type"] == "rotate":
-                    print("/", end="")
-
-                print(HAI_UNICODE[hai_data["hai"]], end="")
-
-            print(" ", end="")
-
-        print("\n")
