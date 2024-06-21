@@ -47,11 +47,7 @@ with open("./GL-MahjongTile.base64", "r", encoding="utf-8") as font_file:
     base_font = font_file.read()
 
 
-def view_tehai(
-    tehai,
-    open_hand=True,
-    font_size=50,
-):
+def view_tehai(tehai, font_size=50, open_hand=True):
     """
     手牌を表示する
     """
