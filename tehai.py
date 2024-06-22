@@ -17,9 +17,9 @@ class Tehai:
             "s": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             "z": [0, 0, 0, 0, 0, 0, 0, 0],
         }
-        self.fuuro = []
-        self.tsumo = None
-        self.riichi = False
+        self.fuuro_list = []
+        self.tsumohai = None
+        self.is_riichi = False
 
         for hai in haipai:
             if hai == "_":
@@ -113,24 +113,24 @@ class Tehai:
 
         for mentsu in fuuro:
             if not mentsu:
-                tehai.tsumo = last
+                tehai.tsumohai = last
                 break
 
             mentsu = cls.valid_mentsu(mentsu)
 
             if mentsu:
-                tehai.fuuro.append(mentsu)
+                tehai.fuuro_list.append(mentsu)
                 last = mentsu
 
-        tehai.tsumo = tehai.tsumo or tsumo or None
-        tehai.riichi = juntehai[-1:] == "*"
+        tehai.tsumohai = tehai.tsumohai or tsumo or None
+        tehai.is_riichi = juntehai[-1:] == "*"
         return tehai
 
     def to_string(self):
         """
         牌姿を返す
         """
-        tsumo_offset = -1 if self.tsumo == "_" else 0
+        tsumo_offset = -1 if self.tsumohai == "_" else 0
         tehai_string = "_" * (self.juntehai["_"] + tsumo_offset)
 
         for s in ["m", "p", "s", "z"]:
@@ -141,11 +141,11 @@ class Tehai:
             for n in range(1, len(juntehai)):
                 n_hai = juntehai[n]
 
-                if self.tsumo:
-                    if s + str(n) == self.tsumo:
+                if self.tsumohai:
+                    if s + str(n) == self.tsumohai:
                         n_hai -= 1
 
-                    if n == 5 and s + "0" == self.tsumo:
+                    if n == 5 and s + "0" == self.tsumohai:
                         n_hai -= 1
                         n_akahai -= 1
 
@@ -160,16 +160,16 @@ class Tehai:
             if len(suit_string) > 1:
                 tehai_string += suit_string
 
-        if self.tsumo and len(self.tsumo) <= 2:
-            tehai_string += self.tsumo
+        if self.tsumohai and len(self.tsumohai) <= 2:
+            tehai_string += self.tsumohai
 
-        if self.riichi:
+        if self.is_riichi:
             tehai_string += "*"
 
-        for mentsu in self.fuuro:
+        for mentsu in self.fuuro_list:
             tehai_string += "," + mentsu
 
-        if self.tsumo and len(self.tsumo) > 2:
+        if self.tsumohai and len(self.tsumohai) > 2:
             tehai_string += ","
 
         return tehai_string
@@ -186,9 +186,9 @@ class Tehai:
             "s": self.juntehai["s"][:],
             "z": self.juntehai["z"][:],
         }
-        tehai.fuuro = self.fuuro[:]
-        tehai.tsumo = self.tsumo
-        tehai.riichi = self.riichi
+        tehai.fuuro_list = self.fuuro_list[:]
+        tehai.tsumohai = self.tsumohai
+        tehai.is_riichi = self.is_riichi
         return tehai
 
     def update_from_string(self, tehai_string):
@@ -203,21 +203,21 @@ class Tehai:
             "s": tehai.juntehai["s"][:],
             "z": tehai.juntehai["z"][:],
         }
-        self.fuuro = tehai.fuuro[:]
-        self.tsumo = tehai.tsumo
-        self.riichi = tehai.riichi
+        self.fuuro_list = tehai.fuuro_list[:]
+        self.tsumohai = tehai.tsumohai
+        self.is_riichi = tehai.is_riichi
         return self
 
-    def action_tsumo(self, hai, check=True):
+    def tsumo(self, hai, check=True):
         """
         ツモる
         """
-        if check and self.tsumo:
+        if check and self.tsumohai:
             raise ValueError("Invalid")
 
         if hai == "_":
             self.juntehai["_"] += 1
-            self.tsumo = hai
+            self.tsumohai = hai
 
         else:
             if not self.valid_hai(hai):
@@ -237,7 +237,7 @@ class Tehai:
 
                 juntehai[5] += 1
 
-            self.tsumo = s + str(n)
+            self.tsumohai = s + str(n)
 
         return self
 
@@ -263,7 +263,7 @@ class Tehai:
         """
         打牌する
         """
-        if check and not self.tsumo:
+        if check and not self.tsumohai:
             raise ValueError("Invalid")
 
         if not self.valid_hai(hai):
@@ -271,18 +271,18 @@ class Tehai:
 
         s, n = hai[0], int(hai[1])
         self.decrease(s, n)
-        self.tsumo = None
+        self.tsumohai = None
 
         if hai[-1] == "*":
-            self.riichi = True
+            self.is_riichi = True
 
         return self
 
-    def action_fuuro(self, mentsu, check=True):
+    def fuuro(self, mentsu, check=True):
         """
         副露する
         """
-        if check and self.tsumo:
+        if check and self.tsumohai:
             raise ValueError("Invalid")
 
         if mentsu != self.valid_mentsu(mentsu):
@@ -299,10 +299,10 @@ class Tehai:
         for n in re.findall(r"\d(?![\+\=\-])", mentsu):
             self.decrease(s, int(n))
 
-        self.fuuro.append(mentsu)
+        self.fuuro_list.append(mentsu)
 
         if not re.search(r"\d{4}", mentsu):
-            self.tsumo = mentsu
+            self.tsumohai = mentsu
 
         return self
 
@@ -310,10 +310,10 @@ class Tehai:
         """
         カン（暗槓/加槓）する
         """
-        if check and not self.tsumo:
+        if check and not self.tsumohai:
             raise ValueError("Invalid")
 
-        if check and len(self.tsumo) > 2:
+        if check and len(self.tsumohai) > 2:
             raise ValueError("Invalid")
 
         if mentsu != self.valid_mentsu(mentsu):
@@ -325,48 +325,48 @@ class Tehai:
             for n in re.findall(r"\d", mentsu):
                 self.decrease(s, int(n))
 
-            self.fuuro.append(mentsu)
+            self.fuuro_list.append(mentsu)
 
         elif re.search(r"\d{3}[\+\=\-]\d$", mentsu):
             m1 = mentsu[:5]
-            index = (i for i, m2 in enumerate(self.fuuro) if m1 == m2)
+            index = (i for i, m2 in enumerate(self.fuuro_list) if m1 == m2)
             target_index = next(index, -1)
 
             if target_index < 0:
                 raise ValueError("Invalid")
 
-            self.fuuro[target_index] = mentsu
+            self.fuuro_list[target_index] = mentsu
             self.decrease(s, int(mentsu[-1]))
 
         else:
             raise ValueError("Invalid")
 
-        self.tsumo = None
+        self.tsumohai = None
         return self
 
     def menzen(self):
         """
         門前かどうかを判定する
         """
-        return len([m for m in self.fuuro if re.search(r"[\+\=\-]", m)]) == 0
+        return len([m for m in self.fuuro_list if re.search(r"[\+\=\-]", m)]) == 0
 
-    def get_riichi(self):
+    def riichi(self):
         """
         リーチしているかどうかを判定する
         """
-        return self.riichi
+        return self.is_riichi
 
     def get_dahai(self, check=True):
         """
         打牌可能な牌の一覧を返す
         """
-        if not self.tsumo:
+        if not self.tsumohai:
             return None
 
         deny = {}
 
-        if check and len(self.tsumo) > 2:
-            mentsu = self.tsumo
+        if check and len(self.tsumohai) > 2:
+            mentsu = self.tsumohai
             s = mentsu[0]
             match = re.search(r"\d(?=[\+\=\-])", mentsu)
             n = int(match.group()) if match and int(match.group()) != 0 else 5
@@ -381,7 +381,7 @@ class Tehai:
 
         dahai = []
 
-        if not self.riichi:
+        if not self.is_riichi:
             for s in ["m", "p", "s", "z"]:
                 juntehai = self.juntehai[s]
 
@@ -392,7 +392,7 @@ class Tehai:
                     if s + str(n) in deny:
                         continue
 
-                    if s + str(n) == self.tsumo and juntehai[n] == 1:
+                    if s + str(n) == self.tsumohai and juntehai[n] == 1:
                         continue
 
                     if s == "z" or n != 5:
@@ -400,15 +400,15 @@ class Tehai:
 
                     else:
                         if juntehai[0] > 0 and (
-                            s + "0" != self.tsumo or juntehai[0] > 1
+                            s + "0" != self.tsumohai or juntehai[0] > 1
                         ):
                             dahai.append(s + "0")
 
                         if juntehai[0] < juntehai[5]:
                             dahai.append(s + str(n))
 
-        if len(self.tsumo) == 2:
-            dahai.append(self.tsumo + "_")
+        if len(self.tsumohai) == 2:
+            dahai.append(self.tsumohai + "_")
 
         return dahai
 
@@ -417,7 +417,7 @@ class Tehai:
         チー可能な面子の一覧を返す
         """
 
-        if self.tsumo:
+        if self.tsumohai:
             return None
 
         if not self.valid_hai(hai):
@@ -433,7 +433,7 @@ class Tehai:
         if s == "z" or d.group() != "-":
             return mentsu
 
-        if self.riichi:
+        if self.is_riichi:
             return mentsu
 
         juntehai = self.juntehai[s]
@@ -441,7 +441,7 @@ class Tehai:
         if 3 <= n and 0 < juntehai[n - 2] and 0 < juntehai[n - 1]:
             if not check or (
                 (juntehai[n] + (juntehai[n - 3] if n > 3 else 0))
-                < 14 - (len(self.fuuro) + 1) * 3
+                < 14 - (len(self.fuuro_list) + 1) * 3
             ):
                 if n - 2 == 5 and juntehai[0] > 0:
                     mentsu.append(f"{s}067-")
@@ -453,7 +453,7 @@ class Tehai:
                     mentsu.append(f"{s}{n-2}{n-1}{hai[1]}{d.group()}")
 
         if 2 <= n <= 8 and 0 < juntehai[n - 1] and 0 < juntehai[n + 1]:
-            if not check or juntehai[n] < 14 - (len(self.fuuro) + 1) * 3:
+            if not check or juntehai[n] < 14 - (len(self.fuuro_list) + 1) * 3:
                 if n - 1 == 5 and juntehai[0] > 0:
                     mentsu.append(f"{s}06-7")
 
@@ -466,7 +466,7 @@ class Tehai:
         if n <= 7 and 0 < juntehai[n + 1] and 0 < juntehai[n + 2]:
             if not check or (
                 (juntehai[n] + (juntehai[n + 3] if n < 7 else 0))
-                < 14 - (len(self.fuuro) + 1) * 3
+                < 14 - (len(self.fuuro_list) + 1) * 3
             ):
                 if n + 1 == 5 and juntehai[0] > 0:
                     mentsu.append(f"{s}4-06")
@@ -483,7 +483,7 @@ class Tehai:
         """
         ポン可能な面子の一覧を返す
         """
-        if self.tsumo:
+        if self.tsumohai:
             return None
 
         if not self.valid_hai(hai):
@@ -496,7 +496,7 @@ class Tehai:
         if not d:
             raise ValueError("Invalid")
 
-        if self.riichi:
+        if self.is_riichi:
             return mentsu
 
         juntehai = self.juntehai[s]
@@ -520,7 +520,7 @@ class Tehai:
         mentsu = []
 
         if hai:
-            if self.tsumo:
+            if self.tsumohai:
                 return None
 
             if not self.valid_hai(hai):
@@ -532,7 +532,7 @@ class Tehai:
             if not d:
                 raise ValueError("Invalid")
 
-            if self.riichi:
+            if self.is_riichi:
                 return mentsu
 
             juntehai = self.juntehai[s]
@@ -545,13 +545,13 @@ class Tehai:
                     mentsu = [f"{s}{str(n) * 4}{d.group()}"]
 
         else:
-            if not self.tsumo:
+            if not self.tsumohai:
                 return None
 
-            if len(self.tsumo) > 2:
+            if len(self.tsumohai) > 2:
                 return None
 
-            hai = self.tsumo.replace("0", "5")
+            hai = self.tsumohai.replace("0", "5")
 
             for s in ["m", "p", "s", "z"]:
                 juntehai = self.juntehai[s]
@@ -561,7 +561,7 @@ class Tehai:
                         continue
 
                     if juntehai[n] == 4:
-                        if self.riichi and s + str(n) != hai:
+                        if self.is_riichi and s + str(n) != hai:
                             continue
 
                         if n == 5:
@@ -571,10 +571,10 @@ class Tehai:
                             mentsu.append(f"{s}{str(n) * 4}")
 
                     else:
-                        if self.riichi:
+                        if self.is_riichi:
                             continue
 
-                        for m in self.fuuro:
+                        for m in self.fuuro_list:
                             if m.replace("0", "5")[:4] == f"{s}{str(n) * 3}":
                                 if n == 5 and juntehai[0] > 0:
                                     mentsu.append(m + "0")
@@ -589,7 +589,7 @@ class Tehai:
         牌姿をjsonで返す
         """
         json_output = {"tehai": {"juntehai": [], "fuuro": []}}
-        tsumo = self.tsumo
+        tsumo = self.tsumohai
 
         for s in ["m", "p", "s", "z"]:
             juntehai = self.juntehai[s]
@@ -630,7 +630,7 @@ class Tehai:
                 }
             )
 
-        for mentsu in self.fuuro:
+        for mentsu in self.fuuro_list:
             s = mentsu[0]
 
             if re.match(r"^[mpsz](\d)\1\1\1$", mentsu.replace("0", "5")):

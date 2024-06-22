@@ -21,9 +21,7 @@ def test_shanten_kokushi():
 
     assert shanten_kokushi(Tehai.from_string()) == 13
     assert (
-        shanten_kokushi(
-            Tehai.from_string("m19p19s19z12345677").action_tsumo("m1", False)
-        )
+        shanten_kokushi(Tehai.from_string("m19p19s19z12345677").tsumo("m1", False))
         == -1
     )
 
@@ -69,8 +67,8 @@ def test_shanten_chiitoi():
     assert (
         shanten_chiitoi(
             Tehai.from_string("m1188p2288s05z1122")
-            .action_tsumo("z7", False)
-            .action_tsumo("z7", False)
+            .tsumo("z7", False)
+            .tsumo("z7", False)
         )
         == -1
     )
@@ -116,7 +114,7 @@ def test_shanten_ippan():
     assert shanten_ippan(Tehai.from_string()) == 13
 
     tehai = Tehai.from_string("m123,p123-,s456-,m789-")
-    tehai.fuuro.append("z555=")
+    tehai.fuuro_list.append("z555=")
     assert shanten_ippan(tehai) == 0
 
     test_cases = [

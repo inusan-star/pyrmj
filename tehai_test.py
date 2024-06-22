@@ -188,13 +188,13 @@ class TestTehai:
         assert tehai.to_string() == tehai.clone().to_string()
 
         tehai = Tehai.from_string("m123p456s789z4567")
-        assert tehai.to_string() != tehai.clone().action_tsumo("m1").to_string()
+        assert tehai.to_string() != tehai.clone().tsumo("m1").to_string()
 
         tehai = Tehai.from_string("m123p456s789z34567")
         assert tehai.to_string() != tehai.clone().dahai("m1").to_string()
 
         tehai = Tehai.from_string("m123p456s789z1167")
-        assert tehai.to_string() != tehai.clone().action_fuuro("z111=").to_string()
+        assert tehai.to_string() != tehai.clone().fuuro("z111=").to_string()
 
         tehai = Tehai.from_string("m123p456s789z11112")
         assert tehai.to_string() != tehai.clone().kan("z1111").to_string()
@@ -218,61 +218,59 @@ class TestTehai:
         for tehai_string, expected in test_cases:
             assert Tehai().update_from_string(tehai_string).to_string() == expected
 
-    def test_action_tsumo(self):
+    def test_tsumo(self):
         """
-        action_tsumo(self, hai, check=True)のテスト
+        tsumo(self, hai, check=True)のテスト
         """
-        print("▶︎ action_tsumo(self, hai, check=True)のテスト")
+        print("▶︎ tsumo(self, hai, check=True)のテスト")
 
         tehai = Tehai.from_string("m123p456s789z4567")
-        assert tehai.action_tsumo("m1").to_string() == "m123p456s789z4567m1"
+        assert tehai.tsumo("m1").to_string() == "m123p456s789z4567m1"
 
         tehai = Tehai.from_string("m123p456s789z4567")
-        assert tehai.action_tsumo("p1").to_string() == "m123p456s789z4567p1"
+        assert tehai.tsumo("p1").to_string() == "m123p456s789z4567p1"
 
         tehai = Tehai.from_string("m123p456s789z4567")
-        assert tehai.action_tsumo("s1").to_string() == "m123p456s789z4567s1"
+        assert tehai.tsumo("s1").to_string() == "m123p456s789z4567s1"
 
         tehai = Tehai.from_string("m123p456s789z4567")
-        assert tehai.action_tsumo("z1").to_string() == "m123p456s789z4567z1"
+        assert tehai.tsumo("z1").to_string() == "m123p456s789z4567z1"
 
         tehai = Tehai.from_string("m123p456s789z4567")
-        assert tehai.action_tsumo("m0").to_string() == "m123p456s789z4567m0"
+        assert tehai.tsumo("m0").to_string() == "m123p456s789z4567m0"
 
         tehai = Tehai.from_string("m123p456s789z4567")
-        assert tehai.action_tsumo("_").to_string() == "m123p456s789z4567_"
+        assert tehai.tsumo("_").to_string() == "m123p456s789z4567_"
 
         # with pytest.raises(ValueError):
-        # Tehai.from_string("m123p456s789z4567").action_tsumo()
+        # Tehai.from_string("m123p456s789z4567").tsumo()
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m123p456s789z4567").action_tsumo("z0")
+            Tehai.from_string("m123p456s789z4567").tsumo("z0")
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m123p456s789z4567").action_tsumo("z8")
+            Tehai.from_string("m123p456s789z4567").tsumo("z8")
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m123p456s789z4567").action_tsumo("mm")
+            Tehai.from_string("m123p456s789z4567").tsumo("mm")
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m123p456s789z4567").action_tsumo("xx")
+            Tehai.from_string("m123p456s789z4567").tsumo("xx")
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m123p456s789z34567").action_tsumo("m1")
+            Tehai.from_string("m123p456s789z34567").tsumo("m1")
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m123p456z34567,s789-,").action_tsumo("m1")
+            Tehai.from_string("m123p456z34567,s789-,").tsumo("m1")
 
         tehai = Tehai.from_string("m123p456s789z34567")
-        assert (
-            tehai.action_tsumo("m1", check=False).to_string() == "m123p456s789z34567m1"
-        )
+        assert tehai.tsumo("m1", check=False).to_string() == "m123p456s789z34567m1"
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m123p456s789z1111").action_tsumo("z1")
+            Tehai.from_string("m123p456s789z1111").tsumo("z1")
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m455556s789z1111").action_tsumo("m0")
+            Tehai.from_string("m455556s789z1111").tsumo("m0")
 
     def test_dahai(self):
         """
@@ -337,70 +335,65 @@ class TestTehai:
         with pytest.raises(ValueError):
             Tehai.from_string("m123p406s789z34567").dahai("p5")
 
-    def test_action_fuuro(self):
+    def test_fuuro(self):
         """
-        action_fuuro(self, mentsu, check=True)のテスト
+        fuuro(self, mentsu, check=True)のテスト
         """
-        print("▶︎ action_fuuro(self, mentsu, check=True)のテスト")
+        print("▶︎ fuuro(self, mentsu, check=True)のテスト")
 
         tehai = Tehai.from_string("m23p456s789z34567")
-        assert tehai.action_fuuro("m1-23").to_string() == "p456s789z34567,m1-23,"
+        assert tehai.fuuro("m1-23").to_string() == "p456s789z34567,m1-23,"
 
         tehai = Tehai.from_string("m123p46s789z34567")
-        assert tehai.action_fuuro("p45-6").to_string() == "m123s789z34567,p45-6,"
+        assert tehai.fuuro("p45-6").to_string() == "m123s789z34567,p45-6,"
 
         tehai = Tehai.from_string("m123p456s99z34567")
-        assert tehai.action_fuuro("s999+").to_string() == "m123p456z34567,s999+,"
+        assert tehai.fuuro("s999+").to_string() == "m123p456z34567,s999+,"
 
         tehai = Tehai.from_string("m123p456s789z1167")
-        assert tehai.action_fuuro("z111=").to_string() == "m123p456s789z67,z111=,"
+        assert tehai.fuuro("z111=").to_string() == "m123p456s789z67,z111=,"
 
         tehai = Tehai.from_string("m123p500s789z4567")
-        assert tehai.action_fuuro("p5005-").to_string() == "m123s789z4567,p5005-"
+        assert tehai.fuuro("p5005-").to_string() == "m123s789z4567,p5005-"
 
         tehai = Tehai.from_string("m123p456s789z4567*")
-        assert tehai.action_fuuro("m1-23").to_string() == "m1p456s789z4567*,m1-23,"
+        assert tehai.fuuro("m1-23").to_string() == "m1p456s789z4567*,m1-23,"
 
         tehai = Tehai.from_string("_____________")
-        assert tehai.action_fuuro("m1-23").to_string() == "___________,m1-23,"
+        assert tehai.fuuro("m1-23").to_string() == "___________,m1-23,"
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m123p456s789z4567").action_fuuro("z3-45")
+            Tehai.from_string("m123p456s789z4567").fuuro("z3-45")
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m123p456s789z4567").action_fuuro("m231-")
+            Tehai.from_string("m123p456s789z4567").fuuro("m231-")
 
         with pytest.raises(ValueError):
-            Tehai.from_string("_____________").action_fuuro("m1111")
+            Tehai.from_string("_____________").fuuro("m1111")
 
         with pytest.raises(ValueError):
-            Tehai.from_string("_____________").action_fuuro("m111+1")
+            Tehai.from_string("_____________").fuuro("m111+1")
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m123p456s789z11567").action_fuuro("z111=")
+            Tehai.from_string("m123p456s789z11567").fuuro("z111=")
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m123p456s789z22,z111=,").action_fuuro("z222=")
+            Tehai.from_string("m123p456s789z22,z111=,").fuuro("z222=")
 
         tehai = Tehai.from_string("m123p456s789z11567")
-        assert (
-            tehai.action_fuuro("z111=", False).to_string() == "m123p456s789z567,z111=,"
-        )
+        assert tehai.fuuro("z111=", False).to_string() == "m123p456s789z567,z111=,"
 
         tehai = Tehai.from_string("m123p456s789z22,z111=,")
-        assert (
-            tehai.action_fuuro("z222=", False).to_string()
-            == "m123p456s789,z111=,z222=,"
-        )
+        assert tehai.fuuro("z222=", False).to_string() == "m123p456s789,z111=,z222=,"
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m123p456s789z2,z111=").action_fuuro("z333=")
+            Tehai.from_string("m123p456s789z2,z111=").fuuro("z333=")
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m123p40s789z22,z111=").action_fuuro("p456-")
+            Tehai.from_string("m123p40s789z22,z111=").fuuro("p456-")
 
         with pytest.raises(ValueError):
-            Tehai.from_string("m123p45s789z22,z111=").action_fuuro("p406-")
+            Tehai.from_string("m123p45s789z22,z111=").fuuro("p406-")
 
     def test_kan(self):
         """
@@ -488,10 +481,10 @@ class TestTehai:
         print("▶︎ get_riichi(self)のテスト")
 
         tehai = Tehai.from_string("_____________")
-        assert not tehai.get_riichi()
+        assert not tehai.riichi()
 
         tehai = Tehai.from_string("_____________")
-        assert tehai.action_tsumo("z7").dahai("z7_*").get_riichi()
+        assert tehai.tsumo("z7").dahai("z7_*").riichi()
 
     def test_get_dahai(self):
         """

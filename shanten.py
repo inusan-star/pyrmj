@@ -2,7 +2,7 @@ def shanten_kokushi(tehai):
     """
     国士無双形の向聴数を計算する
     """
-    if len(tehai.fuuro) > 0:
+    if len(tehai.fuuro_list) > 0:
         return float("inf")
 
     n_yaochu = 0
@@ -26,7 +26,7 @@ def shanten_chiitoi(tehai):
     """
     七対子形の向聴数を計算する
     """
-    if len(tehai.fuuro) > 0:
+    if len(tehai.fuuro_list) > 0:
         return float("inf")
 
     n_toitsu = 0
@@ -167,7 +167,7 @@ def shanten_tehai(tehai, jantou=False):
         elif tehai.juntehai["z"][n] == 1:
             z[2] += 1
 
-    n_fuuro = len(tehai.fuuro)
+    n_fuuro = len(tehai.fuuro_list)
     min_shanten = 13
 
     for m in [result["m"]["a"], result["m"]["b"]]:
@@ -204,7 +204,7 @@ def shanten_ippan(tehai):
                 if n_shanten < min_shanten:
                     min_shanten = n_shanten
 
-    if min_shanten == -1 and tehai.tsumo and len(tehai.tsumo) > 2:
+    if min_shanten == -1 and tehai.tsumohai and len(tehai.tsumohai) > 2:
         return 0
 
     return min_shanten
