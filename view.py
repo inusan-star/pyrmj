@@ -97,7 +97,7 @@ def view_tehai(tehai, font_size=50, open_hand=True):
         if hai_data["type"] == "tsumo":
             start_x += font_width * 0.5
 
-        text = HAI_UNICODE[hai_data["hai"]] if open_hand else "_"
+        text = HAI_UNICODE[hai_data["hai"]] if open_hand else HAI_UNICODE["_"]
         add_text(
             svg,
             text,
