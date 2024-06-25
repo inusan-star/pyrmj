@@ -570,3 +570,109 @@ class Tehai:
                                     kan_mentsu.append(f"{mentsu}{number}")
 
         return kan_mentsu
+
+    def to_json(self):
+        """
+        牌姿をjsonで返す
+        """
+        json_output = {"tehai": {"juntehai": [], "fuuro": []}}
+        tsumo = self.tsumo_
+
+        for suit in ["m", "p", "s", "z"]:
+            juntehai = self.juntehai_[suit]
+            n_akahai = juntehai[0]
+
+            for number in range(1, len(juntehai)):
+                n_hai = juntehai[number]
+
+                if f"{suit}{number}" == tsumo:
+                    n_hai -= 1
+
+                elif number == 5 and f"{suit}{0}" == tsumo:
+                    n_akahai -= 1
+                    n_hai -= 1
+
+                for _ in range(n_hai):
+                    hai = suit
+
+                    if number == 5 and n_akahai > 0:
+                        hai += "0"
+                        n_akahai -= 1
+
+                    else:
+                        hai += str(number)
+
+                    json_output["tehai"]["juntehai"].append(
+                        {
+                            "type": "normal",
+                            "hai": hai,
+                        }
+                    )
+
+        if tsumo and len(tsumo) == 2:
+            json_output["tehai"]["juntehai"].append(
+                {
+                    "type": "tsumo",
+                    "hai": tsumo,
+                }
+            )
+
+        for mentsu in self.fuuro_:
+            suit = mentsu[0]
+
+            if re.match(r"^[mpsz](\d)\1\1\1$", mentsu.replace("0", "5")):
+                numbers = re.findall(r"\d", mentsu)
+                json_output["tehai"]["fuuro"].append(
+                    [
+                        {"type": "normal", "hai": "_"},
+                        {"type": "normal", "hai": f"{suit}{numbers[2]}"},
+                        {"type": "normal", "hai": f"{suit}{numbers[3]}"},
+                        {"type": "normal", "hai": "_"},
+                    ]
+                )
+
+            elif re.match(r"^[mpsz](\d)\1\1\1?[\+\=\-]\1?$", mentsu.replace("0", "5")):
+                not_fuuro = re.search(r"[\+\=\-]\d$", mentsu)
+                direction = re.search(r"[\+\=\-]", mentsu).group()
+                hais = [f"{suit}{number}" for number in re.findall(r"\d", mentsu)]
+                hai_r = [hais[2], hais[3]] if not_fuuro else [hais[-1]]
+                hai_l = ([hais[1], hais[2]] if not not_fuuro and len(hais) == 4 else [hais[1]])
+
+                if direction == "+":
+                    json_output["tehai"]["fuuro"].append(
+                        [
+                            {"type": "normal", "hai": hais[0]},
+                            *[{"type": "normal", "hai": hai} for hai in hai_l],
+                            *[{"type": f"rotate{index}", "hai": hai} for index, hai in enumerate(hai_r)],
+                        ]
+                    )
+
+                elif direction == "=":
+                    json_output["tehai"]["fuuro"].append(
+                        [
+                            {"type": "normal", "hai": hais[0]},
+                            *[{"type": f"rotate{index}", "hai": hai} for index, hai in enumerate(hai_r)],
+                            *[{"type": "normal", "hai": hai} for hai in hai_l],
+                        ]
+                    )
+
+                elif direction == "-":
+                    json_output["tehai"]["fuuro"].append(
+                        [
+                            *[{"type": f"rotate{index}", "hai": hai} for index, hai in enumerate(hai_r)],
+                            {"type": "normal", "hai": hais[0]},
+                            *[{"type": "normal", "hai": hai} for hai in hai_l],
+                        ]
+                    )
+
+            else:
+                numbers = [re.search(r"\d(?=\-)", mentsu).group()] + re.findall(r"\d(?!\-)", mentsu)
+                json_output["tehai"]["fuuro"].append(
+                    [
+                        {"type": "rotate0", "hai": f"{suit}{numbers[0]}"},
+                        {"type": "normal", "hai": f"{suit}{numbers[1]}"},
+                        {"type": "normal", "hai": f"{suit}{numbers[2]}"},
+                    ]
+                )
+
+        return json_output
