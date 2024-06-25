@@ -347,3 +347,57 @@ class Tehai:
         リーチしているか判定する
         """
         return self.riichi_
+
+    def get_dahai(self, check=True):
+        """
+        打牌可能な牌の一覧を返す
+        """
+        if not self.tsumo_:
+            return None
+
+        deny = {}
+
+        if check and len(self.tsumo_) > 2:
+            mentsu = str(self.tsumo_)
+            suit = mentsu[0]
+            match_number = re.search(r"\d(?=[\+\=\-])", mentsu)
+            number = int(match_number.group()) if match_number and int(match_number.group()) != 0 else 5
+            deny[f"{suit}{number}"] = True
+
+            if not re.match(r"^[mpsz](\d)\1\1", mentsu.replace("0", "5")):
+                if number < 7 and re.match(r"^[mps]\d\-\d\d$", mentsu):
+                    deny[f"{suit}{number + 3}"] = True
+
+                if 3 < number and re.match(r"^[mps]\d\d\d\-$", mentsu):
+                    deny[f"{suit}{number - 3}"] = True
+
+        dahai = []
+
+        if not self.riichi_:
+            for suit in ["m", "p", "s", "z"]:
+                juntehai = self.juntehai_[suit]
+
+                for number in range(1, len(juntehai)):
+                    if juntehai[number] == 0:
+                        continue
+
+                    if f"{suit}{number}" in deny:
+                        continue
+
+                    if f"{suit}{number}" == self.tsumo_ and juntehai[number] == 1:
+                        continue
+
+                    if suit == "z" or number != 5:
+                        dahai.append(f"{suit}{number}")
+
+                    else:
+                        if juntehai[0] > 0 and (f"{suit}0" != self.tsumo_ or juntehai[0] > 1):
+                            dahai.append(f"{suit}0")
+
+                        if juntehai[0] < juntehai[5]:
+                            dahai.append(f"{suit}{number}")
+
+        if len(self.tsumo_) == 2:
+            dahai.append(f"{self.tsumo_}_")
+
+        return dahai
