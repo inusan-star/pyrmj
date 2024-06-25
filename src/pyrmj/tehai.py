@@ -46,4 +46,37 @@ class Tehai:
         """
         if re.match(r"^(?:[mps]\d|z[1-7])_?\*?[\+\=\-]?$", hai):
             return hai
+
+        return None
+
+    @staticmethod
+    def valid_mentsu(mentsu):
+        """
+        面子として有効か判定する
+        """
+        if re.match(r"^z.*[089]", mentsu):
+            return None
+
+        black_mentsu = mentsu.replace("0", "5")
+
+        if re.match(r"^[mpsz](\d)\1\1[\+\=\-]\1?$", black_mentsu):
+            return re.sub(r"([mps])05", r"\g<1>" + "50", mentsu)
+
+        elif re.match(r"^[mpsz](\d)\1\1\1[\+\=\-]?$", black_mentsu):
+            sorted_mentsu = "".join(sorted(re.findall(r"\d(?![\+\=\-])", mentsu), reverse=True))
+            return mentsu[0] + sorted_mentsu + (re.search(r"\d[\+\=\-]$", mentsu) or [""])[0]
+
+        elif re.match(r"^[mps]\d+\-\d*$", black_mentsu):
+            akahai = re.search(r"0", mentsu)
+            numbers = sorted(map(int, re.findall(r"\d", black_mentsu)))
+
+            if len(numbers) != 3:
+                return None
+
+            if numbers[0] + 1 != numbers[1] or numbers[1] + 1 != numbers[2]:
+                return None
+
+            black_mentsu = black_mentsu[0] + "".join(sorted(re.findall(r"\d[\+\=\-]?", black_mentsu)))
+            return black_mentsu.replace("5", "0") if akahai else black_mentsu
+
         return None
