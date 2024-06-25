@@ -269,3 +269,69 @@ class Tehai:
             self.riichi_ = True
 
         return self
+
+    def fuuro(self, mentsu, check=True):
+        """
+        副露する
+        """
+        if check and self.tsumo_:
+            raise ValueError("Already tsumoed")
+
+        if mentsu != self.valid_mentsu(mentsu):
+            raise ValueError(f"Invalid mentsu: {mentsu}")
+
+        if re.search(r"\d{4}$", mentsu):
+            raise ValueError("Invalid action: ankan")
+
+        if re.search(r"\d{3}[\+\=\-]\d$", mentsu):
+            raise ValueError("Invalid action: kakan")
+
+        suit = mentsu[0]
+
+        for number in re.findall(r"\d(?![\+\=\-])", mentsu):
+            self.decrease(suit, int(number))
+
+        self.fuuro_.append(mentsu)
+
+        if not re.search(r"\d{4}", mentsu):
+            self.tsumo_ = mentsu
+
+        return self
+
+    def kan(self, mentsu, check=True):
+        """
+        カン（暗槓/加槓）する
+        """
+        if check and not self.tsumo_:
+            raise ValueError("Already tsumoed")
+
+        if check and len(self.tsumo_) > 2:
+            raise ValueError("Already tsumoed")
+
+        if mentsu != self.valid_mentsu(mentsu):
+            raise ValueError(f"Invalid mentsu: {mentsu}")
+
+        suit = mentsu[0]
+
+        if re.search(r"\d{4}$", mentsu):
+            for number in re.findall(r"\d", mentsu):
+                self.decrease(suit, int(number))
+
+            self.fuuro_.append(mentsu)
+
+        elif re.search(r"\d{3}[\+\=\-]\d$", mentsu):
+            mentsu1 = mentsu[:5]
+            index = (i for i, mentsu2 in enumerate(self.fuuro_) if mentsu1 == mentsu2)
+            target_index = next(index, -1)
+
+            if target_index < 0:
+                raise ValueError("Invalid kakan")
+
+            self.fuuro_[target_index] = mentsu
+            self.decrease(suit, int(mentsu[-1]))
+
+        else:
+            raise ValueError("Invalid action")
+
+        self.tsumo_ = None
+        return self
