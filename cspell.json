@@ -1,25 +1,27 @@
 {
   "ignoreWords": [
-    "akahai",
+    "akahai", // 赤牌
+    "ankan", // 暗槓
     "chii",
     "chiitoi",
     "dahai",
-    "fuuro",
-    "hai",
-    "haipai",
+    "fuuro", // 副露
+    "hai", // 牌
+    "haipai", // 配牌
     "ippan",
     "jantou",
-    "juntehai",
+    "juntehai", // 純手牌
+    "kakan", // 加槓
     "kokushi",
     "koritsuhai",
-    "mentsu",
-    "menzen",
-    "riichi",
+    "mentsu", // 面子
+    "menzen", // 門前
+    "riichi", // 立直
     "shanten",
     "taatsu",
-    "tehai",
+    "tehai", // 手牌
     "toitsu",
-    "tsumo",
+    "tsumo", // ツモ
     "yaochu"
   ]
 }

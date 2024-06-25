@@ -335,3 +335,15 @@ class Tehai:
 
         self.tsumo_ = None
         return self
+
+    def menzen(self):
+        """
+        門前か判定する
+        """
+        return len([mentsu for mentsu in self.fuuro_ if re.search(r"[\+\=\-]", mentsu)]) == 0
+
+    def riichi(self):
+        """
+        リーチしているか判定する
+        """
+        return self.riichi_
