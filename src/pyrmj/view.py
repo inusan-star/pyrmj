@@ -1,5 +1,5 @@
-import re
 import os
+import re
 import svgwrite
 from IPython.display import SVG, display
 
@@ -44,12 +44,8 @@ HAI_UNICODE = {
     "_": "🀫",
 }
 
-with open(
-    os.path.join(os.path.dirname(__file__), "../data/GL-MahjongTile.base64"),
-    "r",
-    encoding="utf-8",
-) as font_file:
-    base_font = font_file.read()
+with open(os.path.join(os.path.dirname(__file__), "../data/GL-MahjongTile.base64"), encoding="utf-8") as file:
+    base_font = file.read()
 
 
 def add_text(svg, text, x, y, font_size, red, rotate=False):
@@ -67,9 +63,7 @@ def add_text(svg, text, x, y, font_size, red, rotate=False):
         )
 
         if rotate:
-            text_element["transform"] = (
-                f"rotate(-90, {x + 0.04 * font_size}, {y + 0.02 * font_size})"
-            )
+            text_element["transform"] = f"rotate(-90, {x + 0.04 * font_size}, {y + 0.02 * font_size})"
 
         svg.add(text_element)
 
@@ -109,7 +103,7 @@ def view_tehai(tehai, font_size=50, open_hand=True):
             start_x,
             font_width * 2 + margin,
             font_size,
-            re.match(r"^[mps]0", hai_data["hai"]),
+            re.match(r"^[mps]0", hai_data["hai"]) if open_hand else False,
         )
         start_x += font_width
 
