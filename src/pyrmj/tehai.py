@@ -401,3 +401,67 @@ class Tehai:
             dahai.append(f"{self.tsumo_}_")
 
         return dahai
+
+    def get_chii_mentsu(self, hai, check=True):
+        """
+        チー可能な面子の一覧を返す
+        """
+        if self.tsumo_:
+            return None
+
+        if not self.valid_hai(hai):
+            raise ValueError(f"Invalid hai: {hai}")
+
+        mentsu = []
+        suit, number = hai[0], int(hai[1]) if int(hai[1]) != 0 else 5
+        direction = re.search(r"[\+\=\-]$", hai)
+
+        if not direction:
+            raise ValueError("No direction")
+
+        if suit == "z" or direction.group() != "-":
+            return mentsu
+
+        if self.riichi_:
+            return mentsu
+
+        juntehai = self.juntehai_[suit]
+
+        if 3 <= number and 0 < juntehai[number - 2] and 0 < juntehai[number - 1]:
+            if not check or (
+                (juntehai[number] + (juntehai[number - 3] if 3 < number else 0)) < 14 - (len(self.fuuro_) + 1) * 3
+            ):
+                if number - 2 == 5 and juntehai[0] > 0:
+                    mentsu.append(f"{suit}067-")
+
+                if number - 1 == 5 and juntehai[0] > 0:
+                    mentsu.append(f"{suit}406-")
+
+                if (number - 2 != 5 and number - 1 != 5) or juntehai[0] < juntehai[5]:
+                    mentsu.append(f"{suit}{number - 2}{number - 1}{hai[1]}{direction.group()}")
+
+        if 2 <= number <= 8 and 0 < juntehai[number - 1] and 0 < juntehai[number + 1]:
+            if not check or juntehai[number] < 14 - (len(self.fuuro_) + 1) * 3:
+                if number - 1 == 5 and juntehai[0] > 0:
+                    mentsu.append(f"{suit}06-7")
+
+                if number + 1 == 5 and juntehai[0] > 0:
+                    mentsu.append(f"{suit}34-0")
+
+                if (number - 1 != 5 and number + 1 != 5) or juntehai[0] < juntehai[5]:
+                    mentsu.append(f"{suit}{number - 1}{hai[1]}{direction.group()}{number + 1}")
+
+        if number <= 7 and 0 < juntehai[number + 1] and 0 < juntehai[number + 2]:
+            if not check or (
+                (juntehai[number] + (juntehai[number + 3] if number < 7 else 0)) < 14 - (len(self.fuuro_) + 1) * 3
+            ):
+                if number + 1 == 5 and juntehai[0] > 0:
+                    mentsu.append(f"{suit}4-06")
+
+                if number + 2 == 5 and juntehai[0] > 0:
+                    mentsu.append(f"{suit}3-40")
+
+                if (number + 1 != 5 and number + 2 != 5) or juntehai[0] < juntehai[5]:
+                    mentsu.append(f"{suit}{hai[1]}{direction.group()}{number + 1}{number + 2}")
+
+        return mentsu
