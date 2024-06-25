@@ -1,4 +1,5 @@
 import re
+import os
 import svgwrite
 from IPython.display import SVG, display
 
@@ -43,7 +44,11 @@ HAI_UNICODE = {
     "_": "🀫",
 }
 
-with open("./GL-MahjongTile.base64", "r", encoding="utf-8") as font_file:
+with open(
+    os.path.join(os.path.dirname(__file__), "../data/GL-MahjongTile.base64"),
+    "r",
+    encoding="utf-8",
+) as font_file:
     base_font = font_file.read()
 
 

@@ -1,5 +1,5 @@
 import pytest
-from tehai import Tehai
+from pyrmj import Tehai
 
 
 class TestTehai:

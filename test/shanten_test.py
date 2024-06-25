@@ -1,16 +1,18 @@
 import json
+import os
 import pytest
-from tehai import Tehai
-from shanten import shanten_kokushi, shanten_chiitoi, shanten_ippan, shanten
+from pyrmj import Tehai, shanten, shanten_chiitoi, shanten_ippan, shanten_kokushi
 
-with open("./data/shanten_1.json", encoding="utf-8") as f:
-    data1 = json.load(f)
-with open("./data/shanten_2.json", encoding="utf-8") as f:
-    data2 = json.load(f)
-with open("./data/shanten_3.json", encoding="utf-8") as f:
-    data3 = json.load(f)
-with open("./data/shanten_4.json", encoding="utf-8") as f:
-    data4 = json.load(f)
+base_dir = os.path.dirname(__file__)
+
+with open(os.path.join(base_dir, "./data/shanten_1.json"), encoding="utf-8") as file:
+    data1 = json.load(file)
+with open(os.path.join(base_dir, "./data/shanten_1.json"), encoding="utf-8") as file:
+    data2 = json.load(file)
+with open(os.path.join(base_dir, "./data/shanten_1.json"), encoding="utf-8") as file:
+    data3 = json.load(file)
+with open(os.path.join(base_dir, "./data/shanten_1.json"), encoding="utf-8") as file:
+    data4 = json.load(file)
 
 
 def test_shanten_kokushi():

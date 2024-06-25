@@ -1,0 +1,18 @@
+from setuptools import setup, find_packages
+
+
+def get_requirements():
+    """
+    必要なパッケージをrequirements.txtから取得する
+    """
+    with open("./requirements.txt", encoding="utf-8") as file:
+        return file.read().splitlines()
+
+
+setup(
+    name="pyrmj",
+    version="0.0.1",
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
+    install_requires=get_requirements(),
+)

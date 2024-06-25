@@ -67,9 +67,7 @@ class Tehai:
                 sorted(re.findall(r"\d(?![\+\=\-])", mentsu), reverse=True)
             )
             return (
-                mentsu[0]
-                + sorted_mentsu
-                + (re.search(r"\d[\+\=\-]$", mentsu) or [""])[0]
+                mentsu[0] + sorted_mentsu + (re.search(r"\d[\+\=\-]$", mentsu) or [""])[0]
             )
 
         elif re.match(r"^[mps]\d+\-\d*$", black_mentsu):
@@ -439,10 +437,7 @@ class Tehai:
         juntehai = self.juntehai[s]
 
         if 3 <= n and 0 < juntehai[n - 2] and 0 < juntehai[n - 1]:
-            if not check or (
-                (juntehai[n] + (juntehai[n - 3] if n > 3 else 0))
-                < 14 - (len(self.fuuro_list) + 1) * 3
-            ):
+            if not check or ((juntehai[n] + (juntehai[n - 3] if n > 3 else 0)) < 14 - (len(self.fuuro_list) + 1) * 3):
                 if n - 2 == 5 and juntehai[0] > 0:
                     mentsu.append(f"{s}067-")
 
@@ -450,7 +445,7 @@ class Tehai:
                     mentsu.append(f"{s}406-")
 
                 if (n - 2 != 5 and n - 1 != 5) or juntehai[0] < juntehai[5]:
-                    mentsu.append(f"{s}{n-2}{n-1}{hai[1]}{d.group()}")
+                    mentsu.append(f"{s}{n - 2}{n - 1}{hai[1]}{d.group()}")
 
         if 2 <= n <= 8 and 0 < juntehai[n - 1] and 0 < juntehai[n + 1]:
             if not check or juntehai[n] < 14 - (len(self.fuuro_list) + 1) * 3:
@@ -461,12 +456,11 @@ class Tehai:
                     mentsu.append(f"{s}34-0")
 
                 if (n - 1 != 5 and n + 1 != 5) or juntehai[0] < juntehai[5]:
-                    mentsu.append(f"{s}{n-1}{hai[1]}{d.group()}{n+1}")
+                    mentsu.append(f"{s}{n - 1}{hai[1]}{d.group()}{n + 1}")
 
         if n <= 7 and 0 < juntehai[n + 1] and 0 < juntehai[n + 2]:
             if not check or (
-                (juntehai[n] + (juntehai[n + 3] if n < 7 else 0))
-                < 14 - (len(self.fuuro_list) + 1) * 3
+                (juntehai[n] + (juntehai[n + 3] if n < 7 else 0)) < 14 - (len(self.fuuro_list) + 1) * 3
             ):
                 if n + 1 == 5 and juntehai[0] > 0:
                     mentsu.append(f"{s}4-06")
@@ -475,7 +469,7 @@ class Tehai:
                     mentsu.append(f"{s}3-40")
 
                 if (n + 1 != 5 and n + 2 != 5) or juntehai[0] < juntehai[5]:
-                    mentsu.append(f"{s}{hai[1]}{d.group()}{n+1}{n+2}")
+                    mentsu.append(f"{s}{hai[1]}{d.group()}{n + 1}{n + 2}")
 
         return mentsu
 
