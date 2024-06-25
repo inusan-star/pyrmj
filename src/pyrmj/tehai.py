@@ -80,3 +80,88 @@ class Tehai:
             return black_mentsu.replace("5", "0") if akahai else black_mentsu
 
         return None
+
+    @classmethod
+    def from_string(cls, tehai_string=""):
+        """
+        牌姿からインスタンスを作成する
+        """
+        fuuro = tehai_string.split(",")
+        juntehai = fuuro.pop(0)
+        haipai = re.findall(r"_", juntehai) or []
+
+        for hai in re.findall(r"[mpsz]\d+", juntehai) or []:
+            suit = hai[0]
+
+            for number in re.findall(r"\d", hai):
+                if suit == "z" and (int(number) < 1 or 7 < int(number)):
+                    continue
+
+                haipai.append(f"{suit}{number}")
+
+        haipai = haipai[: 14 - len([mentsu for mentsu in fuuro if mentsu]) * 3]
+        tsumo = (len(haipai) - 2) % 3 == 0 and haipai[-1] or None
+        tehai = cls(haipai)
+        last = None
+
+        for mentsu in fuuro:
+            if not mentsu:
+                tehai.tsumo_ = last
+                break
+
+            mentsu = cls.valid_mentsu(mentsu)
+
+            if mentsu:
+                tehai.fuuro_.append(mentsu)
+                last = mentsu
+
+        tehai.tsumo_ = tehai.tsumo_ or tsumo or None
+        tehai.riichi_ = juntehai[-1:] == "*"
+        return tehai
+
+    def to_string(self):
+        """
+        牌姿を返す
+        """
+        tehai_string = "_" * (self.juntehai_["_"] + (-1 if self.tsumo_ == "_" else 0))
+
+        for suit in ["m", "p", "s", "z"]:
+            suit_string = suit
+            juntehai = self.juntehai_[suit]
+            n_akahai = 0 if suit == "z" else juntehai[0]
+
+            for number in range(1, len(juntehai)):
+                n_hai = juntehai[number]
+
+                if self.tsumo_:
+                    if f"{suit}{number}" == self.tsumo_:
+                        n_hai -= 1
+
+                    if number == 5 and f"{suit}0" == self.tsumo_:
+                        n_hai -= 1
+                        n_akahai -= 1
+
+                for _ in range(n_hai):
+                    if number == 5 and n_akahai > 0:
+                        suit_string += "0"
+                        n_akahai -= 1
+
+                    else:
+                        suit_string += str(number)
+
+            if len(suit_string) > 1:
+                tehai_string += suit_string
+
+        if self.tsumo_ and len(self.tsumo_) <= 2:
+            tehai_string += self.tsumo_
+
+        if self.riichi_:
+            tehai_string += "*"
+
+        for mentsu in self.fuuro_:
+            tehai_string += f",{mentsu}"
+
+        if self.tsumo_ and 2 < len(self.tsumo_):
+            tehai_string += ","
+
+        return tehai_string
