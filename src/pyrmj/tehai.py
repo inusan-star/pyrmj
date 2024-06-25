@@ -165,3 +165,107 @@ class Tehai:
             tehai_string += ","
 
         return tehai_string
+
+    def clone(self):
+        """
+        インスタンスのクローンを作成する
+        """
+        tehai = Tehai()
+        tehai.juntehai_ = {
+            "_": self.juntehai_["_"],
+            "m": self.juntehai_["m"][:],
+            "p": self.juntehai_["p"][:],
+            "s": self.juntehai_["s"][:],
+            "z": self.juntehai_["z"][:],
+        }
+        tehai.fuuro_ = self.fuuro_[:]
+        tehai.tsumo_ = self.tsumo_
+        tehai.riichi_ = self.riichi_
+        return tehai
+
+    def update_from_string(self, tehai_string):
+        """
+        牌姿からインスタンスを置き換える
+        """
+        tehai = self.from_string(tehai_string)
+        self.juntehai_ = {
+            "_": tehai.juntehai_["_"],
+            "m": tehai.juntehai_["m"][:],
+            "p": tehai.juntehai_["p"][:],
+            "s": tehai.juntehai_["s"][:],
+            "z": tehai.juntehai_["z"][:],
+        }
+        self.fuuro_ = tehai.fuuro_[:]
+        self.tsumo_ = tehai.tsumo_
+        self.riichi_ = tehai.riichi_
+        return self
+
+    def tsumo(self, hai, check=True):
+        """
+        牌を引く
+        """
+        if check and self.tsumo_:
+            raise ValueError("Already tsumoed")
+
+        if hai == "_":
+            self.juntehai_["_"] += 1
+            self.tsumo_ = hai
+
+        else:
+            if not self.valid_hai(hai):
+                raise ValueError(f"Invalid hai: {hai}")
+
+            suit, number = hai[0], int(hai[1])
+            juntehai = self.juntehai_[suit]
+
+            if juntehai[number] == 4:
+                raise ValueError(f"Too many hais: {hai}")
+
+            juntehai[number] += 1
+
+            if number == 0:
+                if juntehai[5] == 4:
+                    raise ValueError(f"Too many hais: {hai}")
+
+                juntehai[5] += 1
+
+            self.tsumo_ = f"{suit}{number}"
+
+        return self
+
+    def decrease(self, suit, number):
+        """
+        指定された牌を減らす
+        """
+        juntehai = self.juntehai_[suit]
+
+        if juntehai[number] == 0 or (number == 5 and juntehai[0] == juntehai[5]):
+            if self.juntehai_["_"] == 0:
+                raise ValueError("There are no hidden hais")
+
+            self.juntehai_["_"] -= 1
+
+        else:
+            juntehai[number] -= 1
+
+            if number == 0:
+                juntehai[5] -= 1
+
+    def dahai(self, hai, check=True):
+        """
+        打牌する
+        """
+        if check and not self.tsumo_:
+            raise ValueError("Not yet tsumoed")
+
+        if not self.valid_hai(hai):
+            raise ValueError(f"Invalid hai: {hai}")
+
+        suit, number = hai[0], int(hai[1])
+        self.decrease(suit, number)
+        self.tsumo_ = None
+
+        if hai[-1] == "*":
+            self.riichi_ = True
+
+        return self
