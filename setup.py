@@ -1,3 +1,4 @@
+import os
 from setuptools import setup, find_packages
 
 
@@ -5,7 +6,7 @@ def get_requirements():
     """
     必要なパッケージをrequirements.txtから取得する
     """
-    with open("./requirements.txt", encoding="utf-8") as file:
+    with open(os.path.join(os.path.dirname(__file__), "requirements.txt"), encoding="utf-8") as file:
         return file.read().splitlines()
 
 
