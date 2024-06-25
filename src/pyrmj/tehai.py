@@ -412,7 +412,7 @@ class Tehai:
         if not self.valid_hai(hai):
             raise ValueError(f"Invalid hai: {hai}")
 
-        mentsu = []
+        chii_mentsu = []
         suit, number = hai[0], int(hai[1]) if int(hai[1]) != 0 else 5
         direction = re.search(r"[\+\=\-]$", hai)
 
@@ -420,10 +420,10 @@ class Tehai:
             raise ValueError("No direction")
 
         if suit == "z" or direction.group() != "-":
-            return mentsu
+            return chii_mentsu
 
         if self.riichi_:
-            return mentsu
+            return chii_mentsu
 
         juntehai = self.juntehai_[suit]
 
@@ -432,36 +432,141 @@ class Tehai:
                 (juntehai[number] + (juntehai[number - 3] if 3 < number else 0)) < 14 - (len(self.fuuro_) + 1) * 3
             ):
                 if number - 2 == 5 and juntehai[0] > 0:
-                    mentsu.append(f"{suit}067-")
+                    chii_mentsu.append(f"{suit}067-")
 
                 if number - 1 == 5 and juntehai[0] > 0:
-                    mentsu.append(f"{suit}406-")
+                    chii_mentsu.append(f"{suit}406-")
 
                 if (number - 2 != 5 and number - 1 != 5) or juntehai[0] < juntehai[5]:
-                    mentsu.append(f"{suit}{number - 2}{number - 1}{hai[1]}{direction.group()}")
+                    chii_mentsu.append(f"{suit}{number - 2}{number - 1}{hai[1]}{direction.group()}")
 
         if 2 <= number <= 8 and 0 < juntehai[number - 1] and 0 < juntehai[number + 1]:
             if not check or juntehai[number] < 14 - (len(self.fuuro_) + 1) * 3:
                 if number - 1 == 5 and juntehai[0] > 0:
-                    mentsu.append(f"{suit}06-7")
+                    chii_mentsu.append(f"{suit}06-7")
 
                 if number + 1 == 5 and juntehai[0] > 0:
-                    mentsu.append(f"{suit}34-0")
+                    chii_mentsu.append(f"{suit}34-0")
 
                 if (number - 1 != 5 and number + 1 != 5) or juntehai[0] < juntehai[5]:
-                    mentsu.append(f"{suit}{number - 1}{hai[1]}{direction.group()}{number + 1}")
+                    chii_mentsu.append(f"{suit}{number - 1}{hai[1]}{direction.group()}{number + 1}")
 
         if number <= 7 and 0 < juntehai[number + 1] and 0 < juntehai[number + 2]:
             if not check or (
                 (juntehai[number] + (juntehai[number + 3] if number < 7 else 0)) < 14 - (len(self.fuuro_) + 1) * 3
             ):
                 if number + 1 == 5 and juntehai[0] > 0:
-                    mentsu.append(f"{suit}4-06")
+                    chii_mentsu.append(f"{suit}4-06")
 
                 if number + 2 == 5 and juntehai[0] > 0:
-                    mentsu.append(f"{suit}3-40")
+                    chii_mentsu.append(f"{suit}3-40")
 
                 if (number + 1 != 5 and number + 2 != 5) or juntehai[0] < juntehai[5]:
-                    mentsu.append(f"{suit}{hai[1]}{direction.group()}{number + 1}{number + 2}")
+                    chii_mentsu.append(f"{suit}{hai[1]}{direction.group()}{number + 1}{number + 2}")
 
-        return mentsu
+        return chii_mentsu
+
+    def get_pon_mentsu(self, hai):
+        """
+        ポン可能な面子の一覧を返す
+        """
+        if self.tsumo_:
+            return None
+
+        if not self.valid_hai(hai):
+            raise ValueError(f"Invalid hai: {hai}")
+
+        pon_mentsu = []
+        suit, number = hai[0], int(hai[1]) if int(hai[1]) != 0 else 5
+        direction = re.search(r"[\+\=\-]$", hai)
+
+        if not direction:
+            raise ValueError("No direction")
+
+        if self.riichi_:
+            return pon_mentsu
+
+        juntehai = self.juntehai_[suit]
+
+        if 2 <= juntehai[number]:
+            if number == 5 and 2 <= juntehai[0]:
+                pon_mentsu.append(f"{suit}00{hai[1]}{direction.group()}")
+
+            if number == 5 and 1 <= juntehai[0] and 1 <= juntehai[5] - juntehai[0]:
+                pon_mentsu.append(f"{suit}50{hai[1]}{direction.group()}")
+
+            if number != 5 or 2 <= juntehai[5] - juntehai[0]:
+                pon_mentsu.append(f"{suit}{str(number)}{str(number)}{hai[1]}{direction.group()}")
+
+        return pon_mentsu
+
+    def get_kan_mentsu(self, hai=None):
+        """
+        カン可能な面子の一覧を返す
+        """
+        kan_mentsu = []
+
+        if hai:
+            if self.tsumo_:
+                return None
+
+            if not self.valid_hai(hai):
+                raise ValueError("Invalid")
+
+            suit, number = hai[0], int(hai[1]) if int(hai[1]) != 0 else 5
+            direction = re.search(r"[\+\=\-]$", hai)
+
+            if not direction:
+                raise ValueError("No direction")
+
+            if self.riichi_:
+                return kan_mentsu
+
+            juntehai = self.juntehai_[suit]
+
+            if juntehai[number] == 3:
+                if number == 5:
+                    kan_mentsu = [f"{suit}{"5" * (3 - juntehai[0])}{"0" * juntehai[0]}{hai[1]}{direction.group()}"]
+
+                else:
+                    kan_mentsu = [f"{suit}{str(number) * 4}{direction.group()}"]
+
+        else:
+            if not self.tsumo_:
+                return None
+
+            if len(self.tsumo_) > 2:
+                return None
+
+            hai = self.tsumo_.replace("0", "5")
+
+            for suit in ["m", "p", "s", "z"]:
+                juntehai = self.juntehai_[suit]
+
+                for number in range(1, len(juntehai)):
+                    if juntehai[number] == 0:
+                        continue
+
+                    if juntehai[number] == 4:
+                        if self.riichi_ and f"{suit}{number}" != hai:
+                            continue
+
+                        if number == 5:
+                            kan_mentsu.append(f"{suit}{"5" * (4 - juntehai[0])}{"0" * juntehai[0]}")
+
+                        else:
+                            kan_mentsu.append(f"{suit}{str(number) * 4}")
+
+                    else:
+                        if self.riichi_:
+                            continue
+
+                        for mentsu in self.fuuro_:
+                            if mentsu.replace("0", "5")[:4] == f"{suit}{str(number) * 3}":
+                                if number == 5 and juntehai[0] > 0:
+                                    kan_mentsu.append(f"{mentsu}0")
+
+                                else:
+                                    kan_mentsu.append(f"{mentsu}{number}")
+
+        return kan_mentsu
