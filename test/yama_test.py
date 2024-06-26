@@ -1,5 +1,5 @@
 import pytest
-from pyrmj import Yama
+from pyrmj import Yama, rule
 
 
 def test_class_exists():
@@ -42,8 +42,8 @@ def test___init__():
         ),
     ]
 
-    for rule, expected in test_cases:
-        yama = Yama(rule)
+    for rule_json, expected in test_cases:
+        yama = Yama(rule(rule_json))
         assert ",".join(sorted(yama.hai_)) == expected
 
 
@@ -85,7 +85,27 @@ def test_haisuu():
     """
     print("▶︎ haisuu(self)のテスト")
 
-    assert Yama().haisuu() == 122
+    assert Yama(rule()).haisuu() == 122
+
+
+def test_dora_indicator():
+    """
+    dora_indicator(self)のテスト
+    """
+    print("▶︎ dora_indicator(self)のテスト")
+
+    assert len(Yama(rule()).dora_indicator()) == 1
+
+
+def test_uradora_indicator():
+    """
+    uradora_indicator(self)のテスト
+    """
+    print("▶︎ uradora_indicator(self)のテスト")
+
+    assert Yama(rule()).uradora_indicator() is None
+    assert Yama(rule({"裏ドラあり": False})).close().uradora_indicator() is None
+    assert len(Yama(rule()).close().uradora_indicator()) == 1
 
 
 if __name__ == "__main__":
