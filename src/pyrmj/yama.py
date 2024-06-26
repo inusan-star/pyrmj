@@ -2,7 +2,7 @@ import random
 from pyrmj import Tehai
 
 
-class Shan:
+class Yama:
     """
     牌山を表すクラス
     """
