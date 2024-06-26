@@ -453,10 +453,7 @@ class TestTehai:
         assert tehai.kan("m1111", False).to_string() == "s789z4567,p456-,m1111"
 
         tehai = Tehai.from_string("m1111p4444s789z567")
-        assert (
-            tehai.kan("m1111", False).kan("p4444", False).to_string()
-            == "s789z567,m1111,p4444"
-        )
+        assert tehai.kan("m1111", False).kan("p4444", False).to_string() == "s789z567,m1111,p4444"
 
     def test_menzen(self):
         """
