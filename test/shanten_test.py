@@ -1,17 +1,17 @@
-import json
 import os
+import json
 import pytest
 from pyrmj import Tehai, shanten, shanten_chiitoi, shanten_ippan, shanten_kokushi
 
 base_dir = os.path.dirname(__file__)
 
-with open(os.path.join(base_dir, "./data/shanten_1.json"), encoding="utf-8") as file:
+with open(os.path.join(base_dir, "data/shanten_1.json"), encoding="utf-8") as file:
     data1 = json.load(file)
-with open(os.path.join(base_dir, "./data/shanten_1.json"), encoding="utf-8") as file:
+with open(os.path.join(base_dir, "data/shanten_2.json"), encoding="utf-8") as file:
     data2 = json.load(file)
-with open(os.path.join(base_dir, "./data/shanten_1.json"), encoding="utf-8") as file:
+with open(os.path.join(base_dir, "data/shanten_3.json"), encoding="utf-8") as file:
     data3 = json.load(file)
-with open(os.path.join(base_dir, "./data/shanten_1.json"), encoding="utf-8") as file:
+with open(os.path.join(base_dir, "data/shanten_4.json"), encoding="utf-8") as file:
     data4 = json.load(file)
 
 
@@ -22,10 +22,7 @@ def test_shanten_kokushi():
     print("▶︎ shanten_kokushi(tehai)のテスト")
 
     assert shanten_kokushi(Tehai.from_string()) == 13
-    assert (
-        shanten_kokushi(Tehai.from_string("m19p19s19z12345677").tsumo("m1", False))
-        == -1
-    )
+    assert shanten_kokushi(Tehai.from_string("m19p19s19z12345677").tsumo("m1", False)) == -1
 
     test_cases = [
         ("m23455p345s45678", 13),
@@ -66,14 +63,7 @@ def test_shanten_chiitoi():
     print("▶︎ shanten_chiitoi(tehai))のテスト")
 
     assert shanten_chiitoi(Tehai.from_string()) == 13
-    assert (
-        shanten_chiitoi(
-            Tehai.from_string("m1188p2288s05z1122")
-            .tsumo("z7", False)
-            .tsumo("z7", False)
-        )
-        == -1
-    )
+    assert shanten_chiitoi(Tehai.from_string("m1188p2288s05z1122").tsumo("z7", False).tsumo("z7", False)) == -1
 
     test_cases = [
         ("m19p19s19z1234567", 6),

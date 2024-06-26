@@ -9,7 +9,7 @@ def shanten_kokushi(tehai):
     n_toitsu = 0
 
     for suit in ["m", "p", "s", "z"]:
-        juntehai = tehai.juntehai[suit]
+        juntehai = tehai.juntehai_[suit]
         numbers = [1, 2, 3, 4, 5, 6, 7] if suit == "z" else [1, 9]
 
         for number in numbers:
