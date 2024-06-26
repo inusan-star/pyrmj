@@ -26,20 +26,20 @@ def shanten_chiitoi(tehai):
     """
     七対子形の向聴数を計算する
     """
-    if len(tehai.fuuro_list) > 0:
+    if len(tehai.fuuro_) > 0:
         return float("inf")
 
     n_toitsu = 0
     n_koritsuhai = 0
 
-    for s in ["m", "p", "s", "z"]:
-        juntehai = tehai.juntehai[s]
+    for suit in ["m", "p", "s", "z"]:
+        juntehai = tehai.juntehai_[suit]
 
-        for n in range(1, len(juntehai)):
-            if juntehai[n] >= 2:
+        for number in range(1, len(juntehai)):
+            if juntehai[number] >= 2:
                 n_toitsu += 1
 
-            elif juntehai[n] == 1:
+            elif juntehai[number] == 1:
                 n_koritsuhai += 1
 
     if n_toitsu > 7:

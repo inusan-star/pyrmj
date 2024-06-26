@@ -60,7 +60,7 @@ def test_shanten_chiitoi():
     """
     shanten_chiitoi(tehai)のテスト
     """
-    print("▶︎ shanten_chiitoi(tehai))のテスト")
+    print("▶︎ shanten_chiitoi(tehai)のテスト")
 
     assert shanten_chiitoi(Tehai.from_string()) == 13
     assert shanten_chiitoi(Tehai.from_string("m1188p2288s05z1122").tsumo("z7", False).tsumo("z7", False)) == -1
