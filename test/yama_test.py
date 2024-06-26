@@ -79,6 +79,29 @@ def test_dora():
                 Yama.dora(hai)
 
 
+def test_tsumo():
+    """
+    tsumo(self)のテスト
+    """
+    print("▶︎ tsumo(self)のテスト")
+
+    assert Yama(rule()).tsumo() is not None
+
+    yama = Yama(rule())
+    initial_haisuu = yama.haisuu()
+    yama.tsumo()
+    assert initial_haisuu - 1 == yama.haisuu()
+
+    yama = Yama(rule())
+    while yama.haisuu() > 0:
+        yama.tsumo()
+    with pytest.raises(ValueError):
+        yama.tsumo()
+
+    with pytest.raises(ValueError):
+        Yama(rule()).close().tsumo()
+
+
 def test_haisuu():
     """
     haisuu(self)のテスト
