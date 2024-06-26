@@ -16,7 +16,7 @@ class Yama:
         for suit in ["m", "p", "s", "z"]:
             for number in range(1, 8 if suit == "z" else 10):
                 for i in range(4):
-                    if number == 5 and i < akahai[suit]:
+                    if number == 5 and i < akahai.get(suit, 0):
                         hai.append(f"{suit}0")
 
                     else:

@@ -6,9 +6,11 @@
     "chii", // チー
     "chiitoi", // 七対
     "dahai", // 打牌
+    "dora", // ドラ
     "fuuro", // 副露
     "hai", // 牌
     "haipai", // 配牌
+    "haisuu", // 牌数
     "haitei", // 海底
     "hansuu", // 翻数
     "hoora", // 和了
@@ -16,7 +18,9 @@
     "ippatsu", // 一発
     "jantou", // 雀頭
     "juntehai", // 純手牌
+    "kaikan", // 開槓
     "kakan", // 加槓
+    "kantsumo", // 槓ツモ
     "kokushi", // 国士
     "koritsuhai", // 孤立牌
     "manzu", // 萬子
@@ -32,6 +36,7 @@
     "tenhoo", // 天和
     "toitsu", // 対子
     "tsumo", // ツモ
+    "uradora", // 裏ドラ
     "yaochu", // 幺九
     "zihai", // 字牌
     "yaku" // 役
