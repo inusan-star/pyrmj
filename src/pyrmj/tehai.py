@@ -161,7 +161,7 @@ class Tehai:
         for mentsu in self.fuuro_:
             tehai_string += f",{mentsu}"
 
-        if self.tsumo_ and 2 < len(self.tsumo_):
+        if self.tsumo_ and len(self.tsumo_) > 2:
             tehai_string += ","
 
         return tehai_string
@@ -368,7 +368,7 @@ class Tehai:
                 if number < 7 and re.match(r"^[mps]\d\-\d\d$", mentsu):
                     deny[f"{suit}{number + 3}"] = True
 
-                if 3 < number and re.match(r"^[mps]\d\d\d\-$", mentsu):
+                if number > 3 and re.match(r"^[mps]\d\d\d\-$", mentsu):
                     deny[f"{suit}{number - 3}"] = True
 
         dahai = []
@@ -427,9 +427,9 @@ class Tehai:
 
         juntehai = self.juntehai_[suit]
 
-        if 3 <= number and 0 < juntehai[number - 2] and 0 < juntehai[number - 1]:
+        if number >= 3 and juntehai[number - 2] > 0 and juntehai[number - 1] > 0:
             if not check or (
-                (juntehai[number] + (juntehai[number - 3] if 3 < number else 0)) < 14 - (len(self.fuuro_) + 1) * 3
+                (juntehai[number] + (juntehai[number - 3] if number > 0 else 0)) < 14 - (len(self.fuuro_) + 1) * 3
             ):
                 if number - 2 == 5 and juntehai[0] > 0:
                     chii_mentsu.append(f"{suit}067-")
@@ -440,7 +440,7 @@ class Tehai:
                 if (number - 2 != 5 and number - 1 != 5) or juntehai[0] < juntehai[5]:
                     chii_mentsu.append(f"{suit}{number - 2}{number - 1}{hai[1]}{direction.group()}")
 
-        if 2 <= number <= 8 and 0 < juntehai[number - 1] and 0 < juntehai[number + 1]:
+        if 2 <= number <= 8 and juntehai[number - 1] > 0 and juntehai[number + 1] > 0:
             if not check or juntehai[number] < 14 - (len(self.fuuro_) + 1) * 3:
                 if number - 1 == 5 and juntehai[0] > 0:
                     chii_mentsu.append(f"{suit}06-7")
@@ -451,7 +451,7 @@ class Tehai:
                 if (number - 1 != 5 and number + 1 != 5) or juntehai[0] < juntehai[5]:
                     chii_mentsu.append(f"{suit}{number - 1}{hai[1]}{direction.group()}{number + 1}")
 
-        if number <= 7 and 0 < juntehai[number + 1] and 0 < juntehai[number + 2]:
+        if number <= 7 and juntehai[number + 1] > 0 and juntehai[number + 2] > 0:
             if not check or (
                 (juntehai[number] + (juntehai[number + 3] if number < 7 else 0)) < 14 - (len(self.fuuro_) + 1) * 3
             ):
@@ -488,14 +488,14 @@ class Tehai:
 
         juntehai = self.juntehai_[suit]
 
-        if 2 <= juntehai[number]:
-            if number == 5 and 2 <= juntehai[0]:
+        if juntehai[number] >= 2:
+            if number == 5 and juntehai[0] >= 2:
                 pon_mentsu.append(f"{suit}00{hai[1]}{direction.group()}")
 
-            if number == 5 and 1 <= juntehai[0] and 1 <= juntehai[5] - juntehai[0]:
+            if number == 5 and juntehai[0] >= 1 and juntehai[5] - juntehai[0] >= 1:
                 pon_mentsu.append(f"{suit}50{hai[1]}{direction.group()}")
 
-            if number != 5 or 2 <= juntehai[5] - juntehai[0]:
+            if number != 5 or juntehai[5] - juntehai[0] >= 2:
                 pon_mentsu.append(f"{suit}{str(number)}{str(number)}{hai[1]}{direction.group()}")
 
         return pon_mentsu
