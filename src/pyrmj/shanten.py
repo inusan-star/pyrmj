@@ -59,10 +59,10 @@ def count_taatsu(juntehai):
     n_taatsu = 0
     n_koritsuhai = 0
 
-    for n in range(1, 10):
-        n_pai += juntehai[n]
+    for number in range(1, 10):
+        n_pai += juntehai[number]
 
-        if n <= 7 and juntehai[n + 1] == 0 and juntehai[n + 2] == 0:
+        if number <= 7 and juntehai[number + 1] == 0 and juntehai[number + 2] == 0:
             n_taatsu += n_pai // 2
             n_koritsuhai += n_pai % 2
             n_pai = 0
@@ -73,23 +73,23 @@ def count_taatsu(juntehai):
     return {"a": [0, n_taatsu, n_koritsuhai], "b": [0, n_taatsu, n_koritsuhai]}
 
 
-def count_mentsu(juntehai, n=1):
+def count_mentsu(juntehai, number=1):
     """
     面子数を数える
     """
-    if n > 9:
+    if number > 9:
         return count_taatsu(juntehai)
 
-    max_result = count_mentsu(juntehai, n + 1)
+    max_result = count_mentsu(juntehai, number + 1)
 
-    if n <= 7 and juntehai[n] > 0 and juntehai[n + 1] > 0 and juntehai[n + 2] > 0:
-        juntehai[n] -= 1
-        juntehai[n + 1] -= 1
-        juntehai[n + 2] -= 1
-        result = count_mentsu(juntehai, n)
-        juntehai[n] += 1
-        juntehai[n + 1] += 1
-        juntehai[n + 2] += 1
+    if number <= 7 and juntehai[number] > 0 and juntehai[number + 1] > 0 and juntehai[number + 2] > 0:
+        juntehai[number] -= 1
+        juntehai[number + 1] -= 1
+        juntehai[number + 2] -= 1
+        result = count_mentsu(juntehai, number)
+        juntehai[number] += 1
+        juntehai[number + 1] += 1
+        juntehai[number + 2] += 1
         result["a"][0] += 1
         result["b"][0] += 1
 
@@ -103,10 +103,10 @@ def count_mentsu(juntehai, n=1):
         ):
             max_result["b"] = result["b"]
 
-    if juntehai[n] >= 3:
-        juntehai[n] -= 3
-        result = count_mentsu(juntehai, n)
-        juntehai[n] += 3
+    if juntehai[number] >= 3:
+        juntehai[number] -= 3
+        result = count_mentsu(juntehai, number)
+        juntehai[number] += 3
         result["a"][0] += 1
         result["b"][0] += 1
 
@@ -151,32 +151,32 @@ def shanten_tehai(tehai, jantou=False):
     手牌から最小の向聴数を計算する
     """
     result = {
-        "m": count_mentsu(tehai.juntehai["m"]),
-        "p": count_mentsu(tehai.juntehai["p"]),
-        "s": count_mentsu(tehai.juntehai["s"]),
+        "m": count_mentsu(tehai.juntehai_["m"]),
+        "p": count_mentsu(tehai.juntehai_["p"]),
+        "s": count_mentsu(tehai.juntehai_["s"]),
     }
-    z = [0, 0, 0]
+    zihai = [0, 0, 0]
 
-    for n in range(1, 8):
-        if tehai.juntehai["z"][n] >= 3:
-            z[0] += 1
+    for number in range(1, 8):
+        if tehai.juntehai_["z"][number] >= 3:
+            zihai[0] += 1
 
-        elif tehai.juntehai["z"][n] == 2:
-            z[1] += 1
+        elif tehai.juntehai_["z"][number] == 2:
+            zihai[1] += 1
 
-        elif tehai.juntehai["z"][n] == 1:
-            z[2] += 1
+        elif tehai.juntehai_["z"][number] == 1:
+            zihai[2] += 1
 
-    n_fuuro = len(tehai.fuuro_list)
+    n_fuuro = len(tehai.fuuro_)
     min_shanten = 13
 
-    for m in [result["m"]["a"], result["m"]["b"]]:
-        for p in [result["p"]["a"], result["p"]["b"]]:
-            for s in [result["s"]["a"], result["s"]["b"]]:
+    for manzu in [result["m"]["a"], result["m"]["b"]]:
+        for pinzu in [result["p"]["a"], result["p"]["b"]]:
+            for souzu in [result["s"]["a"], result["s"]["b"]]:
                 shan = [n_fuuro, 0, 0]
 
                 for i in range(3):
-                    shan[i] += m[i] + p[i] + s[i] + z[i]
+                    shan[i] += manzu[i] + pinzu[i] + souzu[i] + zihai[i]
 
                 n_shanten = _shanten(shan[0], shan[1], shan[2], jantou)
 
@@ -192,19 +192,19 @@ def shanten_ippan(tehai):
     """
     min_shanten = shanten_tehai(tehai)
 
-    for s in ["m", "p", "s", "z"]:
-        juntehai = tehai.juntehai[s]
+    for suit in ["m", "p", "s", "z"]:
+        juntehai = tehai.juntehai_[suit]
 
-        for n in range(1, len(juntehai)):
-            if juntehai[n] >= 2:
-                juntehai[n] -= 2
+        for number in range(1, len(juntehai)):
+            if juntehai[number] >= 2:
+                juntehai[number] -= 2
                 n_shanten = shanten_tehai(tehai, True)
-                juntehai[n] += 2
+                juntehai[number] += 2
 
                 if n_shanten < min_shanten:
                     min_shanten = n_shanten
 
-    if min_shanten == -1 and tehai.tsumohai and len(tehai.tsumohai) > 2:
+    if min_shanten == -1 and tehai.tsumo_ and len(tehai.tsumo_) > 2:
         return 0
 
     return min_shanten

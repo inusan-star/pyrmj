@@ -1,7 +1,7 @@
 import os
 import json
 import pytest
-from pyrmj import Tehai, shanten, shanten_chiitoi, shanten_ippan, shanten_kokushi
+from pyrmj import Tehai, shanten_kokushi, shanten_chiitoi, shanten_ippan, shanten
 
 base_dir = os.path.dirname(__file__)
 
@@ -101,12 +101,12 @@ def test_shanten_ippan():
     """
     shanten_ippan(tehai)のテスト
     """
-    print("▶︎ shanten_ippan(tehai))のテスト")
+    print("▶︎ shanten_ippan(tehai)のテスト")
 
     assert shanten_ippan(Tehai.from_string()) == 13
 
     tehai = Tehai.from_string("m123,p123-,s456-,m789-")
-    tehai.fuuro_list.append("z555=")
+    tehai.fuuro_.append("z555=")
     assert shanten_ippan(tehai) == 0
 
     test_cases = [
