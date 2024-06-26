@@ -149,6 +149,54 @@ def test_kantsumo():
         yama.kantsumo()
 
 
+def test_kaikan():
+    """
+    kaikan(self)のテスト
+    """
+    print("▶︎ kaikan(self)のテスト")
+
+    with pytest.raises(ValueError):
+        Yama(rule()).kaikan()
+
+    yama = Yama(rule())
+    yama.kantsumo()
+    assert yama.kaikan() is not None
+
+    yama = Yama(rule())
+    yama.kantsumo()
+    assert len(yama.dora_indicator()) + 1 == len(yama.kaikan().dora_indicator())
+
+    yama = Yama(rule())
+    yama.kantsumo()
+    assert len(yama.kaikan().close().uradora_indicator()) == 2
+
+    yama = Yama(rule())
+    yama.kantsumo()
+    assert yama.kaikan().tsumo() is not None
+
+    yama = Yama(rule())
+    yama.kantsumo()
+    assert yama.kaikan().kantsumo() is not None
+
+    yama = Yama(rule())
+    yama.kantsumo()
+    with pytest.raises(ValueError):
+        yama.close().kaikan()
+
+    yama = Yama(rule({"カンドラあり": False}))
+    yama.kantsumo()
+    with pytest.raises(ValueError):
+        yama.kaikan()
+
+    yama = Yama(rule({"カン裏あり": False}))
+    yama.kantsumo()
+    assert len(yama.kaikan().close().uradora_indicator()) == 1
+
+    yama = Yama(rule({"裏ドラあり": False}))
+    yama.kantsumo()
+    assert yama.kaikan().close().uradora_indicator() is None
+
+
 def test_haisuu():
     """
     haisuu(self)のテスト
