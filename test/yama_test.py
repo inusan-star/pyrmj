@@ -47,5 +47,37 @@ def test___init__():
         assert ",".join(sorted(yama.hai_)) == expected
 
 
+def test_dora():
+    """
+    dora(hai)のテスト
+    """
+    print("▶︎ dora(hai)のテスト")
+
+    test_cases = [
+        ("m1", "m2"),
+        ("m9", "m1"),
+        ("m0", "m6"),
+        ("p1", "p2"),
+        ("p9", "p1"),
+        ("p0", "p6"),
+        ("s1", "s2"),
+        ("s9", "s1"),
+        ("s0", "s6"),
+        ("z1", "z2"),
+        ("z4", "z1"),
+        ("z5", "z6"),
+        ("z7", "z5"),
+        ("z0", ValueError),
+    ]
+
+    for hai, expected in test_cases:
+        if isinstance(expected, str):
+            assert Yama.dora(hai) == expected
+
+        else:
+            with pytest.raises(expected):
+                Yama.dora(hai)
+
+
 if __name__ == "__main__":
     pytest.main()
