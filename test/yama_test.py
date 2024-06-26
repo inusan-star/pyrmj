@@ -79,5 +79,14 @@ def test_dora():
                 Yama.dora(hai)
 
 
+def test_haisuu():
+    """
+    haisuu(self)のテスト
+    """
+    print("▶︎ haisuu(self)のテスト")
+
+    assert Yama().haisuu() == 122
+
+
 if __name__ == "__main__":
     pytest.main()

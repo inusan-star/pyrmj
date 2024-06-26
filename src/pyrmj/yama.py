@@ -7,7 +7,10 @@ class Yama:
     牌山を表すクラス
     """
 
-    def __init__(self, rule):
+    def __init__(self, rule=None):
+        if rule is None:
+            rule = {}
+
         random.seed(1704034800)  # シード値を設定（Time stamp of 1/1/2024）
         self.rule_ = rule
         akahai = rule.get("赤牌", {})
