@@ -1,6 +1,6 @@
 def rule(param=None):
     """
-    ^ルールを作成する
+    ルールを作成する
     """
     if param is None:
         param = {}
