@@ -12,7 +12,7 @@
     "jantou",
     "juntehai", // 純手牌
     "kakan", // 加槓
-    "kokushi",
+    "kokushi", // 国士
     "koritsuhai",
     "mentsu", // 面子
     "menzen", // 門前
@@ -20,8 +20,8 @@
     "shanten",
     "taatsu",
     "tehai", // 手牌
-    "toitsu",
+    "toitsu", // 対子
     "tsumo", // ツモ
-    "yaochu"
+    "yaochu" // 幺九
   ]
 }
