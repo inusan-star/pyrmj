@@ -2,13 +2,18 @@
   "ignoreWords": [
     "akahai", // 赤牌
     "ankan", // 暗槓
+    "chankan", // 槍槓
     "chii", // チー
     "chiitoi", // 七対
     "dahai", // 打牌
     "fuuro", // 副露
     "hai", // 牌
     "haipai", // 配牌
+    "haitei", // 海底
+    "hansuu", // 翻数
+    "hoora", // 和了
     "ippan", // 一般
+    "ippatsu", // 一発
     "jantou", // 雀頭
     "juntehai", // 純手牌
     "kakan", // 加槓
@@ -19,13 +24,16 @@
     "menzen", // 門前
     "pinzu", // 筒子
     "riichi", // 立直
+    "rinshan", // 嶺上
     "shanten", // 向聴
     "souzu", // 索子
     "taatsu", // 塔子
     "tehai", // 手牌
+    "tenhoo", // 天和
     "toitsu", // 対子
     "tsumo", // ツモ
     "yaochu", // 幺九
-    "zihai" // 字牌
+    "zihai", // 字牌
+    "yaku" // 役
   ]
 }
