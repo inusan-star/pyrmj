@@ -10,7 +10,7 @@ class Yama:
     def __init__(self, rule):
         random.seed(1704034800)  # シード値を設定（Time stamp of 1/1/2024）
         self.rule_ = rule
-        akahai = rule["赤牌"]
+        akahai = rule.get("赤牌", {})
         hai = []
 
         for suit in ["m", "p", "s", "z"]:
@@ -25,7 +25,7 @@ class Yama:
         random.shuffle(hai)
         self.hai_ = hai
         self.dora_indicator_ = [self.hai_[4]]
-        self.uradora_indicator_ = [self.hai_[9]] if rule["裏ドラあり"] else None
+        self.uradora_indicator_ = [self.hai_[9]] if rule.get("裏ドラあり", False) else None
         self.not_yet_kaikan_ = False
         self.closed_ = False
 
@@ -80,7 +80,7 @@ class Yama:
         if len(self.dora_indicator_) == 5:
             raise ValueError("Too many doras")
 
-        self.not_yet_kaikan_ = self.rule_["カンドラあり"]
+        self.not_yet_kaikan_ = self.rule_.get("カンドラあり", False)
 
         if not self.not_yet_kaikan_:
             self.dora_indicator_.append("")
@@ -99,7 +99,7 @@ class Yama:
 
         self.dora_indicator_.append(self.hai_[4])
 
-        if self.uradora_indicator_ and self.rule_["カン裏あり"]:
+        if self.uradora_indicator_ and self.rule_.get("カン裏あり", False):
             self.uradora_indicator_.append(self.hai_[9])
 
         self.not_yet_kaikan_ = False
