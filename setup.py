@@ -15,5 +15,8 @@ setup(
     version="0.0.1",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
+    package_data={
+        "pyrmj": ["data/GL-MahjongTile.base64"],
+    },
     install_requires=get_requirements(),
 )

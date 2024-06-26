@@ -44,7 +44,7 @@ HAI_UNICODE = {
     "_": "🀫",
 }
 
-with open(os.path.join(os.path.dirname(__file__), "../data/GL-MahjongTile.base64"), encoding="utf-8") as file:
+with open(os.path.join(os.path.dirname(__file__), "data/GL-MahjongTile.base64"), encoding="utf-8") as file:
     base_font = file.read()
 
 
