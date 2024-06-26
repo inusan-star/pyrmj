@@ -102,6 +102,53 @@ def test_tsumo():
         Yama(rule()).close().tsumo()
 
 
+def test_kantsumo():
+    """
+    kantsumo(self)のテスト
+    """
+    print("▶︎ kantsumo(self)のテスト")
+
+    assert Yama(rule()).kantsumo() is not None
+
+    yama = Yama(rule())
+    initial_haisuu = yama.haisuu()
+    yama.kantsumo()
+    assert initial_haisuu - 1 == yama.haisuu()
+
+    yama = Yama(rule())
+    yama.kantsumo()
+    with pytest.raises(ValueError):
+        yama.tsumo()
+
+    yama = Yama(rule())
+    yama.kantsumo()
+    with pytest.raises(ValueError):
+        yama.kantsumo()
+
+    yama = Yama(rule())
+    while yama.haisuu() > 0:
+        yama.tsumo()
+    with pytest.raises(ValueError):
+        yama.kantsumo()
+
+    with pytest.raises(ValueError):
+        Yama(rule()).close().kantsumo()
+
+    yama = Yama(rule())
+    for _ in range(4):
+        yama.kantsumo()
+        yama.kaikan()
+    with pytest.raises(ValueError):
+        yama.kantsumo()
+
+    yama = Yama(rule({"カンドラあり": False}))
+    for _ in range(4):
+        yama.kantsumo()
+    assert len(yama.dora_indicator()) == 1
+    with pytest.raises(ValueError):
+        yama.kantsumo()
+
+
 def test_haisuu():
     """
     haisuu(self)のテスト
