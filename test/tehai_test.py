@@ -130,5 +130,95 @@ def test_valid_mentsu():
             assert Tehai.valid_mentsu(mentsu) == expected
 
 
+def test_from_string():
+    """
+    from_string(cls, tehai_string="")のテスト
+    """
+    print("▶︎ from_string(cls, tehai_string='')のテスト")
+
+    assert Tehai.from_string().to_string() == ""
+
+    test_cases = [
+        ("", ""),
+        ("z7654s987p654m321", "m123p456s789z4567"),
+        ("m1,p123-,s555=,z777+7,m9999", "m1,p123-,s555=,z777+7,m9999"),
+        ("m123p456s789____", "____m123p456s789"),
+        ("m123p456____,s789-", "____m123p456,s789-"),
+        ("m111p222s333", "m111p222s333"),
+        ("m123456789p123456", "m123456789p1234p5"),
+        ("m123456789p123,z111=", "m123456789p1p2,z111="),
+        ("m123,z111=,p123-,s555=,z777+", "m1m2,z111=,p123-,s555=,z777+"),
+        ("m11123456789991", "m1112345678999m1"),
+        ("m11123456789990", "m1112345678999m0"),
+        ("m12p345s678z23m3,z111=", "m12p345s678z23m3,z111="),
+        ("m5550p5500s0000z00", "m0555p0055s0000"),
+        ("m123p456s789z1112*", "m123p456s789z1112*"),
+        ("m123p456s789z2*,z1111", "m123p456s789z2*,z1111"),
+        ("m123p456s789z2*,z111+", "m123p456s789z2*,z111+"),
+        ("m123p456s789z2,m403-", "m123p456s789z2,m3-40"),
+        ("m123p456s789z2,m304-", "m123p456s789z2,m34-0"),
+        ("m123p456s789z2,m345-", "m123p456s789z2,m345-"),
+        ("m123p456s789z2,p050+", "m123p456s789z2,p500+"),
+        ("m123p456s789z2,p055+", "m123p456s789z2,p505+"),
+        ("m123p456s789z2,p550+", "m123p456s789z2,p550+"),
+        ("m123p456s789z2,s0555=", "m123p456s789z2,s5505="),
+        ("m123p456s789z2,s0050=", "m123p456s789z2,s5000="),
+        ("m123p456s789z2,s0505", "m123p456s789z2,s5500"),
+        ("m123p456s789z2,z000+", "m123p456s789z2"),
+        ("m123p456s789z2,z888+", "m123p456s789z2"),
+        ("m123p456s789z2,z1-23", "m123p456s789z2"),
+        ("m123p456s789z2,s1+23", "m123p456s789z2"),
+        ("m123p456s789z2,z11-", "m123p456s789z2"),
+        ("m123p456s789z2,s13-5", "m123p456s789z2"),
+        ("m123p456s789z2,m1p2s3-", "m123p456s789z2"),
+        ("p456s789z1,m12-3,p999=,", "p456s789z1,m12-3,p999=,"),
+    ]
+
+    for tehai_string, expected in test_cases:
+        assert Tehai.from_string(tehai_string).to_string() == expected
+
+
+def test_clone():
+    """
+    clone(self)のテスト
+    """
+    print("▶︎ clone(self)のテスト")
+
+    tehai = Tehai()
+    assert tehai != tehai.clone()
+
+    test_cases = [
+        "m123p456s789z4567",
+        "m1,p123-,s555=,z777+7,m9999",
+        "m11123456789991",
+        "m123p456s789z1112*",
+        "___________,m123-",
+    ]
+
+    for tehai_string in test_cases:
+        tehai = Tehai.from_string(tehai_string)
+        assert tehai.to_string() == tehai.clone().to_string()
+
+    tehai = Tehai.from_string("m123p456s789z4567")
+    clone_tehai_string = tehai.clone().tsumo("m1").to_string()
+    assert tehai.to_string() != clone_tehai_string
+
+    tehai = Tehai.from_string("m123p456s789z34567")
+    clone_tehai_string = tehai.clone().dahai("m1").to_string()
+    assert tehai.to_string() != clone_tehai_string
+
+    tehai = Tehai.from_string("m123p456s789z1167")
+    clone_tehai_string = tehai.clone().fuuro("z111=").to_string()
+    assert tehai.to_string() != clone_tehai_string
+
+    tehai = Tehai.from_string("m123p456s789z11112")
+    clone_tehai_string = tehai.clone().kan("z1111").to_string()
+    assert tehai.to_string() != clone_tehai_string
+
+    tehai = Tehai.from_string("m123p456s789z11223")
+    clone_tehai_string = tehai.clone().dahai("z3*").to_string()
+    assert tehai.to_string() != clone_tehai_string
+
+
 if __name__ == "__main__":
     pytest.main()
