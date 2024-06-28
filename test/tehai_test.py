@@ -267,5 +267,86 @@ def test_tsumo():
     assert Tehai.from_string("m123p456s789z34567").tsumo("m1", check=False).to_string() == "m123p456s789z34567m1"
 
 
+def test_dahai():
+    """
+    dahai(self, hai, check=True)のテスト
+    """
+    print("▶︎ dahai(self, hai, check=True)のテスト")
+
+    test_cases = [
+        ("m123p456s789z34567", "m1", "m23p456s789z34567"),
+        ("m123p456s789z34567", "p4", "m123p56s789z34567"),
+        ("m123p456s789z34567", "s7", "m123p456s89z34567"),
+        ("m123p456s789z34567", "z3", "m123p456s789z4567"),
+        ("m123p406s789z34567", "p0", "m123p46s789z34567"),
+        ("m123p456s789z34567", "z7*", "m123p456s789z3456*"),
+        ("m123p456s789z11223*", "z1", "m123p456s789z1223*"),
+        ("______________", "m1", "_____________"),
+        ("m123p456s789z34567", "z0", ValueError),
+        ("m123p456s789z34567", "z8", ValueError),
+        ("m123p456s789z34567", "mm", ValueError),
+        ("m123p456s789z34567", "xx", ValueError),
+        ("m123p456s789z4567", "_", ValueError),
+        ("m123p456s789z4567", "m1", ValueError),
+        ("m123p456s789z34567", "z1", ValueError),
+        ("m123p456s789z34567", "p0", ValueError),
+        ("m123p406s789z34567", "p5", ValueError),
+    ]
+
+    for tehai_string, hai, expected in test_cases:
+        tehai = Tehai.from_string(tehai_string)
+        if isinstance(expected, str):
+            assert tehai.dahai(hai).to_string() == expected
+
+        else:
+            with pytest.raises(expected):
+                tehai.dahai(hai)
+
+    assert Tehai.from_string("m123p456s789z4567").dahai("m1", check=False).to_string() == "m23p456s789z4567"
+
+
+def test_fuuro():
+    """
+    fuuro(self, mentsu, check=True)のテスト
+    """
+    print("▶︎ fuuro(self, mentsu, check=True)のテスト")
+
+    test_cases = [
+        ("m23p456s789z34567", "m1-23", "p456s789z34567,m1-23,"),
+        ("m123p46s789z34567", "p45-6", "m123s789z34567,p45-6,"),
+        ("m123p456s99z34567", "s999+", "m123p456z34567,s999+,"),
+        ("m123p456s789z1167", "z111=", "m123p456s789z67,z111=,"),
+        ("m123p500s789z4567", "p5005-", "m123s789z4567,p5005-"),
+        ("m123p456s789z4567*", "m1-23", "m1p456s789z4567*,m1-23,"),
+        ("_____________", "m1-23", "___________,m1-23,"),
+        ("m123p456s789z34567", "z3-45", ValueError),
+        ("m123p456s789z34567", "m231-", ValueError),
+        ("_____________", "m1111", ValueError),
+        ("_____________", "m111+1", ValueError),
+        ("m123p456s789z11567", "z111=", ValueError),
+        ("m123p456s789z22,z111=,", "z222=", ValueError),
+        ("m123p456s789z2,z111=", "z333=", ValueError),
+        ("m123p40s789z22,z111=", "p456-", ValueError),
+        ("m123p45s789z22,z111=", "p406-", ValueError),
+    ]
+
+    for tehai_string, mentsu, expected in test_cases:
+        tehai = Tehai.from_string(tehai_string)
+        if isinstance(expected, str):
+            assert tehai.fuuro(mentsu).to_string() == expected
+        else:
+            with pytest.raises(expected):
+                tehai.fuuro(mentsu)
+
+    test_cases = [
+        ("m123p456s789z11567", "z111=", "m123p456s789z567,z111=,"),
+        ("m123p456s789z22,z111=,", "z222=", "m123p456s789,z111=,z222=,"),
+    ]
+
+    for tehai_string, mentsu, expected in test_cases:
+        tehai = Tehai.from_string(tehai_string)
+        assert tehai.fuuro(mentsu, False).to_string() == expected
+
+
 if __name__ == "__main__":
     pytest.main()
