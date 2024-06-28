@@ -58,5 +58,21 @@ def test_fuuro():
     assert kawa.fuuro("m12-3").hai_.pop() == "m2*-"
 
 
+def test_find():
+    """
+    find(self, hai)のテスト
+    """
+    print("▶︎ find(self, hai)のテスト")
+
+    test_cases = [("m1", "m1"), ("m2_", "m2"), ("m3*", "m3"), ("m0", "m5")]
+    kawa = Kawa()
+
+    for da_hai, find_hai in test_cases:
+        assert kawa.dahai(da_hai).find(find_hai)
+
+    assert kawa.dahai("m4_").fuuro("m234-").find("m4")
+    assert kawa.find("m0_*")
+
+
 if __name__ == "__main__":
     pytest.main()
