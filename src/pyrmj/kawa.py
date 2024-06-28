@@ -29,14 +29,16 @@ class Kawa:
         if not Tehai.valid_mentsu(mentsu):
             raise ValueError(f"Invalid mentsu: {mentsu}")
 
-        hai = f"{mentsu[0]}{re.search(r"\d(?=[\+\=\-])", mentsu).group()}"
+        number = re.search(r"\d(?=[\+\=\-])", mentsu)
         direction = re.search(r"[\+\=\-]", mentsu)
 
         if not direction:
             raise ValueError("No direction")
 
+        hai = f"{mentsu[0]}{number.group()}" if number else mentsu[0]
+
         if self.hai_[-1][:2] != hai:
-            raise ValueError("Invalid hai")
+            raise ValueError(f"There is no {hai} in kawa")
 
         self.hai_[-1] += direction.group()
         return self

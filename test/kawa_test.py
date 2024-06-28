@@ -33,9 +33,29 @@ def test_dahai():
     kawa = Kawa()
     assert len(kawa.hai_) + 1 == len(kawa.dahai("m1").hai_)
 
-    assert Kawa().dahai("m1_").hai_.pop() == "m1_"
-    assert Kawa().dahai("m1*").hai_.pop() == "m1*"
-    assert Kawa().dahai("m1_*").hai_.pop() == "m1_*"
+    test_cases = ["m1_", "m1*", "m1_*"]
+
+    for hai in test_cases:
+        assert Kawa().dahai(hai).hai_.pop() == hai
+
+
+def test_fuuro():
+    """
+    fuuro(self, mentsu)のテスト
+    """
+    print("▶︎ fuuro(self, mentsu)のテスト")
+
+    test_cases = [("m1", "m1-"), ("m1", "m1111"), ("m1", "m12-3")]
+
+    for hai, mentsu in test_cases:
+        with pytest.raises(ValueError):
+            Kawa().dahai(hai).fuuro(mentsu)
+
+    kawa = Kawa().dahai("m1_")
+    assert len(kawa.hai_) == len(kawa.fuuro("m111+").hai_)
+
+    kawa = Kawa().dahai("m2*")
+    assert kawa.fuuro("m12-3").hai_.pop() == "m2*-"
 
 
 if __name__ == "__main__":
