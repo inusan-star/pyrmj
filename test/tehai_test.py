@@ -220,5 +220,52 @@ def test_clone():
     assert tehai.to_string() != clone_tehai_string
 
 
+def test_update_from_string():
+    """
+    update_from_string(self, tehai_string)のテスト
+    """
+    print("▶︎ update_from_string(self, tehai_string)のテスト")
+
+    test_cases = ["m123p456s789z1122z2", "m123p456s789z2,z111=", "m123p456s789z1122*", "__________,z111="]
+
+    for tehai_string in test_cases:
+        assert Tehai().update_from_string(tehai_string).to_string() == tehai_string
+
+
+def test_tsumo():
+    """
+    tsumo(self, hai, check=True)のテスト
+    """
+    print("▶︎ tsumo(self, hai, check=True)のテスト")
+
+    test_cases = [
+        ("m123p456s789z4567", "m1", "m123p456s789z4567m1"),
+        ("m123p456s789z4567", "p1", "m123p456s789z4567p1"),
+        ("m123p456s789z4567", "s1", "m123p456s789z4567s1"),
+        ("m123p456s789z4567", "z1", "m123p456s789z4567z1"),
+        ("m123p456s789z4567", "m0", "m123p456s789z4567m0"),
+        ("m123p456s789z4567", "_", "m123p456s789z4567_"),
+        ("m123p456s789z4567", "z0", ValueError),
+        ("m123p456s789z4567", "z8", ValueError),
+        ("m123p456s789z4567", "mm", ValueError),
+        ("m123p456s789z4567", "xx", ValueError),
+        ("m123p456s789z34567", "m1", ValueError),
+        ("m123p456z34567,s789-,", "m1", ValueError),
+        ("m123p456s789z1111", "z1", ValueError),
+        ("m455556s789z1111", "m0", ValueError),
+    ]
+
+    for tehai_string, hai, expected in test_cases:
+        tehai = Tehai.from_string(tehai_string)
+        if isinstance(expected, str):
+            assert tehai.tsumo(hai).to_string() == expected
+
+        else:
+            with pytest.raises(expected):
+                tehai.tsumo(hai)
+
+    assert Tehai.from_string("m123p456s789z34567").tsumo("m1", check=False).to_string() == "m123p456s789z34567m1"
+
+
 if __name__ == "__main__":
     pytest.main()
