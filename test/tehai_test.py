@@ -403,5 +403,32 @@ def test_kan():
     )
 
 
+def test_menzen():
+    """
+    menzen(self)のテスト
+    """
+    print("▶︎ menzen(self)のテスト")
+
+    test_cases = [
+        ("m123p0s789z4567", True),
+        ("p0s789z4567,m123-", False),
+        ("m123p0s789,z1111", True),
+    ]
+
+    for tehai_string, expected in test_cases:
+        tehai = Tehai.from_string(tehai_string)
+        assert tehai.menzen() == expected
+
+
+def test_riichi():
+    """
+    get_riichi(self)のテスト
+    """
+    print("▶︎ get_riichi(self)のテスト")
+
+    assert not Tehai.from_string("_____________").riichi()
+    assert Tehai.from_string("_____________").tsumo("z7").dahai("z7_*").riichi()
+
+
 if __name__ == "__main__":
     pytest.main()
