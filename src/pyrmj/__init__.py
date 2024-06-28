@@ -1,4 +1,5 @@
 from .hoora import *
+from .kawa import *
 from .rule import *
 from .shanten import *
 from .tehai import *

@@ -1,5 +1,5 @@
 import random
-from pyrmj import Tehai
+from .tehai import Tehai
 
 
 class Yama:
