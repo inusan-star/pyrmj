@@ -1,3 +1,4 @@
+import math
 import re
 from .yama import Yama
 
@@ -314,3 +315,135 @@ def hoora_mentsu_ippan(tehai, hoora_hai):
             juntehai[number] += 2
 
     return mentsu_lists
+
+
+def get_fu_data(mentsu_list, bakaze, zikaze):
+    """
+    符と面子構成情報を取得する
+    """
+    bakaze_hai = re.compile(f"^z{bakaze + 1}.*$")
+    zikaze_hai = re.compile(f"^z{zikaze + 1}.*$")
+    sangenpai = re.compile(r"^z[567].*$")
+    yaochu = re.compile(r"^.*[z19].*$")
+    zihai = re.compile(r"^z.*$")
+    kootsu = re.compile(r"^[mpsz](\d)\1\1.*$")
+    anko = re.compile(r"^[mpsz](\d)\1\1(?:\1|_\!)?$")
+    kantsu = re.compile(r"^[mpsz](\d)\1\1.*\1.*$")
+    tanki = re.compile(r"^[mpsz](\d)\1[\+\=\-\_]\!$")
+    kanchan = re.compile(r"^[mps]\d\d[\+\=\-\_]\!\d$")
+    penchan = re.compile(r"^[mps](123[\+\=\-\_]\!|7[\+\=\-\_]\!89)$")
+
+    fu_data = {
+        "fu": 20,
+        "menzen": True,
+        "tsumo": True,
+        "shuntsu": {"m": [0, 0, 0, 0, 0, 0, 0, 0], "p": [0, 0, 0, 0, 0, 0, 0, 0], "s": [0, 0, 0, 0, 0, 0, 0, 0]},
+        "kootsu": {
+            "m": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            "p": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            "s": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            "z": [0, 0, 0, 0, 0, 0, 0, 0],
+        },
+        "n_shuntsu": 0,
+        "n_kootsu": 0,
+        "n_anko": 0,
+        "n_kantsu": 0,
+        "n_yaochu": 0,
+        "n_zihai": 0,
+        "tanki": False,
+        "pinfu": False,
+        "bakaze": bakaze,
+        "zikaze": zikaze,
+    }
+
+    for mentsu in mentsu_list:
+        if re.search(r"[\+\=\-](?!\!)", mentsu):
+            fu_data["menzen"] = False
+
+        if re.search(r"[\+\=\-]\!", mentsu):
+            fu_data["tsumo"] = False
+
+        if len(mentsu_list) == 1:
+            continue
+
+        if re.match(tanki, mentsu):
+            fu_data["tanki"] = True
+
+        if len(mentsu_list) == 13:
+            continue
+
+        if re.match(yaochu, mentsu):
+            fu_data["n_yaochu"] += 1
+
+        if re.match(zihai, mentsu):
+            fu_data["n_zihai"] += 1
+
+        if len(mentsu_list) != 5:
+            continue
+
+        if mentsu == mentsu_list[0]:
+            fu = 0
+
+            if re.match(bakaze_hai, mentsu):
+                fu += 2
+
+            if re.match(zikaze_hai, mentsu):
+                fu += 2
+
+            if re.match(sangenpai, mentsu):
+                fu += 2
+
+            fu_data["fu"] += fu
+
+            if fu_data["tanki"]:
+                fu_data["fu"] += 2
+
+        elif re.match(kootsu, mentsu):
+            fu_data["n_kootsu"] += 1
+            fu = 2
+
+            if re.match(yaochu, mentsu):
+                fu *= 2
+
+            if re.match(anko, mentsu):
+                fu *= 2
+                fu_data["n_anko"] += 1
+
+            if re.match(kantsu, mentsu):
+                fu *= 4
+                fu_data["n_kantsu"] += 1
+
+            fu_data["fu"] += fu
+            fu_data["kootsu"][mentsu[0]][int(mentsu[1])] += 1
+
+        else:
+            fu_data["n_shuntsu"] += 1
+
+            if re.match(kanchan, mentsu):
+                fu_data["fu"] += 2
+
+            if re.match(penchan, mentsu):
+                fu_data["fu"] += 2
+
+            fu_data["shuntsu"][mentsu[0]][int(mentsu[1])] += 1
+
+    if len(mentsu_list) == 7:
+        fu_data["fu"] = 25
+
+    elif len(mentsu_list) == 5:
+        fu_data["pinfu"] = fu_data["menzen"] and fu_data["fu"] == 20
+
+        if fu_data["tsumo"]:
+            if not fu_data["pinfu"]:
+                fu_data["fu"] += 2
+
+        else:
+            if fu_data["menzen"]:
+                fu_data["fu"] += 10
+
+            elif fu_data["fu"] == 20:
+                fu_data["fu"] = 30
+
+        fu_data["fu"] = math.ceil(fu_data["fu"] / 10) * 10
+
+    return fu_data

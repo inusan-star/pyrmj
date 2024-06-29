@@ -2,6 +2,8 @@
   "ignoreWords": [
     "akahai", // 赤牌
     "ankan", // 暗槓
+    "anko", // 暗刻
+    "bakaze", // 場風
     "chankan", // 槍槓
     "chii", // チー
     "chiitoi", // 七対
@@ -21,6 +23,8 @@
     "juntehai", // 純手牌
     "kaikan", // 開槓
     "kakan", // 加槓
+    "kanchan", // 嵌張
+    "kantsu", // 槓子
     "kantsumo", // 槓ツモ
     "kawa", // 河
     "kokushi", // 国士
@@ -29,14 +33,18 @@
     "manzu", // 萬子
     "mentsu", // 面子
     "menzen", // 門前
+    "penchan", // 辺張
+    "pinfu", // 平和
     "pinzu", // 筒子
     "riichi", // 立直
     "rinshan", // 嶺上
     "ron", // ロン
+    "sangenpai", // 三元牌
     "shanten", // 向聴
     "shuntsu", // 順子
     "souzu", // 索子
     "taatsu", // 塔子
+    "tanki", // 単騎
     "tehai", // 手牌
     "tenhoo", // 天和
     "toitsu", // 対子
@@ -44,6 +52,7 @@
     "uradora", // 裏ドラ
     "yaochu", // 幺九
     "zihai", // 字牌
+    "zikaze", // 自風
     "yaku" // 役
   ]
 }
