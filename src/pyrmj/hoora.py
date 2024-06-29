@@ -38,7 +38,7 @@ def get_pre_yaku(yaku):
     return pre_yaku
 
 
-def get_post_hupai(tehai, ron_hai, dora, uradora):
+def get_post_yaku(tehai, ron_hai, dora, uradora):
     """
     懸賞役一覧を取得する
     """
