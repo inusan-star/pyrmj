@@ -94,3 +94,37 @@ def get_post_yaku(tehai, ron_hai, dora, uradora):
         post_yaku.append({"name": "裏ドラ", "hansuu": n_uradora})
 
     return post_yaku
+
+
+def hoora_mentsu_kokushi(tehai, hoora_hai):
+    """
+    国士無双形の和了形を取得する
+    """
+    if len(tehai.fuuro_) > 0:
+        return []
+
+    mentsu_list = []
+    n_toitsu = 0
+
+    for suit in ["m", "p", "s", "z"]:
+        juntehai = tehai.juntehai_[suit]
+        numbers = [1, 2, 3, 4, 5, 6, 7] if suit == "z" else [1, 9]
+
+        for number in numbers:
+            if juntehai[number] == 2:
+                mentsu = (
+                    f"{suit}{str(number) * 2}{hoora_hai[2]}!"
+                    if (f"{suit}{number}" == hoora_hai[:2])
+                    else f"{suit}{str(number) * 2}"
+                )
+                mentsu_list.insert(0, mentsu)
+                n_toitsu += 1
+
+            elif juntehai[number] == 1:
+                mentsu = f"{suit}{number}{hoora_hai[2]}!" if (f"{suit}{number}" == hoora_hai[:2]) else f"{suit}{number}"
+                mentsu_list.append(mentsu)
+
+            else:
+                return []
+
+    return [mentsu_list] if n_toitsu == 1 else []
