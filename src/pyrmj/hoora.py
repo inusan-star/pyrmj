@@ -128,3 +128,33 @@ def hoora_mentsu_kokushi(tehai, hoora_hai):
                 return []
 
     return [mentsu_list] if n_toitsu == 1 else []
+
+
+def hoora_mentsu_chiitoi(tehai, hoora_hai):
+    """
+    七対子形の和了形を取得する
+    """
+    if len(tehai.fuuro_) > 0:
+        return []
+
+    mentsu_list = []
+
+    for suit in ["m", "p", "s", "z"]:
+        juntehai = tehai.juntehai_[suit]
+
+        for number in range(1, len(juntehai)):
+            if juntehai[number] == 0:
+                continue
+
+            if juntehai[number] == 2:
+                mentsu = (
+                    f"{suit}{str(number) * 2}{hoora_hai[2]}!"
+                    if (f"{suit}{number}" == hoora_hai[:2])
+                    else f"{suit}{str(number) * 2}"
+                )
+                mentsu_list.append(mentsu)
+
+            else:
+                return []
+
+    return [mentsu_list] if len(mentsu_list) == 7 else []
