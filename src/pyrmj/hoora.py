@@ -291,7 +291,7 @@ def hoora_mentsu_ippan(tehai, hoora_hai):
     """
     一般形の和了形を取得する
     """
-    mentsu_list = []
+    mentsu_lists = []
 
     for suit in ["m", "p", "s", "z"]:
         juntehai = tehai.juntehai_[suit]
@@ -309,8 +309,8 @@ def hoora_mentsu_ippan(tehai, hoora_hai):
                 if len(mentsu_list) != 5:
                     continue
 
-                mentsu_list.extend(add_hoora_hai(mentsu_list, hoora_hai))
+                mentsu_lists.extend(add_hoora_hai(mentsu_list, hoora_hai))
 
             juntehai[number] += 2
 
-    return mentsu_list
+    return mentsu_lists
