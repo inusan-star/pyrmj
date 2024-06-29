@@ -158,3 +158,36 @@ def hoora_mentsu_chiitoi(tehai, hoora_hai):
                 return []
 
     return [mentsu_list] if len(mentsu_list) == 7 else []
+
+
+def hoora_mentsu_chuuren(tehai, hoora_hai):
+    """
+    九蓮宝燈形の和了形を取得する
+    """
+    if len(tehai.fuuro_) > 0:
+        return []
+
+    suit = hoora_hai[0]
+    if suit == "z":
+        return []
+
+    mentsu = suit
+    juntehai = tehai.juntehai_[suit]
+
+    for number in range(1, 10):
+        if juntehai[number] == 0:
+            return []
+
+        if (number == 1 or number == 9) and juntehai[number] < 3:
+            return []
+
+        n_pai = juntehai[number] - 1 if number == int(hoora_hai[1]) else juntehai[number]
+
+        for _ in range(n_pai):
+            mentsu += str(number)
+
+    if len(mentsu) != 14:
+        return []
+
+    mentsu += f"{hoora_hai[1:]}!"
+    return [[mentsu]]
