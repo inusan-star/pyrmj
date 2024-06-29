@@ -191,3 +191,126 @@ def hoora_mentsu_chuuren(tehai, hoora_hai):
 
     mentsu += f"{hoora_hai[1:]}!"
     return [[mentsu]]
+
+
+def mentsu_suit(suit, juntehai, number=1):
+    """
+    同色内の面子を取得する
+    """
+    if number > 9:
+        return [[]]
+
+    if juntehai[number] == 0:
+        return mentsu_suit(suit, juntehai, number + 1)
+
+    shuntsu = []
+
+    if number <= 7 and juntehai[number] > 0 and juntehai[number + 1] > 0 and juntehai[number + 2] > 0:
+        juntehai[number] -= 1
+        juntehai[number + 1] -= 1
+        juntehai[number + 2] -= 1
+        shuntsu = mentsu_suit(suit, juntehai, number)
+        juntehai[number] += 1
+        juntehai[number + 1] += 1
+        juntehai[number + 2] += 1
+
+        for shuntsu_mentsu in shuntsu:
+            shuntsu_mentsu.insert(0, f"{suit}{number}{number + 1}{number + 2}")
+
+    kootsu = []
+
+    if juntehai[number] == 3:
+        juntehai[number] -= 3
+        kootsu = mentsu_suit(suit, juntehai, number + 1)
+        juntehai[number] += 3
+
+        for kootsu_mentsu in kootsu:
+            kootsu_mentsu.insert(0, f"{suit}{str(number) * 3}")
+
+    return shuntsu + kootsu
+
+
+def mentsu_all(tehai):
+    """
+    4面子となる組み合わせを全て取得する
+    """
+    tehai_all = [[]]
+
+    for suit in ["m", "p", "s"]:
+        new_mentsu = []
+
+        for mentsu_list in tehai_all:
+            for mentsu_suit_list in mentsu_suit(suit, tehai.juntehai_[suit]):
+                new_mentsu.append(mentsu_list + mentsu_suit_list)
+
+        tehai_all = new_mentsu
+
+    zihai = []
+
+    for number in range(1, 8):
+        if tehai.juntehai_["z"][number] == 0:
+            continue
+
+        if tehai.juntehai_["z"][number] != 3:
+            return []
+
+        zihai.append(f"z{str(number) * 3}")
+
+    fuuro = [mentsu.replace("0", "5") for mentsu in tehai.fuuro_]
+
+    return [te_hai + zihai + fuuro for te_hai in tehai_all]
+
+
+def add_hoora_hai(mentsu, hai):
+    """
+    和了牌にマークを付ける
+    """
+    suit, number, direction = hai[0], hai[1], hai[2]
+    new_mentsu = []
+
+    for i, mentsu_item in enumerate(mentsu):
+        if re.search(r"[\+\=\-]|\d{4}", mentsu_item):
+            continue
+
+        if i > 0 and mentsu_item == mentsu[i - 1]:
+            continue
+
+        replaced_mentsu = re.sub(re.compile(f"^({suit}.*{number})"), r"\g<1>" + f"{direction}!", mentsu_item)
+
+        if replaced_mentsu == mentsu_item:
+            continue
+
+        tmp_mentsu = mentsu[:]
+        tmp_mentsu[i] = replaced_mentsu
+        new_mentsu.append(tmp_mentsu)
+
+    return new_mentsu
+
+
+def hoora_mentsu_ippan(tehai, hoora_hai):
+    """
+    一般形の和了形を取得する
+    """
+    mentsu_list = []
+
+    for suit in ["m", "p", "s", "z"]:
+        juntehai = tehai.juntehai_[suit]
+
+        for number in range(1, len(juntehai)):
+            if juntehai[number] < 2:
+                continue
+
+            juntehai[number] -= 2
+            jantou = f"{suit}{str(number) * 2}"
+
+            for mentsu_list in mentsu_all(tehai):
+                mentsu_list.insert(0, jantou)
+
+                if len(mentsu_list) != 5:
+                    continue
+
+                mentsu_list.extend(add_hoora_hai(mentsu_list, hoora_hai))
+
+            juntehai[number] += 2
+
+    return mentsu_list
