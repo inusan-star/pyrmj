@@ -8,8 +8,10 @@
     "chanta", // 混全帯么九
     "chii", // チー
     "chiitoi", // 七対子
-    "chuuren", // 九蓮
+    "chinroutou", // 清老頭
+    "chuuren", // 九蓮宝燈
     "dahai", // 打牌
+    "daisangen", // 大三元
     "dora", // ドラ
     "fuuro", // 副露
     "hai", // 牌
@@ -20,6 +22,8 @@
     "honitsu", // 混一色
     "honroutou", // 混老頭
     "hoora", // 和了
+    "houjuu", // 放銃
+    "houjuusha", // 放銃者
     "ikkitsuukan", // 一気通貫
     "iipeekoo", // 一盃口
     "ippan", // 一般
@@ -48,6 +52,7 @@
     "riichi", // 立直
     "rinshan", // 嶺上
     "ron", // ロン
+    "ryuuiisoo", // 緑一色
     "sananko", // 三暗刻
     "sankantsu", // 三槓子
     "sangenpai", // 三元牌
@@ -57,6 +62,9 @@
     "shousangen", // 小三元
     "shuntsu", // 順子
     "souzu", // 索子
+    "suuanko", // 四暗刻
+    "suukantsu", // 四槓子
+    "suushii", // 四喜和
     "taatsu", // 塔子
     "tanki", // 単騎
     "tanyao", // 断幺
@@ -66,6 +74,7 @@
     "toitoi", // 対々和
     "toitsu", // 対子
     "tsumo", // ツモ
+    "tsuuiisoo", // 字一色
     "uradora", // 裏ドラ
     "yaochu", // 幺九
     "zihai", // 字牌

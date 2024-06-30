@@ -674,3 +674,129 @@ def get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, rule):
                 return [{"name": "清一色", "hansuu": 6 if fu_data["menzen"] else 5}]
 
         return []
+
+    def kokushi():
+        """
+        国士無双か判定する
+        """
+        if len(mentsu_list) != 13:
+            return []
+
+        if fu_data["tanki"]:
+            return [{"name": "国士無双十三面", "hansuu": "**"}]
+
+        else:
+            return [{"name": "国士無双", "hansuu": "*"}]
+
+    def suuanko():
+        """
+        四暗刻か判定する
+        """
+        if fu_data["n_anko"] != 4:
+            return []
+
+        if fu_data["tanki"]:
+            return [{"name": "四暗刻単騎", "hansuu": "**"}]
+
+        else:
+            return [{"name": "四暗刻", "hansuu": "*"}]
+
+    def daisangen():
+        """
+        大三元か判定する
+        """
+        kootsu = fu_data["kootsu"]
+
+        if kootsu["z"][5] + kootsu["z"][6] + kootsu["z"][7] == 3:
+            houjuu_mentsu = [
+                mentsu for mentsu in mentsu_list if re.match(r"^z([567])\1\1(?:[\+\=\-]|\1)(?!\!)", mentsu)
+            ]
+            houjuusha = houjuu_mentsu[2].search(r"[\+\=\-]") if len(houjuu_mentsu) > 2 else None
+
+            if houjuusha:
+                return [{"name": "大三元", "hansuu": "*", "houjuusha": houjuusha[0]}]
+
+            else:
+                return [{"name": "大三元", "hansuu": "*"}]
+
+        return []
+
+    def suushii():
+        """
+        四喜和か判定する
+        """
+        kootsu = fu_data["kootsu"]
+
+        if kootsu["z"][1] + kootsu["z"][2] + kootsu["z"][3] + kootsu["z"][4] == 4:
+            houjuu_mentsu = [
+                mentsu for mentsu in mentsu_list if re.match(r"^z([1234])\1\1(?:[\+\=\-]|\1)(?!\!)", mentsu)
+            ]
+            houjuusha = houjuu_mentsu[3].search(r"[\+\=\-]") if len(houjuu_mentsu) > 3 else None
+
+            if houjuusha:
+                return [{"name": "大四喜", "hansuu": "**", "houjuusha": houjuusha[0]}]
+
+            else:
+                return [{"name": "大四喜", "hansuu": "**"}]
+
+        if kootsu["z"][1] + kootsu["z"][2] + kootsu["z"][3] + kootsu["z"][4] == 3 and re.match(
+            r"^z[1234]", mentsu_list[0]
+        ):
+            return [{"name": "小四喜", "hansuu": "*"}]
+
+        return []
+
+    def tsuuiisoo():
+        """
+        字一色か判定する
+        """
+        if fu_data["n_zihai"] == len(mentsu_list):
+            return [{"name": "字一色", "hansuu": "*"}]
+
+        return []
+
+    def ryuuiisoo():
+        """
+        緑一色か判定する
+        """
+        if any(re.match(r"^[mp]", mentsu) for mentsu in mentsu_list):
+            return []
+
+        if any(re.match(r"^z[^6]", mentsu) for mentsu in mentsu_list):
+            return []
+
+        if any(re.match(r"^s.*[1579]", mentsu) for mentsu in mentsu_list):
+            return []
+
+        return [{"name": "緑一色", "hansuu": "*"}]
+
+    def chinroutou():
+        """
+        清老頭か判定する
+        """
+        if fu_data["n_yaochu"] == 5 and fu_data["n_kootsu"] == 4 and fu_data["n_zihai"] == 0:
+            return [{"name": "清老頭", "hansuu": "*"}]
+
+        return []
+
+    def suukantsu():
+        """
+        四槓子か判定する
+        """
+        if fu_data["n_kantsu"] == 4:
+            return [{"name": "四槓子", "hansuu": "*"}]
+
+        return []
+
+    def chuuren():
+        """
+        九蓮宝燈か判定する
+        """
+        if len(mentsu_list) != 1:
+            return []
+
+        if re.match(r"^[mpsz]1112345678999", mentsu_list[0]):
+            return [{"name": "純正九蓮宝燈", "hansuu": "**"}]
+
+        else:
+            return [{"name": "九蓮宝燈", "hansuu": "*"}]
