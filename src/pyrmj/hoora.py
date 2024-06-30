@@ -447,3 +447,63 @@ def get_fu_data(mentsu_list, bakaze, zikaze):
         fu_data["fu"] = math.ceil(fu_data["fu"] / 10) * 10
 
     return fu_data
+
+
+def get_yaku(mentsu, fu_data, pre_yaku, post_yaku, rule):
+    """
+    和了役を取得する
+    """
+
+    def menzen_tsumo():
+        """
+        門前清自摸和か判定する
+        """
+        if fu_data["menzen"] and fu_data["tsumo"]:
+            return [{"name": "門前清自摸和", "hansuu": 1}]
+
+        return []
+
+    def yaku_hai():
+        """
+        役牌か判定する
+        """
+        kaze_hai = ["東", "南", "西", "北"]
+        yaku_hai_all = []
+
+        if fu_data["kootsu"]["z"][fu_data["bakaze"] + 1]:
+            yaku_hai_all.append({"name": f'場風 {kaze_hai[fu_data["bakaze"]]}', "hansuu": 1})
+
+        if fu_data["kootsu"]["z"][fu_data["zikaze"] + 1]:
+            yaku_hai_all.append({"name": f'自風 {kaze_hai[fu_data["zikaze"]]}', "hansuu": 1})
+
+        if fu_data["kootsu"]["z"][5]:
+            yaku_hai_all.append({"name": "役牌 白", "hansuu": 1})
+
+        if fu_data["kootsu"]["z"][6]:
+            yaku_hai_all.append({"name": "役牌 發", "hansuu": 1})
+
+        if fu_data["kootsu"]["z"][7]:
+            yaku_hai_all.append({"name": "役牌 中", "hansuu": 1})
+
+        return yaku_hai_all
+
+    def pinfu():
+        """
+        平和か判定する
+        """
+        if fu_data["pinfu"]:
+            return [{"name": "平和", "hansuu": 1}]
+
+        return []
+
+    def tanyao(fu_data, rule):
+        """
+        断幺九か判定する
+        """
+        if fu_data["n_yaochu"] > 0:
+            return []
+
+        if rule["クイタンあり"] or fu_data["menzen"]:
+            return [{"name": "断幺九", "hansuu": 1}]
+
+        return []
