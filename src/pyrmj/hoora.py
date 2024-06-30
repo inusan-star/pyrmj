@@ -800,3 +800,55 @@ def get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, rule):
 
         else:
             return [{"name": "九蓮宝燈", "hansuu": "*"}]
+
+    yakuman = pre_yaku if (len(pre_yaku) > 0 and pre_yaku[0]["hansuu"][0] == "*") else []
+    yakuman = (
+        yakuman
+        + kokushi()
+        + suuanko()
+        + daisangen()
+        + suushii()
+        + tsuuiisoo()
+        + ryuuiisoo()
+        + chinroutou()
+        + suukantsu()
+        + chuuren()
+    )
+
+    for yaku in yakuman:
+        if not rule["ダブル役満あり"]:
+            yaku["hansuu"] = "*"
+
+        if not rule["役満パオあり"]:
+            yaku.pop("houjuusha", None)
+
+    if len(yakuman) > 0:
+        return yakuman
+
+    yaku = (
+        pre_yaku
+        + menzen_tsumo()
+        + yaku_hai()
+        + pinfu()
+        + tanyao()
+        + iipeekoo()
+        + sanshokudoujun()
+        + ikkitsuukan()
+        + chanta()
+        + chiitoi()
+        + toitoi()
+        + sananko()
+        + sankantsu()
+        + sanshokudoukoo()
+        + honroutou()
+        + shousangen()
+        + honitsu()
+        + junchan()
+        + ryanpeekoo()
+        + tinitsu()
+    )
+
+    if len(yaku) > 0:
+        yaku += post_yaku
+
+    return yaku
