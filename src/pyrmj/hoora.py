@@ -735,7 +735,7 @@ def get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, rule_json):
             houjuu_mentsu = [
                 mentsu for mentsu in mentsu_list if re.match(r"^z([567])\1\1(?:[\+\=\-]|\1)(?!\!)", mentsu)
             ]
-            houjuusha = houjuu_mentsu[2].search(r"[\+\=\-]") if len(houjuu_mentsu) > 2 else None
+            houjuusha = re.search(r"[\+\=\-]", houjuu_mentsu[2]) if len(houjuu_mentsu) > 2 else None
 
             if houjuusha:
                 return [{"name": "大三元", "hansuu": "*", "houjuusha": houjuusha[0]}]
@@ -755,7 +755,7 @@ def get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, rule_json):
             houjuu_mentsu = [
                 mentsu for mentsu in mentsu_list if re.match(r"^z([1234])\1\1(?:[\+\=\-]|\1)(?!\!)", mentsu)
             ]
-            houjuusha = houjuu_mentsu[3].search(r"[\+\=\-]") if len(houjuu_mentsu) > 3 else None
+            houjuusha = re.search(r"[\+\=\-]", houjuu_mentsu[3]) if len(houjuu_mentsu) > 3 else None
 
             if houjuusha:
                 return [{"name": "大四喜", "hansuu": "**", "houjuusha": houjuusha[0]}]
