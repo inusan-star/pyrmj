@@ -40,7 +40,7 @@ def get_pre_yaku(yaku):
     return pre_yaku
 
 
-def get_post_yaku(tehai, ron_hai, dora, uradora):
+def get_post_yaku(tehai, ron_hai, dora_indicator, uradora_indicator):
     """
     懸賞役一覧を取得する
     """
@@ -54,7 +54,7 @@ def get_post_yaku(tehai, ron_hai, dora, uradora):
     suit_string_list = re.findall(r"[mpsz][^mpsz,]*", tehai_string)
     n_dora = 0
 
-    for hai in dora:
+    for hai in dora_indicator:
         hai = Yama.dora(hai)
         regexp = re.compile(hai[1])
 
@@ -78,7 +78,7 @@ def get_post_yaku(tehai, ron_hai, dora, uradora):
 
     n_uradora = 0
 
-    for hai in uradora or []:
+    for hai in uradora_indicator or []:
         hai = Yama.dora(hai)
         regexp = re.compile(hai[1])
 
@@ -1002,7 +1002,7 @@ def hoora(tehai, ron_hai, param):
     max_hoora = {}
 
     pre_yaku = get_pre_yaku(param["yaku"])
-    post_yaku = get_post_yaku(tehai, ron_hai, param["dora"], param["uradora"])
+    post_yaku = get_post_yaku(tehai, ron_hai, param["dora_indicator"], param["uradora_indicator"])
 
     for mentsu_list in hoora_mentsu(tehai, ron_hai):
         fu_data = get_fu_data(mentsu_list, param["bakaze"], param["zikaze"])
@@ -1045,8 +1045,8 @@ def hoora_param(param=None):
             "chankan": param.get("chankan", 0),
             "tenhoo": param.get("tenhoo", 0),
         },
-        "dora": param.get("dora", []),
-        "uradora": param.get("uradora", None),
+        "dora_indicator": param.get("dora_indicator", []),
+        "uradora_indicator": param.get("uradora_indicator", None),
         "kyoutaku": {
             "tsumibou": param.get("tsumibou", 0),
             "riichibou": param.get("riichibou", 0),
