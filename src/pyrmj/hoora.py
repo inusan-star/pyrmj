@@ -1043,8 +1043,8 @@ def hoora_param(param=None):
             "chankan": param.get("chankan", 0),
             "tenhoo": param.get("tenhoo", 0),
         },
-        "dora": list(param.get("dora")) if param.get("dora") else [],
-        "uradora": list(param.get("uradora")) if param.get("uradora") else None,
+        "dora": param.get("dora", []),
+        "uradora": param.get("uradora", None),
         "kyoutaku": {
             "tsumibou": param.get("tsumibou", 0),
             "riichibou": param.get("riichibou", 0),
