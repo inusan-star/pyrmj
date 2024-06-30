@@ -977,7 +977,7 @@ def get_tokuten(fu, yaku, ron_hai, param):
                 else:
                     bunpai[i] -= ko + tsumi * 100
 
-    return {
+    result_value = {
         "yaku": yaku,
         "fu": fu,
         "hansuu": hansuu,
@@ -985,6 +985,8 @@ def get_tokuten(fu, yaku, ron_hai, param):
         "tokuten": tokuten + tokuten2,
         "bunpai": bunpai,
     }
+
+    return {key: value for key, value in result_value.items() if value is not None}
 
 
 def hoora(tehai, ron_hai, param):
