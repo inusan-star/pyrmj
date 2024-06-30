@@ -44,8 +44,11 @@
     "riichi", // 立直
     "rinshan", // 嶺上
     "ron", // ロン
+    "sananko", // 三暗刻
+    "sankantsu", // 三槓子
     "sangenpai", // 三元牌
     "sanshokudoujun", // 三色同順
+    "sanshokudoukoo", // 三色同刻
     "shanten", // 向聴
     "shuntsu", // 順子
     "souzu", // 索子
@@ -54,6 +57,7 @@
     "tanyao", // 断幺
     "tehai", // 手牌
     "tenhoo", // 天和
+    "toitoi", // 対々和
     "toitsu", // 対子
     "tsumo", // ツモ
     "uradora", // 裏ドラ

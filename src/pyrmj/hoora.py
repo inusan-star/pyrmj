@@ -449,7 +449,7 @@ def get_fu_data(mentsu_list, bakaze, zikaze):
     return fu_data
 
 
-def get_yaku(mentsu, fu_data, pre_yaku, post_yaku, rule):
+def get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, rule):
     """
     和了役を取得する
     """
@@ -553,5 +553,53 @@ def get_yaku(mentsu, fu_data, pre_yaku, post_yaku, rule):
         """
         if fu_data["n_yaochu"] == 5 and fu_data["n_shuntsu"] > 0 and fu_data["n_zihai"] > 0:
             return [{"name": "混全帯幺九", "hansuu": 2 if fu_data["menzen"] else 1}]
+
+        return []
+
+    def chiitoi():
+        """
+        七対子か判定する
+        """
+        if len(mentsu_list) == 7:
+            return [{"name": "七対子", "hansuu": 2}]
+
+        return []
+
+    def toitoi():
+        """
+        対々和か判定する
+        """
+        if fu_data["n_kootsu"] == 4:
+            return [{"name": "対々和", "hansuu": 2}]
+
+        return []
+
+    def sananko():
+        """
+        三暗刻か判定する
+        """
+        if fu_data["n_anko"] == 3:
+            return [{"name": "三暗刻", "hansuu": 2}]
+
+        return []
+
+    def sankantsu():
+        """
+        三槓子か判定する
+        """
+        if fu_data["n_kantsu"] == 3:
+            return [{"name": "三槓子", "hansuu": 2}]
+
+        return []
+
+    def sanshokudoukoo():
+        """
+        三色同刻か判定する
+        """
+        kootsu = fu_data["kootsu"]
+
+        for number in range(1, 10):
+            if kootsu["m"][number] and kootsu["p"][number] and kootsu["s"][number]:
+                return [{"name": "三色同刻", "hansuu": 2}]
 
         return []
