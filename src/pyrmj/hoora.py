@@ -496,7 +496,7 @@ def get_yaku(mentsu, fu_data, pre_yaku, post_yaku, rule):
 
         return []
 
-    def tanyao(fu_data, rule):
+    def tanyao():
         """
         断幺九か判定する
         """
@@ -505,5 +505,32 @@ def get_yaku(mentsu, fu_data, pre_yaku, post_yaku, rule):
 
         if rule["クイタンあり"] or fu_data["menzen"]:
             return [{"name": "断幺九", "hansuu": 1}]
+
+        return []
+
+    def iipeekoo():
+        """
+        一盃口か判定する
+        """
+        if not fu_data["menzen"]:
+            return []
+
+        shuntsu = fu_data["shuntsu"]
+        peekoo = sum(x >> 1 for x in shuntsu["m"] + shuntsu["p"] + shuntsu["s"])
+
+        if peekoo == 1:
+            return [{"name": "一盃口", "hansuu": 1}]
+
+        return []
+
+    def sanshokudoujun():
+        """
+        三色同順か判定する
+        """
+        shuntsu = fu_data["shuntsu"]
+
+        for number in range(1, 8):
+            if shuntsu["m"][number] and shuntsu["p"][number] and shuntsu["s"][number]:
+                return [{"name": "三色同順", "hansuu": 2 if fu_data["menzen"] else 1}]
 
         return []
