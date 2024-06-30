@@ -1021,7 +1021,7 @@ def hoora(tehai, ron_hai, param):
         ):
             max_hoora = result_value
 
-    return max_hoora
+    return max_hoora if max_hoora else None
 
 
 def hoora_param(param=None):
