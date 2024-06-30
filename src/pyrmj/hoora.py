@@ -984,3 +984,40 @@ def get_tokuten(fu, yaku, ron_hai, param):
         "tokuten": tokuten + tokuten2,
         "bunpai": bunpai,
     }
+
+
+def hoora(tehai, ron_hai, param):
+    """
+    和了点を計算する
+    """
+    if ron_hai:
+        if not re.match(r"[\+\=\-]$", ron_hai):
+            raise ValueError(f"Invalid ron hai: {ron_hai}")
+
+        ron_hai = ron_hai[:2] + ron_hai[-1]
+
+    max_hoora = {}
+
+    pre_yaku = get_pre_yaku(param["yaku"])
+    post_yaku = get_post_yaku(tehai, ron_hai, param["dora"], param["uradora"])
+
+    for mentsu_list in hoora_mentsu(tehai, ron_hai):
+        fu_data = get_fu_data(mentsu_list, param["bakaze"], param["zikaze"])
+        yaku = get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, param["rule"])
+        result_value = get_tokuten(fu_data["fu"], yaku, ron_hai, param)
+
+        if (
+            not max_hoora
+            or result_value["tokuten"] > max_hoora["tokuten"]
+            or (
+                result_value["tokuten"] == max_hoora["tokuten"]
+                and (
+                    not result_value["hansuu"]
+                    or result_value["hansuu"] > max_hoora["hansuu"]
+                    or (result_value["hansuu"] == max_hoora["hansuu"] and result_value["fu"] > max_hoora["fu"])
+                )
+            )
+        ):
+            max_hoora = result_value
+
+    return max_hoora
