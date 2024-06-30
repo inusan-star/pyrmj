@@ -534,3 +534,24 @@ def get_yaku(mentsu, fu_data, pre_yaku, post_yaku, rule):
                 return [{"name": "三色同順", "hansuu": 2 if fu_data["menzen"] else 1}]
 
         return []
+
+    def ikkitsuukan():
+        """
+        一気通貫か判定する
+        """
+        shuntsu = fu_data["shuntsu"]
+
+        for suit in ["m", "p", "s"]:
+            if shuntsu[suit][1] and shuntsu[suit][4] and shuntsu[suit][7]:
+                return [{"name": "一気通貫", "hansuu": 2 if fu_data["menzen"] else 1}]
+
+        return []
+
+    def chanta():
+        """
+        混全帯幺九か判定する
+        """
+        if fu_data["n_yaochu"] == 5 and fu_data["n_shuntsu"] > 0 and fu_data["n_zihai"] > 0:
+            return [{"name": "混全帯幺九", "hansuu": 2 if fu_data["menzen"] else 1}]
+
+        return []

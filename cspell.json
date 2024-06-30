@@ -5,6 +5,7 @@
     "anko", // 暗刻
     "bakaze", // 場風
     "chankan", // 槍槓
+    "chanta", // 混全帯么九
     "chii", // チー
     "chiitoi", // 七対
     "chuuren", // 九蓮
@@ -17,6 +18,8 @@
     "haitei", // 海底
     "hansuu", // 翻数
     "hoora", // 和了
+    "ikkitsuukan", // 一気通貫
+    "iipeekoo", // 一盃口
     "ippan", // 一般
     "ippatsu", // 一発
     "jantou", // 雀頭
@@ -27,12 +30,14 @@
     "kantsu", // 槓子
     "kantsumo", // 槓ツモ
     "kawa", // 河
+    "kaze", // 風
     "kokushi", // 国士
     "kootsu", // 刻子
     "koritsuhai", // 孤立牌
     "manzu", // 萬子
     "mentsu", // 面子
     "menzen", // 門前
+    "peekoo", // 盃口
     "penchan", // 辺張
     "pinfu", // 平和
     "pinzu", // 筒子
@@ -40,11 +45,13 @@
     "rinshan", // 嶺上
     "ron", // ロン
     "sangenpai", // 三元牌
+    "sanshokudoujun", // 三色同順
     "shanten", // 向聴
     "shuntsu", // 順子
     "souzu", // 索子
     "taatsu", // 塔子
     "tanki", // 単騎
+    "tanyao", // 断幺
     "tehai", // 手牌
     "tenhoo", // 天和
     "toitsu", // 対子
