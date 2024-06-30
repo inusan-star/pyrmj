@@ -4,6 +4,7 @@
     "ankan", // 暗槓
     "anko", // 暗刻
     "bakaze", // 場風
+    "bunpai", // 分配
     "chankan", // 槍槓
     "chanta", // 混全帯么九
     "chii", // チー
@@ -38,18 +39,22 @@
     "kantsumo", // 槓ツモ
     "kawa", // 河
     "kaze", // 風
+    "ko", // 子
     "kokushi", // 国士
     "kootsu", // 刻子
     "koritsuhai", // 孤立牌
+    "kyoutaku", // 供託
     "manzu", // 萬子
     "mentsu", // 面子
     "menzen", // 門前
+    "oya", // 親
     "peekoo", // 盃口
     "penchan", // 辺張
     "pinfu", // 平和
     "pinzu", // 筒子
     "ryanpeekoo", // 二盃口
     "riichi", // 立直
+    "riichibou", // 立直棒
     "rinshan", // 嶺上
     "ron", // ロン
     "ryuuiisoo", // 緑一色
@@ -73,6 +78,9 @@
     "tinitsu", // 清一色
     "toitoi", // 対々和
     "toitsu", // 対子
+    "tokuten", // 得点
+    "tsumi", // 積み
+    "tsumibou", //積み棒
     "tsumo", // ツモ
     "tsuuiisoo", // 字一色
     "uradora", // 裏ドラ

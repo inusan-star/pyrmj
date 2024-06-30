@@ -852,3 +852,112 @@ def get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, rule):
         yaku += post_yaku
 
     return yaku
+
+
+def get_tokuten(fu, yaku, hoora_hai, param):
+    """
+    和了点を取得する
+    """
+    if len(yaku) == 0:
+        return {"tokuten": 0}
+
+    zikaze = param["zikaze"]
+    hansuu, yakuman, tokuten, base, houjuusha, tokuten2, base2, houjuusha2 = (
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+    )
+
+    if yaku[0]["hansuu"][0] == "*":
+        fu = None
+        yakuman = 1 if not param["rule"]["役満の複合あり"] else sum(len(y["hansuu"]) for y in yaku)
+        base = 8000 * yakuman
+        y = next((y for y in yaku if "houjuusha" in y), None)
+
+        if y:
+            houjuusha2 = (zikaze + {"+": 1, "=": 2, "-": 3}[y["houjuusha"]]) % 4
+            base2 = 8000 * min(len(y["hansuu"]), yakuman)
+
+    else:
+        hansuu = sum(y["hansuu"] for y in yaku)
+
+        if hansuu >= 13 and param["rule"]["数え役満あり"]:
+            base = 8000
+
+        elif hansuu >= 11:
+            base = 6000
+
+        elif hansuu >= 8:
+            base = 4000
+
+        elif hansuu >= 6:
+            base = 3000
+
+        elif param["rule"]["切り上げ満貫あり"] and fu << (2 + hansuu) == 1920:
+            base = 2000
+
+        else:
+            base = min(fu << (2 + hansuu), 2000)
+
+    bunpai = [0, 0, 0, 0]
+    tsumi = param["kyoutaku"]["tsumibou"]
+    riichi = param["kyoutaku"]["riichibou"]
+
+    if houjuusha2 is not None:
+        if hoora_hai:
+            base2 = base2 // 2
+
+        base = base - base2
+        tokuten2 = base2 * (6 if zikaze == 0 else 4)
+        bunpai[zikaze] += tokuten2
+        bunpai[houjuusha2] -= tokuten2
+
+    else:
+        tokuten2 = 0
+
+    if hoora_hai or base == 0:
+        houjuusha = houjuusha2 if base == 0 else (zikaze + {"+": 1, "=": 2, "-": 3}[hoora_hai[2]]) % 4
+        tokuten = math.ceil(base * (6 if zikaze == 0 else 4) / 100) * 100
+        bunpai[zikaze] += tokuten + tsumi * 300 + riichi * 1000
+        bunpai[houjuusha] -= tokuten + tsumi * 300
+
+    else:
+        oya = math.ceil(base * 2 / 100) * 100
+        ko = math.ceil(base / 100) * 100
+
+        if zikaze == 0:
+            tokuten = oya * 3
+
+            for i in range(4):
+                if i == zikaze:
+                    bunpai[i] += tokuten + tsumi * 300 + riichi * 1000
+
+                else:
+                    bunpai[i] -= oya + tsumi * 100
+
+        else:
+            tokuten = oya + ko * 2
+
+            for i in range(4):
+                if i == zikaze:
+                    bunpai[i] += tokuten + tsumi * 300 + riichi * 1000
+
+                elif i == 0:
+                    bunpai[i] -= oya + tsumi * 100
+
+                else:
+                    bunpai[i] -= ko + tsumi * 100
+
+    return {
+        "yaku": yaku,
+        "fu": fu,
+        "hansuu": hansuu,
+        "yakuman": yakuman,
+        "tokuten": tokuten + tokuten2,
+        "bunpai": bunpai,
+    }
