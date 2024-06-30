@@ -825,7 +825,7 @@ def get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, rule_json):
         else:
             return [{"name": "九蓮宝燈", "hansuu": "*"}]
 
-    yakuman = pre_yaku if (len(pre_yaku) > 0 and pre_yaku[0]["hansuu"][0] == "*") else []
+    yakuman = pre_yaku if (len(pre_yaku) > 0 and str(pre_yaku[0]["hansuu"])[0] == "*") else []
     yakuman = (
         yakuman
         + kokushi()
@@ -897,7 +897,7 @@ def get_tokuten(fu, yaku, ron_hai, param):
         None,
     )
 
-    if yaku[0]["hansuu"][0] == "*":
+    if str(yaku[0]["hansuu"])[0] == "*":
         fu = None
         yakuman = 1 if not param["rule"]["役満の複合あり"] else sum(len(y["hansuu"]) for y in yaku)
         base = 8000 * yakuman
