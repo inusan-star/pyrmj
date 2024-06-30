@@ -317,6 +317,29 @@ def hoora_mentsu_ippan(tehai, hoora_hai):
     return mentsu_lists
 
 
+def hoora_mentsu(tehai, ron_hai):
+    """
+    和了形を取得する
+    """
+    new_tehai = tehai.clone()
+
+    if ron_hai:
+        new_tehai.tsumo(ron_hai)
+
+    if not new_tehai.tsumo_ or len(new_tehai.tsumo_) > 2:
+        return []
+
+    hoora_hai = (ron_hai if ron_hai else new_tehai.tsumo_ + "_").replace("0", "5")
+
+    mentsu_lists = []
+    mentsu_lists.extend(hoora_mentsu_ippan(new_tehai, hoora_hai))
+    mentsu_lists.extend(hoora_mentsu_chiitoi(new_tehai, hoora_hai))
+    mentsu_lists.extend(hoora_mentsu_kokushi(new_tehai, hoora_hai))
+    mentsu_lists.extend(hoora_mentsu_chuuren(new_tehai, hoora_hai))
+
+    return mentsu_lists
+
+
 def get_fu_data(mentsu_list, bakaze, zikaze):
     """
     符と面子構成情報を取得する
@@ -854,7 +877,7 @@ def get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, rule):
     return yaku
 
 
-def get_tokuten(fu, yaku, hoora_hai, param):
+def get_tokuten(fu, yaku, ron_hai, param):
     """
     和了点を取得する
     """
@@ -909,7 +932,7 @@ def get_tokuten(fu, yaku, hoora_hai, param):
     riichi = param["kyoutaku"]["riichibou"]
 
     if houjuusha2 is not None:
-        if hoora_hai:
+        if ron_hai:
             base2 = base2 // 2
 
         base = base - base2
@@ -920,8 +943,8 @@ def get_tokuten(fu, yaku, hoora_hai, param):
     else:
         tokuten2 = 0
 
-    if hoora_hai or base == 0:
-        houjuusha = houjuusha2 if base == 0 else (zikaze + {"+": 1, "=": 2, "-": 3}[hoora_hai[2]]) % 4
+    if ron_hai or base == 0:
+        houjuusha = houjuusha2 if base == 0 else (zikaze + {"+": 1, "=": 2, "-": 3}[ron_hai[2]]) % 4
         tokuten = math.ceil(base * (6 if zikaze == 0 else 4) / 100) * 100
         bunpai[zikaze] += tokuten + tsumi * 300 + riichi * 1000
         bunpai[houjuusha] -= tokuten + tsumi * 300
