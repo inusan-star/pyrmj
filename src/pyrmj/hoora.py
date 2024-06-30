@@ -992,7 +992,7 @@ def hoora(tehai, ron_hai, param):
     和了点を計算する
     """
     if ron_hai:
-        if not re.match(r"[\+\=\-]$", ron_hai):
+        if not re.search(r"[\+\=\-]$", ron_hai):
             raise ValueError(f"Invalid ron hai: {ron_hai}")
 
         ron_hai = ron_hai[:2] + ron_hai[-1]
