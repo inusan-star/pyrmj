@@ -14,8 +14,10 @@
     "dahai", // 打牌
     "daisangen", // 大三元
     "dora", // ドラ
+    "doras", // ドラ(複数)
     "fuuro", // 副露
     "hai", // 牌
+    "hais", // 牌(複数)
     "haipai", // 配牌
     "haisuu", // 牌数
     "haitei", // 海底
@@ -33,6 +35,7 @@
     "junchan", // 純全帯么九
     "juntehai", // 純手牌
     "kaikan", // 開槓
+    "kaikaned", // 開槓(過去分詞)
     "kakan", // 加槓
     "kanchan", // 嵌張
     "kantsu", // 槓子
@@ -47,11 +50,13 @@
     "manzu", // 萬子
     "mentsu", // 面子
     "menzen", // 門前
+    "mpsz", // 萬子・筒子・索子・字牌
     "oya", // 親
     "peekoo", // 盃口
     "penchan", // 辺張
     "pinfu", // 平和
     "pinzu", // 筒子
+    "pyrmj", // モジュール名(麻雀)
     "ryanpeekoo", // 二盃口
     "riichi", // 立直
     "riichibou", // 立直棒
@@ -70,6 +75,7 @@
     "suuanko", // 四暗刻
     "suukantsu", // 四槓子
     "suushii", // 四喜和
+    "svgwrite", // モジュール名(SVG)
     "taatsu", // 塔子
     "tanki", // 単騎
     "tanyao", // 断幺
@@ -82,6 +88,7 @@
     "tsumi", // 積み
     "tsumibou", //積み棒
     "tsumo", // ツモ
+    "tsumoed", // ツモ(過去分詞)
     "tsuuiisoo", // 字一色
     "uradora", // 裏ドラ
     "yakuman", // 役満
