@@ -1,5 +1,6 @@
 import math
 import re
+from .rule import rule
 from .yama import Yama
 
 
@@ -472,7 +473,7 @@ def get_fu_data(mentsu_list, bakaze, zikaze):
     return fu_data
 
 
-def get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, rule):
+def get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, rule_json):
     """
     和了役を取得する
     """
@@ -526,7 +527,7 @@ def get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, rule):
         if fu_data["n_yaochu"] > 0:
             return []
 
-        if rule["クイタンあり"] or fu_data["menzen"]:
+        if rule_json["クイタンあり"] or fu_data["menzen"]:
             return [{"name": "断幺九", "hansuu": 1}]
 
         return []
@@ -839,10 +840,10 @@ def get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, rule):
     )
 
     for yaku in yakuman:
-        if not rule["ダブル役満あり"]:
+        if not rule_json["ダブル役満あり"]:
             yaku["hansuu"] = "*"
 
-        if not rule["役満パオあり"]:
+        if not rule_json["役満パオあり"]:
             yaku.pop("houjuusha", None)
 
     if len(yakuman) > 0:
@@ -1021,3 +1022,33 @@ def hoora(tehai, ron_hai, param):
             max_hoora = result_value
 
     return max_hoora
+
+
+def hoora_param(param=None):
+    """
+    和了点の計算用のパラメータを取得する
+    """
+    if param is None:
+        param = {}
+
+    param_json = {
+        "rule": param.get("rule", rule()),
+        "bakaze": param.get("bakaze", 0),
+        "zikaze": param.get("zikaze", 1),
+        "yaku": {
+            "riichi": param.get("riichi", 0),
+            "ippatsu": param.get("ippatsu", False),
+            "haitei": param.get("haitei", False),
+            "rinshan": param.get("rinshan", False),
+            "chankan": param.get("chankan", 0),
+            "tenhoo": param.get("tenhoo", 0),
+        },
+        "dora": list(param.get("dora")) if param.get("dora") else [],
+        "uradora": list(param.get("uradora")) if param.get("uradora") else None,
+        "kyoutaku": {
+            "tsumibou": param.get("tsumibou", 0),
+            "riichibou": param.get("riichibou", 0),
+        },
+    }
+
+    return param_json
