@@ -323,15 +323,15 @@ def get_fu_data(mentsu_list, bakaze, zikaze):
     """
     bakaze_hai = re.compile(f"^z{bakaze + 1}.*$")
     zikaze_hai = re.compile(f"^z{zikaze + 1}.*$")
-    sangenpai = re.compile(r"^z[567].*$")
-    yaochu = re.compile(r"^.*[z19].*$")
-    zihai = re.compile(r"^z.*$")
-    kootsu = re.compile(r"^[mpsz](\d)\1\1.*$")
-    anko = re.compile(r"^[mpsz](\d)\1\1(?:\1|_\!)?$")
-    kantsu = re.compile(r"^[mpsz](\d)\1\1.*\1.*$")
-    tanki = re.compile(r"^[mpsz](\d)\1[\+\=\-\_]\!$")
-    kanchan = re.compile(r"^[mps]\d\d[\+\=\-\_]\!\d$")
-    penchan = re.compile(r"^[mps](123[\+\=\-\_]\!|7[\+\=\-\_]\!89)$")
+    sangenpai = r"^z[567].*$"
+    yaochu = r"^.*[z19].*$"
+    zihai = r"^z.*$"
+    kootsu = r"^[mpsz](\d)\1\1.*$"
+    anko = r"^[mpsz](\d)\1\1(?:\1|_\!)?$"
+    kantsu = r"^[mpsz](\d)\1\1.*\1.*$"
+    tanki = r"^[mpsz](\d)\1[\+\=\-\_]\!$"
+    kanchan = r"^[mps]\d\d[\+\=\-\_]\!\d$"
+    penchan = r"^[mps](123[\+\=\-\_]\!|7[\+\=\-\_]\!89)$"
 
     fu_data = {
         "fu": 20,
@@ -516,7 +516,7 @@ def get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, rule):
             return []
 
         shuntsu = fu_data["shuntsu"]
-        peekoo = sum(x >> 1 for x in shuntsu["m"] + shuntsu["p"] + shuntsu["s"])
+        peekoo = sum(n >> 1 for n in shuntsu["m"] + shuntsu["p"] + shuntsu["s"])
 
         if peekoo == 1:
             return [{"name": "一盃口", "hansuu": 1}]
@@ -601,5 +601,76 @@ def get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, rule):
         for number in range(1, 10):
             if kootsu["m"][number] and kootsu["p"][number] and kootsu["s"][number]:
                 return [{"name": "三色同刻", "hansuu": 2}]
+
+        return []
+
+    def honroutou():
+        """
+        混老頭か判定する
+        """
+        if fu_data["n_yaochu"] == len(mentsu_list) and fu_data["n_shuntsu"] == 0 and fu_data["n_zihai"] > 0:
+            return [{"name": "混老頭", "hansuu": 2}]
+
+        return []
+
+    def shousangen():
+        """
+        小三元か判定する
+        """
+        kootsu = fu_data["kootsu"]
+
+        if kootsu["z"][5] + kootsu["z"][6] + kootsu["z"][7] == 2 and re.match(r"^z[567]", mentsu_list[0]):
+            return [{"name": "小三元", "hansuu": 2}]
+
+        return []
+
+    def honitsu():
+        """
+        混一色か判定する
+        """
+        for suit in ["m", "p", "s"]:
+            zihai_suit_match = re.compile(f"^[z{suit}]")
+
+            if (
+                sum(1 for mentsu in mentsu_list if zihai_suit_match.match(mentsu)) == len(mentsu_list)
+                and fu_data["n_zihai"] > 0
+            ):
+                return [{"name": "混一色", "hansuu": 3 if fu_data["menzen"] else 2}]
+
+        return []
+
+    def junchan():
+        """
+        純全帯幺九か判定する
+        """
+        if fu_data["n_yaochu"] == 5 and fu_data["n_shuntsu"] > 0 and fu_data["n_zihai"] == 0:
+            return [{"name": "純全帯幺九", "hansuu": 3 if fu_data["menzen"] else 2}]
+
+        return []
+
+    def ryanpeekoo():
+        """
+        二盃口か判定する
+        """
+        if not fu_data["menzen"]:
+            return []
+
+        shuntsu = fu_data["shuntsu"]
+        peekoo = sum(n >> 1 for n in shuntsu["m"] + shuntsu["p"] + shuntsu["s"])
+
+        if peekoo == 2:
+            return [{"name": "二盃口", "hansuu": 3}]
+
+        return []
+
+    def tinitsu():
+        """
+        清一色か判定する
+        """
+        for suit in ["m", "p", "s"]:
+            suit_match = re.compile(f"^[{suit}]")
+
+            if sum(1 for mentsu in mentsu_list if suit_match.match(mentsu)) == len(mentsu_list):
+                return [{"name": "清一色", "hansuu": 6 if fu_data["menzen"] else 5}]
 
         return []
