@@ -989,6 +989,36 @@ def get_tokuten(fu, yaku, ron_hai, param):
     return {key: value for key, value in result_value.items() if value is not None}
 
 
+def hoora_param(param=None):
+    """
+    和了点の計算用のパラメータを取得する
+    """
+    if param is None:
+        param = {}
+
+    param_json = {
+        "rule": param.get("rule", rule()),
+        "bakaze": param.get("bakaze", 0),
+        "zikaze": param.get("zikaze", 1),
+        "yaku": {
+            "riichi": param.get("riichi", 0),
+            "ippatsu": param.get("ippatsu", False),
+            "haitei": param.get("haitei", False),
+            "rinshan": param.get("rinshan", False),
+            "chankan": param.get("chankan", 0),
+            "tenhoo": param.get("tenhoo", 0),
+        },
+        "dora_indicator": param.get("dora_indicator", []),
+        "uradora_indicator": param.get("uradora_indicator", None),
+        "kyoutaku": {
+            "tsumibou": param.get("tsumibou", 0),
+            "riichibou": param.get("riichibou", 0),
+        },
+    }
+
+    return param_json
+
+
 def hoora(tehai, ron_hai, param):
     """
     和了点を計算する
@@ -1024,33 +1054,3 @@ def hoora(tehai, ron_hai, param):
             max_hoora = result_value
 
     return max_hoora if max_hoora else None
-
-
-def hoora_param(param=None):
-    """
-    和了点の計算用のパラメータを取得する
-    """
-    if param is None:
-        param = {}
-
-    param_json = {
-        "rule": param.get("rule", rule()),
-        "bakaze": param.get("bakaze", 0),
-        "zikaze": param.get("zikaze", 1),
-        "yaku": {
-            "riichi": param.get("riichi", 0),
-            "ippatsu": param.get("ippatsu", False),
-            "haitei": param.get("haitei", False),
-            "rinshan": param.get("rinshan", False),
-            "chankan": param.get("chankan", 0),
-            "tenhoo": param.get("tenhoo", 0),
-        },
-        "dora_indicator": param.get("dora_indicator", []),
-        "uradora_indicator": param.get("uradora_indicator", None),
-        "kyoutaku": {
-            "tsumibou": param.get("tsumibou", 0),
-            "riichibou": param.get("riichibou", 0),
-        },
-    }
-
-    return param_json
