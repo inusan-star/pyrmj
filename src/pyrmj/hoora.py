@@ -341,7 +341,7 @@ def hoora_mentsu(tehai, ron_hai=None):
     return mentsu_lists
 
 
-def get_fu_data(mentsu_list, bakaze, zikaze):
+def get_fu_data(mentsu_list, bakaze, zikaze, rule_json):
     """
     符と面子構成情報を取得する
     """
@@ -417,6 +417,7 @@ def get_fu_data(mentsu_list, bakaze, zikaze):
             if re.match(sangenpai, mentsu):
                 fu += 2
 
+            fu = 2 if rule_json["連風牌は2符"] and fu > 2 else fu
             fu_data["fu"] += fu
 
             if fu_data["tanki"]:
@@ -1035,7 +1036,7 @@ def hoora(tehai, ron_hai, param):
     post_yaku = get_post_yaku(tehai, ron_hai, param["dora_indicator"], param["uradora_indicator"])
 
     for mentsu_list in hoora_mentsu(tehai, ron_hai):
-        fu_data = get_fu_data(mentsu_list, param["bakaze"], param["zikaze"])
+        fu_data = get_fu_data(mentsu_list, param["bakaze"], param["zikaze"], param["rule"])
         yaku = get_yaku(mentsu_list, fu_data, pre_yaku, post_yaku, param["rule"])
         result_value = get_tokuten(fu_data["fu"], yaku, ron_hai, param)
 
