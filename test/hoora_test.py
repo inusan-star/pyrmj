@@ -1,12 +1,12 @@
 import pytest
-from pyrmj import Tehai, hoora_mentsu, hoora, hoora_param
+from pyrmj import Tehai, hoora_mentsu, hoora_param, hoora, rule
 
 
 def test_hoora_mentsu():
     """
-    hoora_mentsu(tehai, ron_hai)のテスト
+    hoora_mentsu(tehai, ron_hai=None)のテスト
     """
-    print("▶︎ hoora_mentsu(tehai, ron_hai)のテスト")
+    print("▶︎ hoora_mentsu(tehai, ron_hai=None)のテスト")
 
     test_cases = [
         ("m123p055s789z11122", None, [["z22_!", "m123", "p555", "s789", "z111"]]),
@@ -60,6 +60,41 @@ def test_hoora_mentsu():
     for tehai_string, expected in test_cases:
         tehai = Tehai.from_string(tehai_string)
         assert hoora_mentsu(tehai) == expected
+
+
+def test_hoora():
+    """
+    hoora(tehai, ron_hai, param)のテスト
+    """
+    print("▶︎ hoora(tehai, ron_hai, param)のテスト")
+
+    hoora_result = hoora(
+        Tehai.from_string("m123p123z1z1,s1-23,z555="),
+        None,
+        hoora_param({"zikaze": 0, "rule": rule({"連風牌は2符": True})}),
+    )
+    assert hoora_result.get("fu") == 30
+
+    hoora_result = hoora(
+        Tehai.from_string("m22555p234s78,p777-"),
+        "s6=",
+        hoora_param({"rule": rule({"クイタンあり": False})}),
+    )
+    assert hoora_result.get("yaku") is None
+
+    hoora_result = hoora(
+        Tehai.from_string("m22555p234777s78"),
+        "s6=",
+        hoora_param({"rule": rule({"クイタンあり": False})}),
+    )
+    assert hoora_result == {
+        "yaku": [{"name": "断幺九", "hansuu": 1}],
+        "fu": 40,
+        "hansuu": 1,
+        "yakuman": None,
+        "tokuten": 1300,
+        "bunpai": [0, 1300, 0, -1300],
+    }
 
 
 if __name__ == "__main__":
