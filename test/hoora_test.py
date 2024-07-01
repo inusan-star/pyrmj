@@ -82,19 +82,195 @@ def test_hoora():
     )
     assert hoora_result.get("yaku") is None
 
-    hoora_result = hoora(
-        Tehai.from_string("m22555p234777s78"),
-        "s6=",
-        hoora_param({"rule": rule({"クイタンあり": False})}),
-    )
-    assert hoora_result == {
-        "yaku": [{"name": "断幺九", "hansuu": 1}],
-        "fu": 40,
-        "hansuu": 1,
-        "yakuman": None,
-        "tokuten": 1300,
-        "bunpai": [0, 1300, 0, -1300],
-    }
+    test_cases = [
+        (
+            "m22555p234777s78",
+            "s6=",
+            {"rule": rule({"クイタンあり": False})},
+            {
+                "yaku": [{"name": "断幺九", "hansuu": 1}],
+                "fu": 40,
+                "hansuu": 1,
+                "yakuman": None,
+                "tokuten": 1300,
+                "bunpai": [0, 1300, 0, -1300],
+            },
+        ),
+        (
+            "m19p19s19z1234567",
+            "m1+",
+            {"rule": rule({"ダブル役満あり": False})},
+            {
+                "yaku": [{"name": "国士無双十三面", "hansuu": "*"}],
+                "fu": None,
+                "hansuu": None,
+                "yakuman": 1,
+                "tokuten": 32000,
+                "bunpai": [0, 32000, -32000, 0],
+            },
+        ),
+        (
+            "m111p333s777z111m3",
+            "m3=",
+            {"rule": rule({"ダブル役満あり": False})},
+            {
+                "yaku": [{"name": "四暗刻単騎", "hansuu": "*"}],
+                "fu": None,
+                "hansuu": None,
+                "yakuman": 1,
+                "tokuten": 32000,
+                "bunpai": [0, 32000, 0, -32000],
+            },
+        ),
+        (
+            "m22z22244,z333+,z111-",
+            "z4=",
+            {"rule": rule({"ダブル役満あり": False})},
+            {
+                "yaku": [{"name": "大四喜", "hansuu": "*"}],
+                "fu": None,
+                "hansuu": None,
+                "yakuman": 1,
+                "tokuten": 32000,
+                "bunpai": [0, 32000, 0, -32000],
+            },
+        ),
+        (
+            "m1112345678999",
+            "m2=",
+            {"rule": rule({"ダブル役満あり": False})},
+            {
+                "yaku": [{"name": "純正九蓮宝燈", "hansuu": "*"}],
+                "fu": None,
+                "hansuu": None,
+                "yakuman": 1,
+                "tokuten": 32000,
+                "bunpai": [0, 32000, 0, -32000],
+            },
+        ),
+        (
+            "z77,z111-,z2222,z333=3,z444+",
+            None,
+            {"riichibou": 1, "tsumibou": 1, "rule": rule({"役満の複合あり": False})},
+            {
+                "yaku": [{"name": "大四喜", "hansuu": "**", "houjuusha": "+"}, {"name": "字一色", "hansuu": "*"}],
+                "fu": None,
+                "hansuu": None,
+                "yakuman": 1,
+                "tokuten": 32000,
+                "bunpai": [0, 33300, -32300, 0],
+            },
+        ),
+        (
+            "z7,z111-,z2222,z333=3,z444+",
+            "z7-",
+            {"riichibou": 1, "tsumibou": 1, "rule": rule({"役満の複合あり": False})},
+            {
+                "yaku": [{"name": "大四喜", "hansuu": "**", "houjuusha": "+"}, {"name": "字一色", "hansuu": "*"}],
+                "fu": None,
+                "hansuu": None,
+                "yakuman": 1,
+                "tokuten": 32000,
+                "bunpai": [-16300, 33300, -16000, 0],
+            },
+        ),
+        (
+            "m2234,z555-5,z6666,z777+",
+            "m5=",
+            {"rule": rule({"役満パオあり": False})},
+            {
+                "yaku": [{"name": "大三元", "hansuu": "*"}],
+                "fu": None,
+                "hansuu": None,
+                "yakuman": 1,
+                "tokuten": 32000,
+                "bunpai": [0, 32000, 0, -32000],
+            },
+        ),
+        (
+            "m2,z222+,z4444,z333+,z111-",
+            "m2=",
+            {"rule": rule({"役満パオあり": False})},
+            {
+                "yaku": [{"name": "大四喜", "hansuu": "**"}],
+                "fu": None,
+                "hansuu": None,
+                "yakuman": 2,
+                "tokuten": 64000,
+                "bunpai": [0, 64000, 0, -64000],
+            },
+        ),
+        (
+            "p22334455667788*",
+            None,
+            {"riichi": 1, "rule": rule({"数え役満あり": False})},
+            {
+                "yaku": [
+                    {"name": "立直", "hansuu": 1},
+                    {"name": "門前清自摸和", "hansuu": 1},
+                    {"name": "平和", "hansuu": 1},
+                    {"name": "断幺九", "hansuu": 1},
+                    {"name": "二盃口", "hansuu": 3},
+                    {"name": "清一色", "hansuu": 6},
+                ],
+                "fu": 20,
+                "hansuu": 13,
+                "yakuman": None,
+                "tokuten": 24000,
+                "bunpai": [-12000, 24000, -6000, -6000],
+            },
+        ),
+        (
+            "m22z111p445566s789",
+            None,
+            {"bakaze": 1, "zikaze": 0, "rule": rule({"切り上げ満貫あり": True})},
+            {
+                "yaku": [
+                    {"name": "門前清自摸和", "hansuu": 1},
+                    {"name": "自風 東", "hansuu": 1},
+                    {"name": "一盃口", "hansuu": 1},
+                ],
+                "fu": 30,
+                "hansuu": 3,
+                "yakuman": None,
+                "tokuten": 6000,
+                "bunpai": [6000, -2000, -2000, -2000],
+            },
+        ),
+        (
+            "m11z111p123789s789",
+            None,
+            {"rule": rule({"切り上げ満貫あり": True})},
+            {
+                "yaku": [
+                    {"name": "門前清自摸和", "hansuu": 1},
+                    {"name": "場風 東", "hansuu": 1},
+                    {"name": "混全帯幺九", "hansuu": 2},
+                ],
+                "fu": 30,
+                "hansuu": 4,
+                "yakuman": None,
+                "tokuten": 8000,
+                "bunpai": [-4000, 8000, -2000, -2000],
+            },
+        ),
+        (
+            "m11222789,z2222,m444=",
+            None,
+            {"bakaze": 1, "zikaze": 0, "rule": rule({"切り上げ満貫あり": True})},
+            {
+                "yaku": [{"name": "場風 南", "hansuu": 1}, {"name": "混一色", "hansuu": 2}],
+                "fu": 60,
+                "hansuu": 3,
+                "yakuman": None,
+                "tokuten": 12000,
+                "bunpai": [12000, -4000, -4000, -4000],
+            },
+        ),
+    ]
+
+    for tehai_string, ron_hai, param, expected in test_cases:
+        assert hoora(Tehai.from_string(tehai_string), ron_hai, hoora_param(param)) == expected
 
 
 if __name__ == "__main__":
