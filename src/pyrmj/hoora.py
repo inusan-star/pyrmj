@@ -318,7 +318,7 @@ def hoora_mentsu_ippan(tehai, hoora_hai):
     return mentsu_lists
 
 
-def hoora_mentsu(tehai, ron_hai):
+def hoora_mentsu(tehai, ron_hai=None):
     """
     和了形を取得する
     """
