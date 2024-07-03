@@ -110,7 +110,7 @@ class Game:
         reply = self.get_reply(model["teban"])
 
         if reply.get("toupai", False):
-            if allow_ryuukyoku(self.rule_, model["tehai"][model["teban"]], self.first_tsumo_):
+            if self.allow_ryuukyoku():
                 tehai = [""] * 4
                 tehai[model["teban"]] = model["tehai"][model["teban"]].to_string()
                 return self.ryuukyoku("九種九牌", tehai)
@@ -344,6 +344,13 @@ class Game:
         """
         model = self.model_
         return self.reply_[model["player_id"][cha_id]]
+
+    def allow_ryuukyoku(self):
+        """
+        流局が可能か判定する
+        """
+        model = self.model_
+        return allow_ryuukyoku(self.rule_, model["tehai"][model["teban"]], self.first_tsumo_)
 
 
 def allow_ryuukyoku(rule_json, tehai, first_tsumo):
