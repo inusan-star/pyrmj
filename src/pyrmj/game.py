@@ -1,8 +1,10 @@
+import re
 import copy
 import random
 import datetime
 from .kawa import Kawa
 from .rule import rule
+from .shanten import shanten, yuukouhai
 from .tehai import Tehai
 from .yama import Yama
 
@@ -15,6 +17,7 @@ class Game:
     KAIKYOKU = "kaikyoku"
     HAIPAI = "haipai"
     TSUMO = "tsumo"
+    RYUUKYOKU = "ryuukyoku"
 
     def __init__(self, rule_json=None, title=None):
         self.rule_ = rule_json or rule()
@@ -56,7 +59,7 @@ class Game:
 
     def get_observation(self, status, message):
         """
-        観測値を取得
+        観測値を返す
         """
         self.status_ = status
         self.reply_ = [None] * 4
@@ -84,6 +87,9 @@ class Game:
         elif self.status_ == self.HAIPAI:
             return self.reply_haipai()
 
+        elif self.status_ == self.TSUMO:
+            return self.reply_tsumo()
+
     def reply_kaikyoku(self):
         """
         開局の応答に対する処理
@@ -95,6 +101,19 @@ class Game:
         配牌の応答に対する処理
         """
         return self.tsumo()
+
+    def reply_tsumo(self):
+        """
+        ツモの応答に対する処理
+        """
+        model = self.model_
+        reply = self.get_reply(model["teban"])
+
+        if reply.get("toupai", False):
+            if allow_ryuukyoku(self.rule_, model["tehai"][model["teban"]], self.first_tsumo_):
+                tehai = [""] * 4
+                tehai[model["teban"]] = model["tehai"][model["teban"]].to_string()
+                return self.ryuukyoku("九種九牌", tehai)
 
     def kaikyoku(self, chiicha=None):
         """
@@ -211,8 +230,140 @@ class Game:
 
         return self.get_observation(self.TSUMO, message)
 
+    def ryuukyoku(self, name, tehai=None):
+        """
+        流局の局進行を行う
+        """
+        if tehai is None:
+            tehai = [""] * 4
+
+        model = self.model_
+        bunpai = [0, 0, 0, 0]
+
+        if not name:
+            n_yuukouhai = 0
+
+            for cha_id in range(4):
+                if self.rule_["ノーテン宣言あり"] and not tehai[cha_id] and not model["tehai"][cha_id].riichi():
+                    continue
+
+                if (
+                    not self.rule_["ノーテン罰あり"]
+                    and (self.rule_["連荘方式"] != 2 or cha_id != 0)
+                    and not model["tehai"][cha_id].riichi()
+                ):
+                    tehai[cha_id] = ""
+
+                elif shanten(model["tehai"][cha_id]) == 0 and len(yuukouhai(model["tehai"][cha_id])) > 0:
+                    n_yuukouhai += 1
+                    tehai[cha_id] = model["tehai"][cha_id].to_string()
+
+                    if self.rule_["連荘方式"] == 2 and cha_id == 0:
+                        self.renchan_ = True
+
+                else:
+                    tehai[cha_id] = ""
+
+            if self.rule_["流し満貫あり"]:
+                for cha_id in range(4):
+                    all_yaochu = True
+
+                    for hai in model["kawa"][cha_id].hai_:
+                        if re.search(r"[\+\=\-]$", hai):
+                            all_yaochu = False
+                            break
+
+                        if re.match(r"^z", hai):
+                            continue
+
+                        if re.match(r"^[mps][19]", hai):
+                            continue
+
+                        all_yaochu = False
+                        break
+
+                    if all_yaochu:
+                        name = "流し満貫"
+
+                        for i in range(4):
+                            if cha_id == 0 and i == cha_id:
+                                bunpai[i] += 12000
+
+                            elif cha_id == 0:
+                                bunpai[i] -= 4000
+
+                            elif cha_id != 0 and i == cha_id:
+                                bunpai[i] += 8000
+
+                            elif cha_id != 0 and i == 0:
+                                bunpai[i] -= 4000
+
+                            else:
+                                bunpai[i] -= 2000
+
+            if not name:
+                name = "荒牌平局"
+
+                if self.rule_["ノーテン罰あり"] and 0 < n_yuukouhai < 4:
+                    for cha_id in range(4):
+                        if tehai[cha_id]:
+                            bunpai[cha_id] = 3000 / n_yuukouhai
+
+                        else:
+                            bunpai[cha_id] = -3000 / (4 - n_yuukouhai)
+
+            if self.rule_["連荘方式"] == 3:
+                self.renchan_ = True
+
+        else:
+            self.no_game_ = True
+            self.renchan_ = True
+
+        if self.rule_["場数"] == 0:
+            self.renchan_ = True
+
+        self.bunpai_ = bunpai
+        haifu = {"ryuukyoku": {"name": name, "tehai": tehai, "bunpai": bunpai}}
+        self.add_haifu(haifu)
+        message = []
+
+        for cha_id in range(4):
+            message.append(copy.deepcopy(haifu))
+
+        return self.get_observation(self.RYUUKYOKU, message)
+
     def add_haifu(self, haifu):
         """
         牌譜を追加する
         """
         self.haifu_["log"][-1].append(haifu)
+
+    def get_reply(self, cha_id):
+        """
+        指定した家の応答を返す
+        """
+        model = self.model_
+        return self.reply_[model["player_id"][cha_id]]
+
+
+def allow_ryuukyoku(rule_json, tehai, first_tsumo):
+    """
+    流局が可能か判定する
+    """
+    if not (first_tsumo and tehai.tsumo_):
+        return False
+
+    if not rule_json["途中流局あり"]:
+        return False
+
+    n_yaochu = 0
+
+    for suit in ["m", "p", "s", "z"]:
+        juntehai = tehai.juntehai_[suit]
+        numbers = [1, 2, 3, 4, 5, 6, 7] if suit == "z" else [1, 9]
+
+        for number in numbers:
+            if juntehai[number] > 0:
+                n_yaochu += 1
+
+    return n_yaochu >= 9
