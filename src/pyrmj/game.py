@@ -168,6 +168,7 @@ class Game:
                 "tehai": [tehai.to_string() for tehai in model["tehai"]],
             }
         }
+        self.haifu_["log"][-1].append(haifu)
 
         message = []
 
