@@ -80,6 +80,12 @@ class Game:
         if self.status_ == self.KAIKYOKU:
             return self.reply_kaikyoku()
 
+    def reply_kaikyoku(self):
+        """
+        開局の応答に対する処理
+        """
+        return self.haipai()
+
     def kaikyoku(self, chiicha=None):
         """
         開局する
@@ -115,12 +121,6 @@ class Game:
             )
 
         return self.get_observation(self.KAIKYOKU, message)
-
-    def reply_kaikyoku(self):
-        """
-        開局の応答に対する処理
-        """
-        return self.haipai()
 
     def haipai(self, yama=None):
         """
