@@ -178,7 +178,7 @@ class Game:
                 "tehai": [tehai.to_string() for tehai in model["tehai"]],
             }
         }
-        self.haifu_["log"][-1].append(haifu)
+        self.add_haifu(haifu)
 
         message = []
 
@@ -200,7 +200,7 @@ class Game:
         tsumo_hai = model["yama"].tsumo()
         model["tehai"][model["teban"]].tsumo(tsumo_hai)
         haifu = {"tsumo": {"cha_id": model["teban"], "hai": tsumo_hai}}
-        self.haifu_["log"][-1].append(haifu)
+        self.add_haifu(haifu)
         message = []
 
         for cha_id in range(4):
@@ -210,3 +210,9 @@ class Game:
                 message[cha_id]["tsumo"]["hai"] = ""
 
         return self.get_observation(self.TSUMO, message)
+
+    def add_haifu(self, haifu):
+        """
+        牌譜を追加する
+        """
+        self.haifu_["log"][-1].append(haifu)
