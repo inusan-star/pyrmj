@@ -1,6 +1,9 @@
 import random
 import datetime
+from .kawa import Kawa
 from .rule import rule
+from .tehai import Tehai
+from .yama import Yama
 
 
 class Game:
@@ -28,12 +31,13 @@ class Game:
             "tehai": [],
             "kawa": [],
             "player_id": [0, 1, 2, 3],
+            "teban": None,
         }
 
-        self.max_kyokusuu_ = None
-        self.haifu_ = {}
         self.status_ = None
         self.reply_ = []
+        self.max_kyokusuu_ = None
+        self.haifu_ = {}
 
     def step(self, actions):
         """
@@ -89,7 +93,21 @@ class Game:
         """
         self.haipai()
 
-    def haipai(self):
+    def haipai(self, yama=None):
         """
         配牌する
         """
+        model = self.model_
+        model["yama"] = yama or Yama(self.rule_)
+
+        for cha_id in range(4):
+            haipai = []
+
+            for _ in range(13):
+                haipai.append(model["shan"].tsumo())
+
+            model["tehai"][cha_id] = Tehai(haipai)
+            model["kawa"][cha_id] = Kawa()
+            model["player_id"][cha_id] = (model["chiicha"] + model["kyokusuu"] + cha_id) % 4
+
+        model["teban"] = -1
