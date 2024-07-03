@@ -1,3 +1,4 @@
+import copy
 import random
 import datetime
 from .kawa import Kawa
@@ -12,10 +13,9 @@ class Game:
     """
 
     KAIKYOKU = "kaikyoku"
+    HAIPAI = "haipai"
 
-    def __init__(self, players, callback=None, rule_json=None, title=None):
-        self.players_ = players
-        self.callback_ = callback or (lambda: None)
+    def __init__(self, rule_json=None, title=None):
         self.rule_ = rule_json or rule()
 
         self.model_ = {
@@ -28,24 +28,24 @@ class Game:
             "riichibou": 0,
             "tokuten": [self.rule_["配給原点"]] * 4,
             "yama": None,
-            "tehai": [],
-            "kawa": [],
+            "tehai": [None] * 4,
+            "kawa": [None] * 4,
             "player_id": [0, 1, 2, 3],
             "teban": None,
         }
 
         self.status_ = None
-        self.reply_ = []
+        self.reply_ = [None] * 4
         self.max_kyokusuu_ = None
         self.haifu_ = {}
         self.first_tsumo_ = None
         self.suufuurenda_ = None
         self.dahai_ = None
         self.kan_ = None
-        self.riichi_ = []
-        self.ippatsu_ = []
-        self.n_kan_ = []
-        self.cannot_ron_ = []
+        self.riichi_ = [None] * 4
+        self.ippatsu_ = [None] * 4
+        self.n_kan_ = [None] * 4
+        self.cannot_ron_ = [None] * 4
         self.hoora_ = []
         self.hoora_option_ = None
         self.no_game_ = None
@@ -53,17 +53,32 @@ class Game:
         self.tsumibou_ = None
         self.bunpai_ = None
 
+    def get_observation(self, status, message):
+        """
+        観測値を取得
+        """
+        self.status_ = status
+        self.reply_ = [None] * 4
+        observation = {}
+
+        for cha_id in range(4):
+            player_id = self.model_["player_id"][cha_id]
+            observation[player_id] = message[cha_id]
+
+        return observation
+
     def step(self, actions):
         """
         対局を進める
         """
-        self.reply_ = [None] * 4
-
         for player_id, action in actions.items():
             self.reply_[player_id] = action or {}
 
+        if None in self.reply_:
+            return None
+
         if self.status_ == self.KAIKYOKU:
-            self.reply_kaikyoku()
+            return self.reply_kaikyoku()
 
     def kaikyoku(self, chiicha=None):
         """
@@ -83,10 +98,11 @@ class Game:
             "rank": [],
         }
 
-        observation = []
+        message = []
 
-        for player_id in range(4):
-            observation.append(
+        for cha_id in range(4):
+            player_id = cha_id
+            message.append(
                 {
                     "kaikyoku": {
                         "id": player_id,
@@ -98,14 +114,13 @@ class Game:
                 }
             )
 
-        self.status_ = self.KAIKYOKU
-        return observation
+        return self.get_observation(self.KAIKYOKU, message)
 
     def reply_kaikyoku(self):
         """
         開局の応答に対する処理
         """
-        self.haipai()
+        return self.haipai()
 
     def haipai(self, yama=None):
         """
@@ -118,7 +133,7 @@ class Game:
             haipai = []
 
             for _ in range(13):
-                haipai.append(model["shan"].tsumo())
+                haipai.append(model["yama"].tsumo())
 
             model["tehai"][cha_id] = Tehai(haipai)
             model["kawa"][cha_id] = Kawa()
@@ -139,3 +154,28 @@ class Game:
         self.renchan_ = False
         self.tsumibou_ = model["tsumibou"]
         self.bunpai_ = None
+
+        self.haifu_["tokuten"] = model["tokuten"][:]
+        self.haifu_["log"].append([])
+        haifu = {
+            "haipai": {
+                "bakaze": model["bakaze"],
+                "kyokusuu": model["kyokusuu"],
+                "tsumibou": model["tsumibou"],
+                "riichibou": model["riichibou"],
+                "tokuten": [model["tokuten"][player_id] for player_id in model["player_id"]],
+                "dora_indicator": model["yama"].dora_indicator_[0],
+                "tehai": [tehai.to_string() for tehai in model["tehai"]],
+            }
+        }
+
+        message = []
+
+        for cha_id in range(4):
+            message.append(copy.deepcopy(haifu))
+
+            for i in range(4):
+                if i != cha_id:
+                    message[cha_id]["haipai"]["tehai"][i] = ""
+
+        return self.get_observation(self.HAIPAI, message)
