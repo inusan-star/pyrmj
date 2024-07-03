@@ -216,3 +216,30 @@ def shanten(tehai):
     """
 
     return min(shanten_kokushi(tehai), shanten_chiitoi(tehai), shanten_ippan(tehai))
+
+
+def yuukouhai(tehai):
+    """
+    有効牌を返す
+    """
+    if tehai.tsumo_:
+        return None
+
+    hai = []
+    n_shanten = shanten(tehai)
+
+    for suit in ["m", "p", "s", "z"]:
+        juntehai = tehai.juntehai_[suit]
+
+        for number in range(1, len(juntehai)):
+            if juntehai[number] >= 4:
+                continue
+
+            juntehai[number] += 1
+
+            if shanten(tehai) < n_shanten:
+                hai.append(f"{suit}{number}")
+
+            juntehai[number] -= 1
+
+    return hai

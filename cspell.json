@@ -104,6 +104,7 @@
     "yaochu", // 幺九
     "zihai", // 字牌
     "zikaze", // 自風
-    "yaku" // 役
+    "yaku", // 役
+    "yuukouhai" // 有効牌
   ]
 }
