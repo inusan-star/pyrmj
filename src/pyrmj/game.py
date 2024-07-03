@@ -14,6 +14,7 @@ class Game:
 
     KAIKYOKU = "kaikyoku"
     HAIPAI = "haipai"
+    TSUMO = "tsumo"
 
     def __init__(self, rule_json=None, title=None):
         self.rule_ = rule_json or rule()
@@ -80,11 +81,20 @@ class Game:
         if self.status_ == self.KAIKYOKU:
             return self.reply_kaikyoku()
 
+        elif self.status_ == self.HAIPAI:
+            return self.reply_haipai()
+
     def reply_kaikyoku(self):
         """
         開局の応答に対する処理
         """
         return self.haipai()
+
+    def reply_haipai(self):
+        """
+        配牌の応答に対する処理
+        """
+        return self.tsumo()
 
     def kaikyoku(self, chiicha=None):
         """
@@ -124,7 +134,7 @@ class Game:
 
     def haipai(self, yama=None):
         """
-        配牌する
+        配牌の局進行を行う
         """
         model = self.model_
         model["yama"] = yama or Yama(self.rule_)
@@ -180,3 +190,23 @@ class Game:
                     message[cha_id]["haipai"]["tehai"][i] = ""
 
         return self.get_observation(self.HAIPAI, message)
+
+    def tsumo(self):
+        """
+        ツモの局進行を行う
+        """
+        model = self.model_
+        model["teban"] = (model["teban"] + 1) % 4
+        tsumo_hai = model["yama"].tsumo()
+        model["tehai"][model["teban"]].tsumo(tsumo_hai)
+        haifu = {"tsumo": {"cha_id": model["teban"], "hai": tsumo_hai}}
+        self.haifu_["log"][-1].append(haifu)
+        message = []
+
+        for cha_id in range(4):
+            message.append(copy.deepcopy(haifu))
+
+            if cha_id != model["teban"]:
+                message[cha_id]["tsumo"]["hai"] = ""
+
+        return self.get_observation(self.TSUMO, message)
