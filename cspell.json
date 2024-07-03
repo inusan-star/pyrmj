@@ -61,11 +61,12 @@
     "pinfu", // 平和
     "pinzu", // 筒子
     "pyrmj", // モジュール名(麻雀)
-    "ryanpeekoo", // 二盃口
+    "renchan", // 連荘
     "riichi", // 立直
     "riichibou", // 立直棒
     "rinshan", // 嶺上
     "ron", // ロン
+    "ryanpeekoo", // 二盃口
     "ryuuiisoo", // 緑一色
     "sananko", // 三暗刻
     "sankantsu", // 三槓子
@@ -77,6 +78,7 @@
     "shuntsu", // 順子
     "souzu", // 索子
     "suuanko", // 四暗刻
+    "suufuurenda", // 四風連打
     "suukantsu", // 四槓子
     "suushii", // 四喜和
     "svgwrite", // モジュール名(SVG)

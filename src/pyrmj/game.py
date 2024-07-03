@@ -38,6 +38,20 @@ class Game:
         self.reply_ = []
         self.max_kyokusuu_ = None
         self.haifu_ = {}
+        self.first_tsumo_ = None
+        self.suufuurenda_ = None
+        self.dahai_ = None
+        self.kan_ = None
+        self.riichi_ = []
+        self.ippatsu_ = []
+        self.n_kan_ = []
+        self.cannot_ron_ = []
+        self.hoora_ = []
+        self.hoora_option_ = None
+        self.no_game_ = None
+        self.renchan_ = None
+        self.tsumibou_ = None
+        self.bunpai_ = None
 
     def step(self, actions):
         """
@@ -111,3 +125,17 @@ class Game:
             model["player_id"][cha_id] = (model["chiicha"] + model["kyokusuu"] + cha_id) % 4
 
         model["teban"] = -1
+        self.first_tsumo_ = True
+        self.suufuurenda_ = self.rule_["途中流局あり"]
+        self.dahai_ = None
+        self.kan_ = None
+        self.riichi_ = [0, 0, 0, 0]
+        self.ippatsu_ = [0, 0, 0, 0]
+        self.n_kan_ = [0, 0, 0, 0]
+        self.cannot_ron_ = [1, 1, 1, 1]
+        self.hoora_ = []
+        self.hoora_option_ = None
+        self.no_game_ = False
+        self.renchan_ = False
+        self.tsumibou_ = model["tsumibou"]
+        self.bunpai_ = None
