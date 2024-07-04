@@ -352,6 +352,14 @@ class Game:
         model = self.model_
         return get_dahai(self.rule_, model["tehai"][model["teban"]])
 
+    def get_chii_mentsu(self, cha_id):
+        """
+        チー可能な面子の一覧を返す
+        """
+        model = self.model_
+        direction = "_+=-"[(4 + model["teban"] - cha_id) % 4]
+        return get_chii_mentsu(self.rule_, model["tehai"][cha_id], f"{self.dahai_}{direction}", model["yama"].haisuu())
+
     def allow_ryuukyoku(self):
         """
         流局が可能か判定する
@@ -374,6 +382,21 @@ def get_dahai(rule_json, tehai):
         return [hai for hai in tehai.get_dahai(False) if hai.replace("0", "5") != deny]
 
     return tehai.get_dahai(False)
+
+
+def get_chii_mentsu(rule_json, tehai, hai, haisuu):
+    """
+    チー可能な面子の一覧を返す
+    """
+    mentsu = tehai.get_chii_mentsu(hai, rule_json["喰い替え許可レベル"] == 0)
+
+    if not mentsu:
+        return mentsu
+
+    if rule_json["喰い替え許可レベル"] == 1 and len(tehai.fuuro_) == 3 and tehai.juntehai_[hai[0]][int(hai[1])] == 2:
+        mentsu = []
+
+    return [] if haisuu == 0 else mentsu
 
 
 def allow_ryuukyoku(rule_json, tehai, first_tsumo):
