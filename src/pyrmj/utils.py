@@ -1,4 +1,6 @@
 import re
+from .hoora import hoora_mentsu
+from .shanten import shanten, yuukouhai
 
 
 class Utils:
@@ -52,6 +54,44 @@ class Utils:
             return mentsu
 
         return [] if haisuu == 0 else mentsu
+
+    @staticmethod
+    def get_kan_mentsu(rule_json, tehai, hai, haisuu, n_kan):
+        """
+        カン可能な面子の一覧を返す
+        """
+        mentsu = tehai.get_kan_mentsu(hai)
+
+        if not mentsu or len(mentsu) == 0:
+            return mentsu
+
+        if tehai.riichi():
+            if rule_json["リーチ後暗槓許可レベル"] == 0:
+                return []
+
+            elif rule_json["リーチ後暗槓許可レベル"] == 1:
+                new_tehai = tehai.clone().dahai(tehai.tsumo_)
+                n_hoora1 = sum(len(hoora_mentsu(new_tehai, h)) for h in yuukouhai(new_tehai))
+                new_tehai = tehai.clone().kan(mentsu[0])
+                n_hoora2 = sum(len(hoora_mentsu(new_tehai, h)) for h in yuukouhai(new_tehai))
+
+                if n_hoora1 > n_hoora2:
+                    return []
+
+            else:
+                new_tehai = tehai.clone().dahai(tehai.tsumo_)
+                n_yuukouhai1 = len(yuukouhai(new_tehai))
+                new_tehai = tehai.clone().kan(mentsu[0])
+
+                if shanten(new_tehai) > 0:
+                    return []
+
+                n_yuukouhai2 = len(yuukouhai(new_tehai))
+
+                if n_yuukouhai1 > n_yuukouhai2:
+                    return []
+
+        return [] if haisuu == 0 or n_kan == 4 else mentsu
 
     @staticmethod
     def allow_ryuukyoku(rule_json, tehai, first_tsumo):

@@ -371,6 +371,26 @@ class Game:
         direction = "_+=-"[(4 + model["teban"] - cha_id) % 4]
         return Utils.get_pon_mentsu(model["tehai"][cha_id], f"{self.dahai_}{direction}", model["yama"].haisuu())
 
+    def get_kan_mentsu(self, cha_id):
+        """
+        カン可能な面子の一覧を返す
+        """
+        model = self.model_
+        if cha_id is None:
+            return Utils.get_kan_mentsu(
+                self.rule_, model["tehai"][model["teban"]], None, model["yama"].haisuu(), sum(self.n_kan_)
+            )
+
+        else:
+            direction = "_+=-"[(4 + model["teban"] - cha_id) % 4]
+            return Utils.get_kan_mentsu(
+                self.rule_,
+                model["tehai"][cha_id],
+                f"{self.dahai_}{direction}",
+                model["yama"].haisuu(),
+                sum(self.n_kan_),
+            )
+
     def allow_ryuukyoku(self):
         """
         流局が可能か判定する
