@@ -42,6 +42,18 @@ class Utils:
         return [] if haisuu == 0 else mentsu
 
     @staticmethod
+    def get_pon_mentsu(tehai, hai, haisuu):
+        """
+        ポン可能な面子の一覧を返す
+        """
+        mentsu = tehai.get_pon_mentsu(hai)
+
+        if not mentsu:
+            return mentsu
+
+        return [] if haisuu == 0 else mentsu
+
+    @staticmethod
     def allow_ryuukyoku(rule_json, tehai, first_tsumo):
         """
         流局が可能か判定する

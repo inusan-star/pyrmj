@@ -363,6 +363,14 @@ class Game:
             self.rule_, model["tehai"][cha_id], f"{self.dahai_}{direction}", model["yama"].haisuu()
         )
 
+    def get_pon_mentsu(self, cha_id):
+        """
+        ポン可能な面子の一覧を返す
+        """
+        model = self.model_
+        direction = "_+=-"[(4 + model["teban"] - cha_id) % 4]
+        return Utils.get_pon_mentsu(model["tehai"][cha_id], f"{self.dahai_}{direction}", model["yama"].haisuu())
+
     def allow_ryuukyoku(self):
         """
         流局が可能か判定する
