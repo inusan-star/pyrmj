@@ -391,6 +391,19 @@ class Game:
                 sum(self.n_kan_),
             )
 
+    def allow_riichi(self, hai):
+        """
+        立直が可能か判定する
+        """
+        model = self.model_
+        return Utils.allow_riichi(
+            self.rule_,
+            model["tehai"][model["teban"]],
+            hai,
+            model["yama"].haisuu(),
+            model["tokuten"][model["player_id"][model["teban"]]],
+        )
+
     def allow_ryuukyoku(self):
         """
         流局が可能か判定する

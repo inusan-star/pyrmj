@@ -94,6 +94,44 @@ class Utils:
         return [] if haisuu == 0 or n_kan == 4 else mentsu
 
     @staticmethod
+    def allow_riichi(rule_json, tehai, hai, haisuu, tokuten):
+        """
+        立直が可能か判定する
+        """
+        if not tehai.tsumo_:
+            return False
+
+        if tehai.riichi():
+            return False
+
+        if not tehai.menzen():
+            return False
+
+        if not rule_json["ツモ番なしリーチあり"] and haisuu < 4:
+            return False
+
+        if rule_json["トビ終了あり"] and tokuten < 1000:
+            return False
+
+        if shanten(tehai) > 0:
+            return False
+
+        if hai:
+            new_tehai = tehai.clone().dahai(hai)
+            return shanten(new_tehai) == 0 and len(yuukouhai(new_tehai)) > 0
+
+        else:
+            dahai = []
+
+            for h in Utils.get_dahai(rule_json, tehai):
+                new_tehai = tehai.clone().dahai(h)
+
+                if shanten(new_tehai) == 0 and len(yuukouhai(new_tehai)) > 0:
+                    dahai.append(h)
+
+            return dahai if dahai else False
+
+    @staticmethod
     def allow_ryuukyoku(rule_json, tehai, first_tsumo):
         """
         流局が可能か判定する
