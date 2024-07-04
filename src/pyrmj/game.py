@@ -345,12 +345,35 @@ class Game:
         model = self.model_
         return self.reply_[model["player_id"][cha_id]]
 
+    def get_dahai(self):
+        """
+        打牌可能な牌の一覧を返す
+        """
+        model = self.model_
+        return get_dahai(self.rule_, model["tehai"][model["teban"]])
+
     def allow_ryuukyoku(self):
         """
         流局が可能か判定する
         """
         model = self.model_
         return allow_ryuukyoku(self.rule_, model["tehai"][model["teban"]], self.first_tsumo_)
+
+
+def get_dahai(rule_json, tehai):
+    """
+    打牌可能な牌の一覧を返す
+    """
+    if rule_json["喰い替え許可レベル"] == 0:
+        return tehai.get_dahai(True)
+
+    if rule_json["喰い替え許可レベル"] == 1 and tehai.tsumo_ and len(tehai.tsumo_) > 2:
+
+        match = re.search(r"\d(?=[\+\=\-])", tehai.tsumo_)
+        deny = tehai.tsumo_[0] + (match.group() if match else "5")
+        return [hai for hai in tehai.get_dahai(False) if hai.replace("0", "5") != deny]
+
+    return tehai.get_dahai(False)
 
 
 def allow_ryuukyoku(rule_json, tehai, first_tsumo):
