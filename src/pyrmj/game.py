@@ -83,22 +83,26 @@ class Game:
         対局を進める
         """
         for player_id, action in actions.items():
-            self.reply_[player_id] = action or {}
+            self.reply_[player_id] = action or {}  # TODO: 要検討
 
-        if None in self.reply_:
-            return None
+        if None in self.reply_:  # TODO: 要検討
+            return None, True  # TODO: 要検討
 
         if self.status_ == self.KAIKYOKU:
-            return self.reply_kaikyoku()
+            return self.reply_kaikyoku(), False
 
         elif self.status_ == self.HAIPAI:
-            return self.reply_haipai()
+            return self.reply_haipai(), False
 
         elif self.status_ == self.TSUMO:
-            return self.reply_tsumo()
+            return self.reply_tsumo(), False
 
         elif self.status_ == self.RYUUKYOKU:
-            return self.reply_ryuukyoku()
+            return self.reply_ryuukyoku(), False
+
+        elif self.status_ == self.SYUUKYOKU:
+            # TODO: 牌譜をファイルに保存する
+            return None, True
 
     def reply_kaikyoku(self):
         """
