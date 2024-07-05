@@ -100,6 +100,9 @@ class Game:
         elif self.status_ == self.TSUMO:
             return self.reply_tsumo(), False
 
+        elif self.status_ == self.HOORA:
+            return self.reply_hoora(), False
+
         elif self.status_ == self.RYUUKYOKU:
             return self.reply_ryuukyoku(), False
 
@@ -135,6 +138,27 @@ class Game:
         elif self.HOORA in reply:
             if self.allow_hoora():
                 return self.hoora()
+
+    def reply_hoora(self):
+        """
+        和了の応答に対する処理
+        """
+        model = self.model_
+
+        for cha_id in range(4):
+            model["tokuten"][model["player_id"][cha_id]] += self.bunpai_[cha_id]
+
+        model["tsumibou"] = 0
+        model["riichibou"] = 0
+
+        if self.hoora_:
+            return self.hoora()
+
+        else:
+            if self.renchan_:
+                model["tsumibou"] = self.tsumibou_ + 1
+
+            return self.last()
 
     def reply_ryuukyoku(self):
         """
