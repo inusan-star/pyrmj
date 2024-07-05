@@ -376,7 +376,7 @@ class Game:
         direction = "_+=-"[(4 + model["teban"] - cha_id) % 4]
         return Utils.get_pon_mentsu(model["tehai"][cha_id], f"{self.dahai_}{direction}", model["yama"].haisuu())
 
-    def get_kan_mentsu(self, cha_id):
+    def get_kan_mentsu(self, cha_id=None):
         """
         カン可能な面子の一覧を返す
         """
