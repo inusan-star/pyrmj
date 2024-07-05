@@ -2,6 +2,7 @@ import re
 import copy
 import random
 import datetime
+from .hoora import hoora
 from .kawa import Kawa
 from .rule import rule
 from .shanten import shanten, yuukouhai
@@ -131,6 +132,10 @@ class Game:
                 tehai[model["teban"]] = model["tehai"][model["teban"]].to_string()
                 return self.ryuukyoku("九種九牌", tehai)
 
+        elif self.HOORA in reply:
+            if self.allow_hoora():
+                return self.hoora()
+
     def reply_ryuukyoku(self):
         """
         流局の応答に対する処理
@@ -203,7 +208,7 @@ class Game:
         self.dahai_ = None
         self.kan_ = None
         self.riichi_ = [0, 0, 0, 0]
-        self.ippatsu_ = [0, 0, 0, 0]
+        self.ippatsu_ = [False, False, False, False]
         self.n_kan_ = [0, 0, 0, 0]
         self.not_friten_ = [True, True, True, True]
         self.hoora_ = []
@@ -258,6 +263,82 @@ class Game:
                 message[cha_id][self.TSUMO]["hai"] = ""
 
         return self.get_observation(self.TSUMO, message)
+
+    def hoora(self):
+        """
+        和了の局進行を行う
+        """
+        model = self.model_
+
+        if self.status_ != self.HOORA:
+            model["yama"].close()
+            self.hoora_option_ = (
+                "chankan" if self.status_ == self.KAN else "rinshan" if self.status_ == self.KANTSUMO else None
+            )
+
+        zikaze = self.hoora_.pop(0) if self.hoora_ else model["teban"]
+        ron_hai = (
+            None
+            if zikaze == model["teban"]
+            else (f"{self.kan_[0]}{self.kan_[-1]}" if self.hoora_option_ == "chankan" else self.dahai_[:2])
+            + "_+=-"[(4 + model["teban"] - zikaze) % 4]
+        )
+        tehai = model["tehai"][zikaze].clone()
+        uradora_indicator = model["yama"].uradora_indicator() if tehai.riichi() else None
+
+        param = {
+            "rule": self.rule_,
+            "bakaze": model["bakaze"],
+            "zikaze": zikaze,
+            "yaku": {
+                "riichi": self.riichi_[zikaze],
+                "ippatsu": self.ippatsu_[zikaze],
+                "chankan": self.hoora_option_ == "chankan",
+                "rinshan": self.hoora_option_ == "rinshan",
+                "haitei": (
+                    0 if model["yama"].haisuu() > 0 or self.hoora_option_ == "rinshan" else 1 if not ron_hai else 2
+                ),
+                "tenhoo": 0 if not (self.first_tsumo_ and not ron_hai) else 1 if zikaze == 0 else 2,
+            },
+            "dora_indicator": model["yama"].dora_indicator(),
+            "uradora_indicator": uradora_indicator,
+            "kyoutaku": {"tsumibou": model["tsumibou"], "riichibou": model["riichibou"]},
+        }
+        hoora_result = hoora(tehai, ron_hai, param)
+
+        if self.rule_["連荘方式"] > 0 and zikaze == 0:
+            self.renchan_ = True
+
+        if self.rule_["場数"] == 0:
+            self.renchan_ = False
+
+        self.bunpai_ = hoora_result["bunpai"]
+        haifu = {
+            self.HOORA: {
+                "cha_id": zikaze,
+                "tehai": tehai.tsumo(ron_hai).to_string() if ron_hai else tehai.to_string(),
+                "houjuusha": model["teban"] if ron_hai else None,
+                "uradora_indicator": uradora_indicator,
+                "fu": hoora_result["fu"],
+                "hansuu": hoora_result["hansuu"],
+                "yakuman": hoora_result["yakuman"],
+                "tokuten": hoora_result["tokuten"],
+                "yaku": hoora_result["yaku"],
+                "bunpai": hoora_result["bunpai"],
+            }
+        }
+
+        for key in ["fu", "hansuu", "yakuman"]:
+            if not haifu[self.HOORA][key]:
+                del haifu[self.HOORA][key]
+
+        self.add_haifu(haifu)
+        message = []
+
+        for _ in range(4):
+            message.append(copy.deepcopy(haifu))
+
+        return self.get_observation(self.HOORA, message)
 
     def ryuukyoku(self, name, tehai=None):
         """
