@@ -100,6 +100,9 @@ class Game:
         elif self.status_ == self.TSUMO:
             return self.reply_tsumo(), False
 
+        elif self.status_ == self.KAN:
+            return self.reply_kan(), False
+
         elif self.status_ == self.HOORA:
             return self.reply_hoora(), False
 
@@ -142,6 +145,36 @@ class Game:
         elif self.KAN in reply:
             if reply[self.KAN] in self.get_kan_mentsu():
                 return self.kan(reply[self.KAN])
+
+    def reply_kan(self):
+        """
+        カン（暗槓/加槓）の応答に対する処理
+        """
+        model = self.model_
+
+        if re.match(r"^[mpsz]\d{4}$", self.kan_):
+            return self.kantsumo()
+
+        for i in range(1, 4):
+            cha_id = (model["teban"] + i) % 4
+            reply = self.get_reply(cha_id)
+
+            if self.HOORA in reply and self.allow_hoora(cha_id):
+                if self.rule_["最大同時和了数"] == 1 and self.hoora_:
+                    continue
+
+                self.hoora_.append(cha_id)
+
+            else:
+                hai = f"{self.kan_[0]}{self.kan_[-1]}"
+                tehai = model["tehai"][cha_id].clone().tsumo(hai)
+                if shanten(tehai) == -1:
+                    self.not_friten_[cha_id] = False
+
+        if self.hoora_:
+            return self.hoora()
+
+        return self.kantsumo()
 
     def reply_hoora(self):
         """
