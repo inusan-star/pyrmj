@@ -50,7 +50,7 @@ class Game:
         self.riichi_ = [None] * 4
         self.ippatsu_ = [None] * 4
         self.n_kan_ = [None] * 4
-        self.cannot_ron_ = [None] * 4
+        self.not_friten_ = [None] * 4
         self.hoora_ = []
         self.hoora_option_ = None
         self.no_game_ = None
@@ -177,7 +177,7 @@ class Game:
         self.riichi_ = [0, 0, 0, 0]
         self.ippatsu_ = [0, 0, 0, 0]
         self.n_kan_ = [0, 0, 0, 0]
-        self.cannot_ron_ = [1, 1, 1, 1]
+        self.not_friten_ = [True, True, True, True]
         self.hoora_ = []
         self.hoora_option_ = None
         self.no_game_ = False
