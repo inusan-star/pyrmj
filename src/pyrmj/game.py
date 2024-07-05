@@ -96,6 +96,9 @@ class Game:
         elif self.status_ == self.TSUMO:
             return self.reply_tsumo()
 
+        elif self.status_ == self.RYUUKYOKU:
+            return self.reply_ryuukyoku()
+
     def reply_kaikyoku(self):
         """
         開局の応答に対する処理
@@ -120,6 +123,19 @@ class Game:
                 tehai = [""] * 4
                 tehai[model["teban"]] = model["tehai"][model["teban"]].to_string()
                 return self.ryuukyoku("九種九牌", tehai)
+
+    def reply_ryuukyoku(self):
+        """
+        流局の応答に対する処理
+        """
+        model = self.model_
+
+        for cha_id in range(4):
+            model["tokuten"][model["player_id"][cha_id]] += self.bunpai_[cha_id]
+
+        model["tsumibou"] += 1
+
+        return self.last()
 
     def kaikyoku(self, chiicha=None):
         """
@@ -337,6 +353,67 @@ class Game:
             message.append(copy.deepcopy(haifu))
 
         return self.get_observation(self.RYUUKYOKU, message)
+
+    def last(self):
+        """
+        対局終了か判定する
+        """
+        model = self.model_
+        model["teban"] = -1
+
+        if not self.renchan_:
+            model["kyokusuu"] += 1
+            model["bakaze"] += model["kyokusuu"] // 4
+            model["kyokusuu"] = model["kyokusuu"] % 4
+
+        syuukyoku = False
+        top_player = -1
+        tokuten = model["tokuten"]
+
+        for i in range(4):
+            player_id = (model["chiicha"] + i) % 4
+
+            if tokuten[player_id] < 0 and self.rule_["トビ終了あり"]:
+                syuukyoku = True
+
+            if tokuten[player_id] >= 30000 and (top_player < 0 or tokuten[player_id] > tokuten[top_player]):
+                top_player = player_id
+
+        sum_kyokusuu = model["bakaze"] * 4 + model["kyokusuu"]
+
+        if sum_kyokusuu > 15:
+            syuukyoku = True
+
+        elif (self.rule_["場数"] + 1) * 4 - 1 < sum_kyokusuu:
+            syuukyoku = True
+
+        elif self.max_kyokusuu_ < sum_kyokusuu:
+            if self.rule_["延長戦方式"] == 0:
+                syuukyoku = True
+
+            elif self.rule_["場数"] == 0:
+                syuukyoku = True
+
+            elif top_player >= 0:
+                syuukyoku = True
+
+            else:
+                self.max_kyokusuu_ += 4 if self.rule_["延長戦方式"] == 3 else 1 if self.rule_["延長戦方式"] == 2 else 0
+
+        elif self.max_kyokusuu_ == sum_kyokusuu:
+            if (
+                self.rule_["オーラス止めあり"]
+                and top_player == model["player_id"][0]
+                and self.renchan_
+                and not self.no_game_
+            ):
+                syuukyoku = True
+
+        if syuukyoku:
+            return self.syuukyoku()
+
+        else:
+            return self.haipai()
 
     def add_haifu(self, haifu):
         """
