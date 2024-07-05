@@ -22,7 +22,9 @@ class Game:
     FUURO = "fuuro"
     KAN = "kan"
     KANTSUMO = "kantsumo"
+    KAIKAN = "kaikan"
     HOORA = "hoora"
+    TOUPAI = "toupai"
     RYUUKYOKU = "ryuukyoku"
     SYUUKYOKU = "syuukyoku"
 
@@ -123,7 +125,7 @@ class Game:
         model = self.model_
         reply = self.get_reply(model["teban"])
 
-        if reply.get("toupai", False):
+        if self.TOUPAI in reply:
             if self.allow_ryuukyoku():
                 tehai = [""] * 4
                 tehai[model["teban"]] = model["tehai"][model["teban"]].to_string()
