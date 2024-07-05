@@ -139,6 +139,10 @@ class Game:
             if self.allow_hoora():
                 return self.hoora()
 
+        elif self.KAN in reply:
+            if reply[self.KAN] in self.get_kan_mentsu():
+                return self.kan(reply[self.KAN])
+
     def reply_hoora(self):
         """
         和了の応答に対する処理
@@ -287,6 +291,27 @@ class Game:
                 message[cha_id][self.TSUMO]["hai"] = ""
 
         return self.get_observation(self.TSUMO, message)
+
+    def kan(self, mentsu):
+        """
+        カン（暗槓/加槓）の局進行を行う
+        """
+        model = self.model_
+        model["tehai"][model["teban"]].kan(mentsu)
+        haifu = {"kan": {"cha_id": model["teban"], "mentsu": mentsu}}
+        self.add_haifu(haifu)
+
+        # if self.kan_: #TODO: 要検討
+        # self.kaikan()
+
+        self.kan_ = mentsu
+        self.n_kan_[model["teban"]] += 1
+        message = []
+
+        for _ in range(4):
+            message.append(copy.deepcopy(haifu))
+
+        return self.get_observation(self.KAN, message)
 
     def hoora(self):
         """
