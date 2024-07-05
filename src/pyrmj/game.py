@@ -162,7 +162,7 @@ class Game:
             player_id = cha_id
             message.append(
                 {
-                    "kaikyoku": {
+                    self.KAIKYOKU: {
                         "id": player_id,
                         "rule": self.rule_,
                         "title": self.haifu_["title"],
@@ -210,7 +210,7 @@ class Game:
         self.haifu_["tokuten"] = model["tokuten"][:]
         self.haifu_["log"].append([])
         haifu = {
-            "haipai": {
+            self.HAIPAI: {
                 "bakaze": model["bakaze"],
                 "kyokusuu": model["kyokusuu"],
                 "tsumibou": model["tsumibou"],
@@ -229,7 +229,7 @@ class Game:
 
             for i in range(4):
                 if i != cha_id:
-                    message[cha_id]["haipai"]["tehai"][i] = ""
+                    message[cha_id][self.HAIPAI]["tehai"][i] = ""
 
         return self.get_observation(self.HAIPAI, message)
 
@@ -241,7 +241,7 @@ class Game:
         model["teban"] = (model["teban"] + 1) % 4
         tsumo_hai = model["yama"].tsumo()
         model["tehai"][model["teban"]].tsumo(tsumo_hai)
-        haifu = {"tsumo": {"cha_id": model["teban"], "hai": tsumo_hai}}
+        haifu = {self.TSUMO: {"cha_id": model["teban"], "hai": tsumo_hai}}
         self.add_haifu(haifu)
         message = []
 
@@ -249,7 +249,7 @@ class Game:
             message.append(copy.deepcopy(haifu))
 
             if cha_id != model["teban"]:
-                message[cha_id]["tsumo"]["hai"] = ""
+                message[cha_id][self.TSUMO]["hai"] = ""
 
         return self.get_observation(self.TSUMO, message)
 
@@ -346,7 +346,7 @@ class Game:
             self.renchan_ = True
 
         self.bunpai_ = bunpai
-        haifu = {"ryuukyoku": {"name": name, "tehai": tehai, "bunpai": bunpai}}
+        haifu = {self.RYUUKYOKU: {"name": name, "tehai": tehai, "bunpai": bunpai}}
         self.add_haifu(haifu)
         message = []
 
@@ -453,7 +453,7 @@ class Game:
             point[ranking[0]] -= point[rank_player_id]
 
         self.haifu_["point"] = [f"{p:.0f}" if round_point else f"{p:.1f}" for p in point]
-        haifu = {"syuukyoku": self.haifu_}
+        haifu = {self.SYUUKYOKU: self.haifu_}
         message = []
 
         for _ in range(4):
