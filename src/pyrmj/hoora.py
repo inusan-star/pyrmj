@@ -10,31 +10,31 @@ def get_pre_yaku(yaku):
     """
     pre_yaku = []
 
-    if yaku["riichi"] == 1:
+    if yaku.get("riichi", 0) == 1:
         pre_yaku.append({"name": "立直", "hansuu": 1})
 
-    if yaku["riichi"] == 2:
+    if yaku.get("riichi", 0) == 2:
         pre_yaku.append({"name": "ダブル立直", "hansuu": 2})
 
-    if yaku["ippatsu"]:
+    if yaku.get("ippatsu", False):
         pre_yaku.append({"name": "一発", "hansuu": 1})
 
-    if yaku["haitei"] == 1:
+    if yaku.get("haitei", 0) == 1:
         pre_yaku.append({"name": "海底摸月", "hansuu": 1})
 
-    if yaku["haitei"] == 2:
+    if yaku.get("haitei", 0) == 2:
         pre_yaku.append({"name": "河底撈魚", "hansuu": 1})
 
-    if yaku["rinshan"]:
+    if yaku.get("rinshan", False):
         pre_yaku.append({"name": "嶺上開花", "hansuu": 1})
 
-    if yaku["chankan"]:
+    if yaku.get("chankan", False):
         pre_yaku.append({"name": "槍槓", "hansuu": 1})
 
-    if yaku["tenhoo"] == 1:
+    if yaku.get("tenhoo", 0) == 1:
         pre_yaku = [{"name": "天和", "hansuu": "*"}]
 
-    if yaku["tenhoo"] == 2:
+    if yaku.get("tenhoo", 0) == 2:
         pre_yaku = [{"name": "地和", "hansuu": "*"}]
 
     return pre_yaku
@@ -1002,9 +1002,9 @@ def hoora_param(param=None):
         "yaku": {
             "riichi": param.get("riichi", 0),
             "ippatsu": param.get("ippatsu", False),
-            "haitei": param.get("haitei", False),
+            "haitei": param.get("haitei", 0),
             "rinshan": param.get("rinshan", False),
-            "chankan": param.get("chankan", 0),
+            "chankan": param.get("chankan", False),
             "tenhoo": param.get("tenhoo", 0),
         },
         "dora_indicator": param.get("dora_indicator", []),
@@ -1031,7 +1031,7 @@ def hoora(tehai, ron_hai, param):
     max_hoora = {}
 
     pre_yaku = get_pre_yaku(param["yaku"])
-    post_yaku = get_post_yaku(tehai, ron_hai, param["dora_indicator"], param["uradora_indicator"])
+    post_yaku = get_post_yaku(tehai, ron_hai, param["dora_indicator"], param.get("uradora_indicator", None))
 
     for mentsu_list in hoora_mentsu(tehai, ron_hai):
         fu_data = get_fu_data(mentsu_list, param["bakaze"], param["zikaze"], param["rule"])
