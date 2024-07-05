@@ -18,6 +18,11 @@ class Game:
     KAIKYOKU = "kaikyoku"
     HAIPAI = "haipai"
     TSUMO = "tsumo"
+    DAHAI = "dahai"
+    FUURO = "fuuro"
+    KAN = "kan"
+    KANTSUMO = "kantsumo"
+    HOORA = "hoora"
     RYUUKYOKU = "ryuukyoku"
 
     def __init__(self, rule_json=None, title=None):
@@ -403,6 +408,27 @@ class Game:
             model["yama"].haisuu(),
             model["tokuten"][model["player_id"][model["teban"]]],
         )
+
+    def allow_hoora(self, cha_id=None):
+        """
+        和了が可能か判定する
+        """
+        model = self.model_
+        if cha_id is None:
+            yaku = (
+                model["tehai"][model["teban"]].riichi() or self.status_ == self.KANTSUMO or model["yama"].haisuu() == 0
+            )
+            return Utils.allow_hoora(
+                self.rule_, model["tehai"][model["teban"]], None, model["bakaze"], model["teban"], yaku
+            )
+        else:
+            hai = (self.kan_[0] + self.kan_[-1] if self.status_ == self.KAN else self.dahai_) + "_+=-"[
+                (4 + model["teban"] - cha_id) % 4
+            ]
+            yaku = model["tehai"][cha_id].riichi() or self.status_ == self.KAN or model["yama"].haisuu() == 0
+            return Utils.allow_hoora(
+                self.rule_, model["tehai"][cha_id], hai, model["bakaze"], cha_id, yaku, self.not_friten_[cha_id]
+            )
 
     def allow_ryuukyoku(self):
         """

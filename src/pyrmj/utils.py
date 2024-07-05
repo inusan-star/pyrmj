@@ -1,5 +1,5 @@
 import re
-from .hoora import hoora_mentsu
+from .hoora import hoora_mentsu, hoora
 from .shanten import shanten, yuukouhai
 
 
@@ -130,6 +130,36 @@ class Utils:
                     dahai.append(h)
 
             return dahai if dahai else False
+
+    @staticmethod
+    def allow_hoora(rule_json, tehai, hai, bakaze, zikaze, yaku, not_friten=False):
+        """
+        和了が可能か判定する
+        """
+        if hai and not not_friten:
+            return False
+
+        new_tehai = tehai.clone()
+
+        if hai:
+            new_tehai.tsumo(hai)
+
+        if shanten(new_tehai) != -1:
+            return False
+
+        if yaku:
+            return True
+
+        param = {
+            "rule": rule_json,
+            "bakaze": bakaze,
+            "zikaze": zikaze,
+            "yaku": {},
+            "dora_indicator": [],
+            "kyoutaku": {"tsumibou": 0, "riichibou": 0},
+        }
+        hoora_result = hoora(tehai, hai, param)
+        return hoora_result is not None and hoora_result.get("yaku", None) is not None
 
     @staticmethod
     def allow_ryuukyoku(rule_json, tehai, first_tsumo):
