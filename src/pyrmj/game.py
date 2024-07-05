@@ -24,6 +24,7 @@ class Game:
     KANTSUMO = "kantsumo"
     HOORA = "hoora"
     RYUUKYOKU = "ryuukyoku"
+    SYUUKYOKU = "syuukyoku"
 
     def __init__(self, rule_json=None, title=None):
         self.rule_ = rule_json or rule()
@@ -349,7 +350,7 @@ class Game:
         self.add_haifu(haifu)
         message = []
 
-        for cha_id in range(4):
+        for _ in range(4):
             message.append(copy.deepcopy(haifu))
 
         return self.get_observation(self.RYUUKYOKU, message)
@@ -414,6 +415,51 @@ class Game:
 
         else:
             return self.haipai()
+
+    def syuukyoku(self):
+        """
+        終局の局進行を行う
+        """
+        model = self.model_
+        ranking = []
+        tokuten = model["tokuten"]
+
+        for i in range(4):
+            player_id = (model["chiicha"] + i) % 4
+
+            for j in range(4):
+                if j == len(ranking) or tokuten[player_id] > tokuten[ranking[j]]:
+                    ranking.insert(j, player_id)
+                    break
+
+        tokuten[ranking[0]] += model["riichibou"] * 1000
+        self.haifu_["tokuten"] = tokuten
+        rank = [0, 0, 0, 0]
+
+        for i in range(4):
+            rank[ranking[i]] = i + 1
+
+        self.haifu_["rank"] = rank
+        round_point = not any(re.search(r"\.\d$", p) for p in self.rule_["順位点"])
+        point = [0, 0, 0, 0]
+
+        for i in range(1, 4):
+            rank_player_id = ranking[i]
+            point[rank_player_id] = (tokuten[rank_player_id] - 30000) / 1000 + float(self.rule_["順位点"][i])
+
+            if round_point:
+                point[rank_player_id] = round(point[rank_player_id])
+
+            point[ranking[0]] -= point[rank_player_id]
+
+        self.haifu_["point"] = [f"{p:.0f}" if round_point else f"{p:.1f}" for p in point]
+        haifu = {"syuukyoku": self.haifu_}
+        message = []
+
+        for _ in range(4):
+            message.append(copy.deepcopy(haifu))
+
+        return self.get_observation(self.SYUUKYOKU, message)
 
     def add_haifu(self, haifu):
         """
