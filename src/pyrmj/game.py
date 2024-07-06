@@ -334,11 +334,16 @@ class Game:
         """
         model = self.model_
         model["tehai"][model["teban"]].kan(mentsu)
-        haifu = {"kan": {"cha_id": model["teban"], "mentsu": mentsu}}
+        haifu = {self.KAN: {"cha_id": model["teban"], "mentsu": mentsu}}
         self.add_haifu(haifu)
 
-        # if self.kan_: #TODO: 要検討
-        # self.kaikan()
+        if self.kan_:
+            observation_kaikan = self.kaikan()
+
+            if observation_kaikan is None:
+                observation_kaikan = {}
+        else:
+            observation_kaikan = {}
 
         self.kan_ = mentsu
         self.n_kan_[model["teban"]] += 1
@@ -347,7 +352,8 @@ class Game:
         for _ in range(4):
             message.append(copy.deepcopy(haifu))
 
-        return self.get_observation(self.KAN, message)
+        observation_kan = self.get_observation(self.KAN, message)
+        return {key: {**value, **observation_kaikan.get(key, {})} for key, value in observation_kan.items()}
 
     def kantsumo(self):
         """
@@ -361,8 +367,14 @@ class Game:
         haifu = {self.KANTSUMO: {"cha_id": model["teban"], "hai": tsumo_hai}}
         self.add_haifu(haifu)
 
-        # if not self.rule_["カンドラ後乗せ"] or re.match(r"^[mpsz]\d{4}$", self.kan_): #TODO：要検討
-        # self.kaikan()
+        if not self.rule_["カンドラ後乗せ"] or re.match(r"^[mpsz]\d{4}$", self.kan_):
+            observation_kaikan = self.kaikan()
+
+            if observation_kaikan is None:
+                observation_kaikan = {}
+
+        else:
+            observation_kaikan = {}
 
         message = []
 
@@ -372,7 +384,30 @@ class Game:
             if cha_id != model["teban"]:
                 message[cha_id][self.KANTSUMO]["hai"] = ""
 
-        return self.get_observation(self.KANTSUMO, message)
+        observation_kantsumo = self.get_observation(self.KANTSUMO, message)
+        return {key: {**value, **observation_kaikan.get(key, {})} for key, value in observation_kantsumo.items()}
+
+    def kaikan(self):
+        """
+        開槓の局進行を行う
+        """
+        self.kan_ = None
+
+        if not self.rule_["カンドラあり"]:
+            return None
+
+        model = self.model_
+
+        model["yama"].kaikan()
+        dora_indicator = model["yama"].dora_indicator().pop()
+        haifu = {self.KAIKAN: {"dora": dora_indicator}}
+        self.add_haifu(haifu)
+        message = []
+
+        for _ in range(4):
+            message.append(copy.deepcopy(haifu))
+
+        return self.get_observation(self.KAIKAN, message)
 
     def hoora(self):
         """
