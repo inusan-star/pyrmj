@@ -103,6 +103,9 @@ class Game:
         elif self.status_ == self.KAN:
             return self.reply_kan(), False
 
+        elif self.status_ == self.KANTSUMO:
+            return self.reply_tsumo(), False
+
         elif self.status_ == self.HOORA:
             return self.reply_hoora(), False
 
@@ -345,6 +348,31 @@ class Game:
             message.append(copy.deepcopy(haifu))
 
         return self.get_observation(self.KAN, message)
+
+    def kantsumo(self):
+        """
+        槓ツモの局進行を行う
+        """
+        model = self.model_
+        self.first_tsumo_ = False
+        self.ippatsu_ = [False, False, False, False]
+        tsumo_hai = model["yama"].kantsumo()
+        model["tehai"][model["teban"]].tsumo(tsumo_hai)
+        haifu = {self.KANTSUMO: {"cha_id": model["teban"], "hai": tsumo_hai}}
+        self.add_haifu(haifu)
+
+        # if not self.rule_["カンドラ後乗せ"] or re.match(r"^[mpsz]\d{4}$", self.kan_): #TODO：要検討
+        # self.kaikan()
+
+        message = []
+
+        for cha_id in range(4):
+            message.append(copy.deepcopy(haifu))
+
+            if cha_id != model["teban"]:
+                message[cha_id][self.KANTSUMO]["hai"] = ""
+
+        return self.get_observation(self.KANTSUMO, message)
 
     def hoora(self):
         """
