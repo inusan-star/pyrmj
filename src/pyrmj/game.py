@@ -16,19 +16,6 @@ class Game:
     ゲーム進行を管理するクラス
     """
 
-    KAIKYOKU = "kaikyoku"
-    HAIPAI = "haipai"
-    TSUMO = "tsumo"
-    DAHAI = "dahai"
-    FUURO = "fuuro"
-    KAN = "kan"
-    KANTSUMO = "kantsumo"
-    KAIKAN = "kaikan"
-    HOORA = "hoora"
-    TOUPAI = "toupai"
-    RYUUKYOKU = "ryuukyoku"
-    SYUUKYOKU = "syuukyoku"
-
     def __init__(self, rule_json=None, title=None):
         self.rule_ = rule_json or rule()
 
@@ -97,28 +84,28 @@ class Game:
         if None in self.reply_:  # TODO: 要検討
             return None, True  # TODO: 要検討
 
-        if self.status_ == self.KAIKYOKU:
+        if self.status_ == Utils.KAIKYOKU:
             return self.reply_kaikyoku(), False
 
-        elif self.status_ == self.HAIPAI:
+        elif self.status_ == Utils.HAIPAI:
             return self.reply_haipai(), False
 
-        elif self.status_ == self.TSUMO:
+        elif self.status_ == Utils.TSUMO:
             return self.reply_tsumo(), False
 
-        elif self.status_ == self.KAN:
+        elif self.status_ == Utils.KAN:
             return self.reply_kan(), False
 
-        elif self.status_ == self.KANTSUMO:
+        elif self.status_ == Utils.KANTSUMO:
             return self.reply_tsumo(), False
 
-        elif self.status_ == self.HOORA:
+        elif self.status_ == Utils.HOORA:
             return self.reply_hoora(), False
 
-        elif self.status_ == self.RYUUKYOKU:
+        elif self.status_ == Utils.RYUUKYOKU:
             return self.reply_ryuukyoku(), False
 
-        elif self.status_ == self.SYUUKYOKU:
+        elif self.status_ == Utils.SYUUKYOKU:
             # TODO: 牌譜をファイルに保存する
             return None, True
 
@@ -141,19 +128,19 @@ class Game:
         model = self.model_
         reply = self.get_reply(model["teban"])
 
-        if self.TOUPAI in reply:
+        if Utils.TOUPAI in reply:
             if self.allow_ryuukyoku():
                 tehai = [""] * 4
                 tehai[model["teban"]] = model["tehai"][model["teban"]].to_string()
                 return self.ryuukyoku("九種九牌", tehai)
 
-        elif self.HOORA in reply:
+        elif Utils.HOORA in reply:
             if self.allow_hoora():
                 return self.hoora()
 
-        elif self.KAN in reply:
-            if reply[self.KAN] in self.get_kan_mentsu():
-                return self.kan(reply[self.KAN])
+        elif Utils.KAN in reply:
+            if reply[Utils.KAN] in self.get_kan_mentsu():
+                return self.kan(reply[Utils.KAN])
 
     def reply_kan(self):
         """
@@ -168,7 +155,7 @@ class Game:
             cha_id = (model["teban"] + i) % 4
             reply = self.get_reply(cha_id)
 
-            if self.HOORA in reply and self.allow_hoora(cha_id):
+            if Utils.HOORA in reply and self.allow_hoora(cha_id):
                 if self.rule_["最大同時和了数"] == 1 and self.hoora_:
                     continue
 
@@ -243,7 +230,7 @@ class Game:
             player_id = cha_id
             message.append(
                 {
-                    self.KAIKYOKU: {
+                    Utils.KAIKYOKU: {
                         "id": player_id,
                         "rule": self.rule_,
                         "title": self.haifu_["title"],
@@ -253,7 +240,7 @@ class Game:
                 }
             )
 
-        return self.get_observation(self.KAIKYOKU, message)
+        return self.get_observation(Utils.KAIKYOKU, message)
 
     def haipai(self, yama=None):
         """
@@ -291,7 +278,7 @@ class Game:
         self.haifu_["tokuten"] = model["tokuten"][:]
         self.haifu_["log"].append([])
         haifu = {
-            self.HAIPAI: {
+            Utils.HAIPAI: {
                 "bakaze": model["bakaze"],
                 "kyokusuu": model["kyokusuu"],
                 "tsumibou": model["tsumibou"],
@@ -310,9 +297,9 @@ class Game:
 
             for i in range(4):
                 if i != cha_id:
-                    message[cha_id][self.HAIPAI]["tehai"][i] = ""
+                    message[cha_id][Utils.HAIPAI]["tehai"][i] = ""
 
-        return self.get_observation(self.HAIPAI, message)
+        return self.get_observation(Utils.HAIPAI, message)
 
     def tsumo(self):
         """
@@ -322,7 +309,7 @@ class Game:
         model["teban"] = (model["teban"] + 1) % 4
         tsumo_hai = model["yama"].tsumo()
         model["tehai"][model["teban"]].tsumo(tsumo_hai)
-        haifu = {self.TSUMO: {"cha_id": model["teban"], "hai": tsumo_hai}}
+        haifu = {Utils.TSUMO: {"cha_id": model["teban"], "hai": tsumo_hai}}
         self.add_haifu(haifu)
         message = []
 
@@ -330,9 +317,9 @@ class Game:
             message.append(copy.deepcopy(haifu))
 
             if cha_id != model["teban"]:
-                message[cha_id][self.TSUMO]["hai"] = ""
+                message[cha_id][Utils.TSUMO]["hai"] = ""
 
-        return self.get_observation(self.TSUMO, message)
+        return self.get_observation(Utils.TSUMO, message)
 
     def kan(self, mentsu):
         """
@@ -340,7 +327,7 @@ class Game:
         """
         model = self.model_
         model["tehai"][model["teban"]].kan(mentsu)
-        haifu = {self.KAN: {"cha_id": model["teban"], "mentsu": mentsu}}
+        haifu = {Utils.KAN: {"cha_id": model["teban"], "mentsu": mentsu}}
         self.add_haifu(haifu)
 
         if self.kan_:
@@ -358,7 +345,7 @@ class Game:
         for _ in range(4):
             message.append(copy.deepcopy(haifu))
 
-        observation_kan = self.get_observation(self.KAN, message)
+        observation_kan = self.get_observation(Utils.KAN, message)
         return {key: {**value, **observation_kaikan.get(key, {})} for key, value in observation_kan.items()}
 
     def kantsumo(self):
@@ -370,7 +357,7 @@ class Game:
         self.ippatsu_ = [False, False, False, False]
         tsumo_hai = model["yama"].kantsumo()
         model["tehai"][model["teban"]].tsumo(tsumo_hai)
-        haifu = {self.KANTSUMO: {"cha_id": model["teban"], "hai": tsumo_hai}}
+        haifu = {Utils.KANTSUMO: {"cha_id": model["teban"], "hai": tsumo_hai}}
         self.add_haifu(haifu)
 
         if not self.rule_["カンドラ後乗せ"] or re.match(r"^[mpsz]\d{4}$", self.kan_):
@@ -388,9 +375,9 @@ class Game:
             message.append(copy.deepcopy(haifu))
 
             if cha_id != model["teban"]:
-                message[cha_id][self.KANTSUMO]["hai"] = ""
+                message[cha_id][Utils.KANTSUMO]["hai"] = ""
 
-        observation_kantsumo = self.get_observation(self.KANTSUMO, message)
+        observation_kantsumo = self.get_observation(Utils.KANTSUMO, message)
         return {key: {**value, **observation_kaikan.get(key, {})} for key, value in observation_kantsumo.items()}
 
     def kaikan(self):
@@ -406,14 +393,14 @@ class Game:
 
         model["yama"].kaikan()
         dora_indicator = model["yama"].dora_indicator().pop()
-        haifu = {self.KAIKAN: {"dora": dora_indicator}}
+        haifu = {Utils.KAIKAN: {"dora": dora_indicator}}
         self.add_haifu(haifu)
         message = []
 
         for _ in range(4):
             message.append(copy.deepcopy(haifu))
 
-        return self.get_observation(self.KAIKAN, message)
+        return self.get_observation(Utils.KAIKAN, message)
 
     def hoora(self):
         """
@@ -421,10 +408,10 @@ class Game:
         """
         model = self.model_
 
-        if self.status_ != self.HOORA:
+        if self.status_ != Utils.HOORA:
             model["yama"].close()
             self.hoora_option_ = (
-                "chankan" if self.status_ == self.KAN else "rinshan" if self.status_ == self.KANTSUMO else None
+                "chankan" if self.status_ == Utils.KAN else "rinshan" if self.status_ == Utils.KANTSUMO else None
             )
 
         zikaze = self.hoora_.pop(0) if self.hoora_ else model["teban"]
@@ -465,7 +452,7 @@ class Game:
 
         self.bunpai_ = hoora_result["bunpai"]
         haifu = {
-            self.HOORA: {
+            Utils.HOORA: {
                 "cha_id": zikaze,
                 "tehai": tehai.tsumo(ron_hai).to_string() if ron_hai else tehai.to_string(),
                 "houjuusha": model["teban"] if ron_hai else None,
@@ -480,8 +467,8 @@ class Game:
         }
 
         for key in ["fu", "hansuu", "yakuman"]:
-            if not haifu[self.HOORA][key]:
-                del haifu[self.HOORA][key]
+            if not haifu[Utils.HOORA][key]:
+                del haifu[Utils.HOORA][key]
 
         self.add_haifu(haifu)
         message = []
@@ -489,7 +476,7 @@ class Game:
         for _ in range(4):
             message.append(copy.deepcopy(haifu))
 
-        return self.get_observation(self.HOORA, message)
+        return self.get_observation(Utils.HOORA, message)
 
     def ryuukyoku(self, name, tehai=None):
         """
@@ -584,14 +571,14 @@ class Game:
             self.renchan_ = True
 
         self.bunpai_ = bunpai
-        haifu = {self.RYUUKYOKU: {"name": name, "tehai": tehai, "bunpai": bunpai}}
+        haifu = {Utils.RYUUKYOKU: {"name": name, "tehai": tehai, "bunpai": bunpai}}
         self.add_haifu(haifu)
         message = []
 
         for _ in range(4):
             message.append(copy.deepcopy(haifu))
 
-        return self.get_observation(self.RYUUKYOKU, message)
+        return self.get_observation(Utils.RYUUKYOKU, message)
 
     def last(self):
         """
@@ -691,13 +678,13 @@ class Game:
             point[ranking[0]] -= point[rank_player_id]
 
         self.haifu_["point"] = [f"{p:.0f}" if round_point else f"{p:.1f}" for p in point]
-        haifu = {self.SYUUKYOKU: self.haifu_}
+        haifu = {Utils.SYUUKYOKU: self.haifu_}
         message = []
 
         for _ in range(4):
             message.append(copy.deepcopy(haifu))
 
-        return self.get_observation(self.SYUUKYOKU, message)
+        return self.get_observation(Utils.SYUUKYOKU, message)
 
     def add_haifu(self, haifu):
         """
@@ -777,16 +764,16 @@ class Game:
         model = self.model_
         if cha_id is None:
             yaku = (
-                model["tehai"][model["teban"]].riichi() or self.status_ == self.KANTSUMO or model["yama"].haisuu() == 0
+                model["tehai"][model["teban"]].riichi() or self.status_ == Utils.KANTSUMO or model["yama"].haisuu() == 0
             )
             return Utils.allow_hoora(
                 self.rule_, model["tehai"][model["teban"]], None, model["bakaze"], model["teban"], yaku
             )
         else:
-            hai = (self.kan_[0] + self.kan_[-1] if self.status_ == self.KAN else self.dahai_) + "_+=-"[
+            hai = (self.kan_[0] + self.kan_[-1] if self.status_ == Utils.KAN else self.dahai_) + "_+=-"[
                 (4 + model["teban"] - cha_id) % 4
             ]
-            yaku = model["tehai"][cha_id].riichi() or self.status_ == self.KAN or model["yama"].haisuu() == 0
+            yaku = model["tehai"][cha_id].riichi() or self.status_ == Utils.KAN or model["yama"].haisuu() == 0
             return Utils.allow_hoora(
                 self.rule_, model["tehai"][cha_id], hai, model["bakaze"], cha_id, yaku, self.not_friten_[cha_id]
             )

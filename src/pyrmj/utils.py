@@ -8,6 +8,19 @@ class Utils:
     ユーティリティクラス
     """
 
+    KAIKYOKU = "kaikyoku"
+    HAIPAI = "haipai"
+    TSUMO = "tsumo"
+    DAHAI = "dahai"
+    FUURO = "fuuro"
+    KAN = "kan"
+    KANTSUMO = "kantsumo"
+    KAIKAN = "kaikan"
+    HOORA = "hoora"
+    TOUPAI = "toupai"
+    RYUUKYOKU = "ryuukyoku"
+    SYUUKYOKU = "syuukyoku"
+
     @staticmethod
     def get_dahai(rule_json, tehai):
         """
