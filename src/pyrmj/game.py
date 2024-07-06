@@ -81,6 +81,12 @@ class Game:
 
         return observation
 
+    def reset(self, chiicha=None):
+        """
+        対局を開始する
+        """
+        return self.kaikyoku(chiicha), False
+
     def step(self, actions):
         """
         対局を進める
@@ -213,7 +219,7 @@ class Game:
 
         return self.last()
 
-    def kaikyoku(self, chiicha=None):
+    def kaikyoku(self, chiicha):
         """
         開局する
         """
