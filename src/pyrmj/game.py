@@ -334,6 +334,59 @@ class Game:
 
         return self.get_observation(Utils.TSUMO, message)
 
+    def dahai(self, hai):
+        """
+        打牌の局進行を行う
+        """
+        model = self.model_
+        self.ippatsu_[model["teban"]] = False
+
+        if not model["tehai"][model["teban"]].riichi():
+            self.not_friten_[model["teban"]] = True
+
+        model["tehai"][model["teban"]].dahai(hai)
+        model["kawa"][model["teban"]].dahai(hai)
+
+        if self.first_tsumo_:
+            if not re.match(r"^z[1234]", hai):
+                self.suufuurenda_ = False
+
+            if self.dahai_ and self.dahai_[:2] != hai[:2]:
+                self.suufuurenda_ = False
+
+        else:
+            self.suufuurenda_ = False
+
+        if hai[-1] == "*":
+            self.riichi_[model["teban"]] = 2 if self.first_tsumo_ else 1
+            self.ippatsu_[model["teban"]] = self.rule_["一発あり"]
+
+        if shanten(model["tehai"][model["teban"]]) == 0 and any(
+            model["kawa"][model["teban"]].find(h) for h in yuukouhai(model["tehai"][model["teban"]])
+        ):
+            self.not_friten_[model["teban"]] = False
+
+        self.dahai_ = hai
+        haifu = {"dahai": {"cha_id": model["teban"], "hai": hai}}
+        self.add_haifu(haifu)
+
+        if self.kan_:
+            observation_kaikan = self.kaikan()
+
+            if observation_kaikan is None:
+                observation_kaikan = {}
+
+        else:
+            observation_kaikan = {}
+
+        message = []
+
+        for _ in range(4):
+            message.append(copy.deepcopy(haifu))
+
+        observation_dahai = self.get_observation(Utils.DAHAI, message)
+        return {key: {**value, **observation_kaikan.get(key, {})} for key, value in observation_dahai.items()}
+
     def kan(self, mentsu):
         """
         カン（暗槓/加槓）の局進行を行う
@@ -348,6 +401,7 @@ class Game:
 
             if observation_kaikan is None:
                 observation_kaikan = {}
+
         else:
             observation_kaikan = {}
 
