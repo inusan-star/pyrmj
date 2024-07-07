@@ -911,30 +911,11 @@ class Game:
         """
         self.haifu_["log"][-1].append(haifu)
 
-    def transform_keys(self, haifu):
-        """
-        牌譜のキーを変換する
-        """
-        if isinstance(haifu, dict):
-            new_haifu = {}
-
-            for key, value in haifu.items():
-                new_key = Utils.haifu_mapping.get(key, key)
-                new_haifu[new_key] = self.transform_keys(value)
-
-            return new_haifu
-
-        elif isinstance(haifu, list):
-            return [self.transform_keys(item) for item in haifu]
-
-        else:
-            return haifu
-
     def save_haifu(self):
         """
         牌譜を保存する
         """
-        self.haifu_ = self.transform_keys(self.haifu_)
+        self.haifu_ = Utils.transform_keys(self.haifu_)
         save_dir = os.getcwd()
         file_path = os.path.join(save_dir, self.model_["title"] + ".json")
 

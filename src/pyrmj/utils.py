@@ -227,3 +227,23 @@ class Utils:
                     n_yaochu += 1
 
         return n_yaochu >= 9
+
+    @staticmethod
+    def transform_keys(haifu):
+        """
+        牌譜のキーを変換する
+        """
+        if isinstance(haifu, dict):
+            new_haifu = {}
+
+            for key, value in haifu.items():
+                new_key = Utils.haifu_mapping.get(key, key)
+                new_haifu[new_key] = Utils.transform_keys(value)
+
+            return new_haifu
+
+        elif isinstance(haifu, list):
+            return [Utils.transform_keys(item) for item in haifu]
+
+        else:
+            return haifu
