@@ -93,6 +93,9 @@ class Game:
         elif self.status_ == Utils.TSUMO:
             return self.reply_tsumo(), False
 
+        elif self.status_ == Utils.DAHAI:
+            return self.reply_dahai(), False
+
         elif self.status_ == Utils.KAN:
             return self.reply_kan(), False
 
@@ -154,6 +157,91 @@ class Game:
         # TODO 応答が不正の場合
         hai = self.get_dahai().pop()
         return self.dahai(hai)
+
+    def reply_dahai(self):
+        """
+        打牌の応答に対する処理
+        """
+        model = self.model_
+
+        for i in range(1, 4):
+            cha_id = (model["teban"] + i) % 4
+            reply = self.get_reply(cha_id)
+
+            if Utils.HOORA in reply and self.allow_hoora(cha_id):
+                if self.rule_["最大同時和了数"] == 1 and self.hoora_:
+                    continue
+
+                self.hoora_.append(cha_id)
+
+            else:
+                tehai = model["tehai"][cha_id].clone().tsumo(self.dahai_)
+                if shanten(tehai) == -1:
+                    self.not_friten_[cha_id] = False
+
+        if len(self.hoora_) == 3 and self.rule_["最大同時和了数"] == 2:
+            tehai = [""] * 4
+
+            for cha_id in self.hoora_:
+                tehai[cha_id] = model["tehai"][cha_id].to_string()
+
+            return self.ryuukyoku("三家和", tehai)
+
+        elif self.hoora_:
+            return self.hoora()
+
+        if self.dahai_[-1] == "*":
+            model["tokuten"][model["player_id"][model["teban"]]] -= 1000
+            model["riichibou"] += 1
+
+            if len([r for r in self.riichi_ if r]) == 4 and self.rule_["途中流局あり"]:
+                tehai = [te.to_string() for te in model["tehai"]]
+                return self.ryuukyoku("四家立直", tehai)
+
+        if self.first_tsumo_ and model["teban"] == 3:
+            self.first_tsumo_ = False
+
+            if self.suufuurenda_:
+                return self.ryuukyoku("四風連打")
+
+        if sum(self.n_kan_) == 4:
+            if max(self.n_kan_) < 4 and self.rule_["途中流局あり"]:
+                return self.ryuukyoku("四開槓")
+
+        if not model["yama"].haisuu():
+            tehai = [""] * 4
+
+            for cha_id in range(4):
+                reply = self.get_reply(cha_id)
+
+                if Utils.TOUPAI in reply:
+                    tehai[cha_id] = reply[Utils.TOUPAI]
+
+            return self.ryuukyoku("", tehai)
+
+        for i in range(1, 4):
+            cha_id = (model["teban"] + i) % 4
+            reply = self.get_reply(cha_id)
+
+            if Utils.FUURO in reply:
+                mentsu = reply[Utils.FUURO].replace("0", "5")
+
+                if re.match(r"^[mpsz](\d)\1\1\1", mentsu):
+                    if reply[Utils.FUURO] in self.get_kan_mentsu(cha_id):
+                        return self.fuuro(reply[Utils.FUURO])
+
+                elif re.match(r"^[mpsz](\d)\1\1", mentsu):
+                    if reply[Utils.FUURO] in self.get_pon_mentsu(cha_id):
+                        return self.fuuro(reply[Utils.FUURO])
+
+        cha_id = (model["teban"] + 1) % 4
+        reply = self.get_reply(cha_id)
+
+        if Utils.FUURO in reply:
+            if reply[Utils.FUURO] in self.get_chii_mentsu(cha_id):
+                return self.fuuro(reply[Utils.FUURO])
+
+        return self.tsumo()
 
     def reply_kan(self):
         """
