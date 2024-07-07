@@ -96,6 +96,9 @@ class Game:
         elif self.status_ == Utils.DAHAI:
             return self.reply_dahai(), False
 
+        elif self.status_ == Utils.FUURO:
+            return self.reply_fuuro(), False
+
         elif self.status_ == Utils.KAN:
             return self.reply_kan(), False
 
@@ -474,6 +477,31 @@ class Game:
 
         observation_dahai = self.get_observation(Utils.DAHAI, message)
         return {key: {**value, **observation_kaikan.get(key, {})} for key, value in observation_dahai.items()}
+
+    def fuuro(self, mentsu):
+        """
+        副露の局進行を行う
+        """
+        model = self.model_
+        self.first_tsumo_ = False
+        self.ippatsu_ = [False, False, False, False]
+        model["kawa"][model["teban"]].fuuro(mentsu)
+        direction = re.search(r"[\+\=\-]", mentsu).group()
+        model["teban"] = (model["teban"] + "_-=+".index(direction)) % 4
+        model["tehai"][model["teban"]].fuuro(mentsu)
+
+        if re.match(r"^[mpsz]\d{4}", mentsu):
+            self.kan_ = mentsu
+            self.n_kan_[model["teban"]] += 1
+
+        haifu = {"fuuro": {"cha_id": model["teban"], "mentsu": mentsu}}
+        self.add_haifu(haifu)
+        message = []
+
+        for _ in range(4):
+            message.append(copy.deepcopy(haifu))
+
+        return self.get_observation(Utils.FUURO, message)
 
     def kan(self, mentsu):
         """
