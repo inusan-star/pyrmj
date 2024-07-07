@@ -1,5 +1,5 @@
-import os
 import json
+import os
 import pytest
 from pyrmj import Tehai, shanten_kokushi, shanten_chiitoi, shanten_ippan, shanten, yuukouhai
 
