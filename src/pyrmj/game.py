@@ -79,10 +79,10 @@ class Game:
         対局を進める
         """
         for player_id, action in actions.items():
-            self.reply_[player_id] = action or {}  # TODO: 要検討
+            self.reply_[player_id] = action
 
-        if None in self.reply_:  # TODO: 要検討
-            return None, True  # TODO: 要検討
+        if None in self.reply_:
+            raise ValueError("Action is None")
 
         if self.status_ == Utils.KAIKYOKU:
             return self.reply_kaikyoku(), False
