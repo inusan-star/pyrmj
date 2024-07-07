@@ -142,6 +142,19 @@ class Game:
             if reply[Utils.KAN] in self.get_kan_mentsu():
                 return self.kan(reply[Utils.KAN])
 
+        elif Utils.DAHAI in reply:
+            dahai = re.sub(r"\*$", "", reply[Utils.DAHAI])
+
+            if dahai in self.get_dahai():
+                if reply[Utils.DAHAI][-1] == "*" and self.allow_riichi(dahai):
+                    return self.dahai(reply[Utils.DAHAI])
+
+                return self.dahai(dahai)
+
+        # TODO 応答が不正の場合
+        hai = self.get_dahai().pop()
+        return self.dahai(hai)
+
     def reply_kan(self):
         """
         カン（暗槓/加槓）の応答に対する処理
