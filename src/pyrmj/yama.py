@@ -8,7 +8,7 @@ class Yama:
     """
 
     def __init__(self, rule):
-        random.seed(1704034800)  # シード値を設定（Time stamp of 1/1/2024）
+        random.seed(1704034800)  # TODO シード値を設定（Time stamp of 1/1/2024）
         self.rule_ = rule
         akahai = rule["赤牌"]
         hai = []
