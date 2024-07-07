@@ -246,6 +246,25 @@ class Game:
 
         return self.tsumo()
 
+    def reply_fuuro(self):
+        """
+        副露の応答に対する処理
+        """
+        model = self.model_
+
+        if self.kan_:
+            return self.kantsumo()
+
+        reply = self.get_reply(model["teban"])
+
+        if Utils.DAHAI in reply:
+            if reply[Utils.DAHAI] in self.get_dahai():
+                return self.dahai(reply[Utils.DAHAI])
+
+        # TODO 応答が不正の場合
+        hai = self.get_dahai().pop()
+        return self.dahai(hai)
+
     def reply_kan(self):
         """
         カン（暗槓/加槓）の応答に対する処理
