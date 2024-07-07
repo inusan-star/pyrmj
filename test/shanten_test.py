@@ -1,7 +1,7 @@
 import os
 import json
 import pytest
-from pyrmj import Tehai, shanten_kokushi, shanten_chiitoi, shanten_ippan, shanten
+from pyrmj import Tehai, shanten_kokushi, shanten_chiitoi, shanten_ippan, shanten, yuukouhai
 
 base_dir = os.path.dirname(__file__)
 
@@ -176,6 +176,35 @@ def test_shanten():
     for data in data4:
         tehai = Tehai(data["h"])
         assert shanten(tehai) == min(data["s"])
+
+
+def test_yuukouhai():
+    """
+    yuukouhai(tehai)のテスト
+    """
+    print("▶︎ yuukouhai(tehai)のテスト")
+
+    test_cases = [("m123p456s789z12345"), ("m123p456z12345,s789-,")]
+
+    for tehai_string in test_cases:
+        tehai = Tehai.from_string(tehai_string)
+        assert yuukouhai(tehai) is None
+
+    test_cases = [
+        ("m123p456s789z1234", ["z1", "z2", "z3", "z4"]),
+        ("m123p456z1234,s789-", ["z1", "z2", "z3", "z4"]),
+        ("m19p19s19z1234567", ["m1", "m9", "p1", "p9", "s1", "s9", "z1", "z2", "z3", "z4", "z5", "z6", "z7"]),
+        ("m1234444p456s789", ["m1"]),
+        ("m13p456s789z11,m2222", ["m2"]),
+        ("m11155p2278s66z17", ["m5", "p2", "p6", "p7", "p8", "p9", "s6", "z1", "z7"]),
+    ]
+
+    for tehai_string, expected in test_cases:
+        tehai = Tehai.from_string(tehai_string)
+        assert yuukouhai(tehai) == expected
+
+    tehai = Tehai.from_string("m11155p2278s66z17")
+    assert yuukouhai(tehai, shanten_chiitoi) == ["p7", "p8", "z1", "z7"]
 
 
 if __name__ == "__main__":

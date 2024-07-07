@@ -218,7 +218,7 @@ def shanten(tehai):
     return min(shanten_kokushi(tehai), shanten_chiitoi(tehai), shanten_ippan(tehai))
 
 
-def yuukouhai(tehai):
+def yuukouhai(tehai, shanten_func=shanten):
     """
     有効牌を返す
     """
@@ -226,7 +226,7 @@ def yuukouhai(tehai):
         return None
 
     hai = []
-    n_shanten = shanten(tehai)
+    n_shanten = shanten_func(tehai)
 
     for suit in ["m", "p", "s", "z"]:
         juntehai = tehai.juntehai_[suit]
@@ -237,7 +237,7 @@ def yuukouhai(tehai):
 
             juntehai[number] += 1
 
-            if shanten(tehai) < n_shanten:
+            if shanten_func(tehai) < n_shanten:
                 hai.append(f"{suit}{number}")
 
             juntehai[number] -= 1
