@@ -38,6 +38,7 @@ class Game:
         }
 
         self.status_ = None
+        self.finished_ = None
         self.reply_ = [None] * 4
         self.max_kyokusuu_ = None
         self.haifu_ = {}
@@ -74,7 +75,8 @@ class Game:
         """
         対局を開始する
         """
-        return self.kaikyoku(chiicha), False
+        self.finished_ = False
+        return self.kaikyoku(chiicha)
 
     def step(self, actions):
         """
@@ -87,35 +89,40 @@ class Game:
             raise ValueError("Action is None")
 
         if self.status_ == Utils.KAIKYOKU:
-            return self.reply_kaikyoku(), False
+            return self.reply_kaikyoku()
 
         elif self.status_ == Utils.HAIPAI:
-            return self.reply_haipai(), False
+            return self.reply_haipai()
 
         elif self.status_ == Utils.TSUMO:
-            return self.reply_tsumo(), False
+            return self.reply_tsumo()
 
         elif self.status_ == Utils.DAHAI:
-            return self.reply_dahai(), False
+            return self.reply_dahai()
 
         elif self.status_ == Utils.FUURO:
-            return self.reply_fuuro(), False
+            return self.reply_fuuro()
 
         elif self.status_ == Utils.KAN:
-            return self.reply_kan(), False
+            return self.reply_kan()
 
         elif self.status_ == Utils.KANTSUMO:
-            return self.reply_tsumo(), False
+            return self.reply_tsumo()
 
         elif self.status_ == Utils.HOORA:
-            return self.reply_hoora(), False
+            return self.reply_hoora()
 
         elif self.status_ == Utils.RYUUKYOKU:
-            return self.reply_ryuukyoku(), False
+            return self.reply_ryuukyoku()
 
         elif self.status_ == Utils.SYUUKYOKU:
-            self.save_haifu()
-            return None, True
+            return self.reply_syuukyoku()
+
+    def done(self):
+        """
+        対局が終了したか返す
+        """
+        return self.finished_
 
     def reply_kaikyoku(self):
         """
@@ -330,6 +337,14 @@ class Game:
         model["tsumibou"] += 1
 
         return self.last()
+
+    def reply_syuukyoku(self):
+        """
+        終局の応答に対する処理
+        """
+        self.save_haifu()
+        self.finished_ = True
+        return None
 
     def kaikyoku(self, chiicha):
         """
