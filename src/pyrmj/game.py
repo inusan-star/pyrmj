@@ -40,6 +40,7 @@ class Game:
         self.status_ = None
         self.finished_ = None
         self.reply_ = [None] * 4
+        self.save_flag_ = None
         self.max_kyokusuu_ = None
         self.haifu_ = {}
         self.first_tsumo_ = None
@@ -71,10 +72,15 @@ class Game:
 
         return observation
 
-    def reset(self, chiicha=None):
+    def reset(
+        self,
+        chiicha=None,
+        save_flag=False,
+    ):
         """
         対局を開始する
         """
+        self.save_flag_ = save_flag
         self.finished_ = False
         return self.kaikyoku(chiicha)
 
@@ -342,7 +348,9 @@ class Game:
         """
         終局の応答に対する処理
         """
-        self.save_haifu()
+        if self.save_flag_:
+            self.save_haifu()
+
         self.finished_ = True
         return None
 
