@@ -1,7 +1,9 @@
-import re
 import copy
-import random
 import datetime
+import json
+import os
+import random
+import re
 from .hoora import hoora
 from .kawa import Kawa
 from .rule import rule
@@ -20,7 +22,7 @@ class Game:
         self.rule_ = rule_json or rule()
 
         self.model_ = {
-            "title": title or "pyrmj - " + datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
+            "title": title or "pyrmj_" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S"),
             "player": ["自家", "下家", "対面", "上家"],
             "chiicha": 0,
             "bakaze": 0,
@@ -112,7 +114,7 @@ class Game:
             return self.reply_ryuukyoku(), False
 
         elif self.status_ == Utils.SYUUKYOKU:
-            # TODO: 牌譜をファイルに保存する
+            self.save_haifu()
             return None, True
 
     def reply_kaikyoku(self):
@@ -893,6 +895,16 @@ class Game:
         牌譜を追加する
         """
         self.haifu_["log"][-1].append(haifu)
+
+    def save_haifu(self):
+        """
+        牌譜を保存する
+        """
+        save_dir = os.getcwd()
+        file_path = os.path.join(save_dir, self.model_["title"] + ".json")
+
+        with open(file_path, "w", encoding="utf-8") as file:
+            json.dump(self.haifu_, file, ensure_ascii=False, indent=2)
 
     def get_reply(self, cha_id):
         """
