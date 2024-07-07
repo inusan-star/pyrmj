@@ -4,9 +4,12 @@
     "ankan", // 暗槓
     "anko", // 暗刻
     "bakaze", // 場風
+    "baojia", // 放銃者(中国語)
+    "baopai", // ドラ(中国語)
     "bunpai", // 分配
+    "changbang", // 積み棒(中国語)
     "chankan", // 槍槓
-    "chanta", // 混全帯么九
+    "chanta", // 混全帯幺九
     "chiicha", // 起家
     "chii", // チー
     "chiitoi", // 七対子
@@ -14,10 +17,18 @@
     "chuuren", // 九蓮宝燈
     "dahai", // 打牌
     "daisangen", // 大三元
+    "damanguan", // 役満(中国語)
+    "dapai", // 打牌(中国語)
+    "defen", // 得点(中国語)
     "dora", // ドラ
     "doras", // ドラ(複数)
+    "fanshu", // 翻数(中国語)
+    "fenpei", // 分配(中国語)
     "friten", // フリテン
+    "fubaopai", // 裏ドラ(中国語)
+    "fulou", // 副露(中国語)
     "fuuro", // 副露
+    "gangzimo", // 槓ツモ(中国語)
     "hai", // 牌
     "haifu", // 牌譜
     "hais", // 牌(複数)
@@ -30,13 +41,19 @@
     "hoora", // 和了
     "houjuu", // 放銃
     "houjuusha", // 放銃者
+    "hule", // 和了(中国語)
+    "hupai", // 役
     "ikkitsuukan", // 一気通貫
     "iipeekoo", // 一盃口
     "ippan", // 一般
     "ippatsu", // 一発
     "jantou", // 雀頭
-    "junchan", // 純全帯么九
+    "jieju", // 終局(中国語)
+    "junchan", // 純全帯幺九
+    "jushu", // 局数(中国語)
     "juntehai", // 純手牌
+    "kaigang", // 開槓(中国語)
+    "kaiju", // 開局(中国語)
     "kaikan", // 開槓
     "kaikaned", // 開槓(過去分詞)
     "kaikyoku", // 開局
@@ -52,6 +69,7 @@
     "koritsuhai", // 孤立牌
     "kyokusuu", // 局数
     "kyoutaku", // 供託
+    "lizhibang", // 立直棒(中国語)
     "manzu", // 萬子
     "mentsu", // 面子
     "menzen", // 門前
@@ -60,8 +78,11 @@
     "peekoo", // 盃口
     "penchan", // 辺張
     "pinfu", // 平和
+    "pingju", // 流局(中国語)
     "pinzu", // 筒子
     "pyrmj", // モジュール名(麻雀)
+    "qijia", // 起家(中国語)
+    "qipai", // 配牌(中国語)
     "renchan", // 連荘
     "riichi", // 立直
     "riichibou", // 立直棒
@@ -76,6 +97,7 @@
     "sanshokudoujun", // 三色同順
     "sanshokudoukoo", // 三色同刻
     "shanten", // 向聴
+    "shoupai", // 手牌(中国語)
     "shousangen", // 小三元
     "shuntsu", // 順子
     "souzu", // 索子
@@ -107,6 +129,8 @@
     "zihai", // 字牌
     "zikaze", // 自風
     "yaku", // 役
-    "yuukouhai" // 有効牌
+    "yuukouhai", // 有効牌
+    "zhuangfeng", // 場風(中国語)
+    "zimo" // ツモ(中国語)
   ]
 }
