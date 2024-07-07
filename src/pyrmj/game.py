@@ -494,7 +494,7 @@ class Game:
             self.not_friten_[model["teban"]] = False
 
         self.dahai_ = hai
-        haifu = {"dahai": {"cha_id": model["teban"], "hai": hai}}
+        haifu = {Utils.DAHAI: {"cha_id": model["teban"], "hai": hai}}
         self.add_haifu(haifu)
 
         if self.kan_:
@@ -530,7 +530,7 @@ class Game:
             self.kan_ = mentsu
             self.n_kan_[model["teban"]] += 1
 
-        haifu = {"fuuro": {"cha_id": model["teban"], "mentsu": mentsu}}
+        haifu = {Utils.FUURO: {"cha_id": model["teban"], "mentsu": mentsu}}
         self.add_haifu(haifu)
         message = []
 
@@ -612,7 +612,7 @@ class Game:
 
         model["yama"].kaikan()
         dora_indicator = model["yama"].dora_indicator().pop()
-        haifu = {Utils.KAIKAN: {"dora": dora_indicator}}
+        haifu = {Utils.KAIKAN: {"dora_indicator": dora_indicator}}
         self.add_haifu(haifu)
         message = []
 
@@ -911,10 +911,30 @@ class Game:
         """
         self.haifu_["log"][-1].append(haifu)
 
+    def transform_keys(self, haifu):
+        """
+        牌譜のキーを変換する
+        """
+        if isinstance(haifu, dict):
+            new_haifu = {}
+
+            for key, value in haifu.items():
+                new_key = Utils.haifu_mapping.get(key, key)
+                new_haifu[new_key] = self.transform_keys(value)
+
+            return new_haifu
+
+        elif isinstance(haifu, list):
+            return [self.transform_keys(item) for item in haifu]
+
+        else:
+            return haifu
+
     def save_haifu(self):
         """
         牌譜を保存する
         """
+        self.haifu_ = self.transform_keys(self.haifu_)
         save_dir = os.getcwd()
         file_path = os.path.join(save_dir, self.model_["title"] + ".json")
 

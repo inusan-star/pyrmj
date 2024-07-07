@@ -21,6 +21,37 @@ class Utils:
     RYUUKYOKU = "ryuukyoku"
     SYUUKYOKU = "syuukyoku"
 
+    haifu_mapping = {
+        KAIKYOKU: "kaiju",
+        HAIPAI: "qipai",
+        TSUMO: "zimo",
+        DAHAI: "dapai",
+        FUURO: "fulou",
+        KAN: "gang",
+        KANTSUMO: "gangzimo",
+        KAIKAN: "kaigang",
+        HOORA: "hule",
+        RYUUKYOKU: "pingju",
+        SYUUKYOKU: "jieju",
+        "chiicha": "qijia",
+        "tokuten": "defen",
+        "bakaze": "zhuangfeng",
+        "kyokusuu": "jushu",
+        "tsumibou": "changbang",
+        "riichibou": "lizhibang",
+        "dora_indicator": "baopai",
+        "tehai": "shoupai",
+        "cha_id": "l",
+        "hai": "p",
+        "mentsu": "m",
+        "houjuusha": "baojia",
+        "uradora_indicator": "fubaopai",
+        "hansuu": "fanshu",
+        "yakuman": "damanguan",
+        "yaku": "hupai",
+        "bunpai": "fenpei",
+    }
+
     @staticmethod
     def get_dahai(rule_json, tehai):
         """
