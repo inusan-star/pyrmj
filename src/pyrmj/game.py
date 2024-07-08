@@ -358,7 +358,7 @@ class Game:
         """
         開局する
         """
-        random.seed(1704034800)  # シード値を設定（Time stamp of 1/1/2024）
+        random.seed(1704034800)  # TODO シード値を設定（Time stamp of 1/1/2024）
         self.model_["chiicha"] = chiicha if chiicha else random.randint(0, 3)
         self.max_kyokusuu_ = 0 if self.rule_["場数"] == 0 else self.rule_["場数"] * 4 - 1
 
