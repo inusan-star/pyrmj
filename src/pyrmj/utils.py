@@ -229,6 +229,22 @@ class Utils:
         return n_yaochu >= 9
 
     @staticmethod
+    def allow_toupai(rule_json, tehai, haisuu):
+        """
+        倒牌（ノーテン宣言）が可能か判定する
+        """
+        if haisuu > 0 or tehai.tsumo_:
+            return False
+
+        if not rule_json["ノーテン宣言あり"]:
+            return False
+
+        if tehai.riichi():
+            return False
+
+        return shanten(tehai) == 0 and len(yuukouhai(tehai)) > 0
+
+    @staticmethod
     def transform_keys(haifu):
         """
         牌譜のキーを変換する
