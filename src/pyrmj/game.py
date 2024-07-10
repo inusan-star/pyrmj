@@ -62,13 +62,29 @@ class Game:
         """
         観測値を返す
         """
+        model = self.model_
         self.status_ = status
         self.reply_ = [None] * 4
         observation = {}
 
         for cha_id in range(4):
             player_id = self.model_["player_id"][cha_id]
-            observation[player_id] = message[cha_id]
+            observation[player_id] = {}
+            observation[player_id]["message"] = message[cha_id]
+            observation[player_id]["game_info"] = {
+                "zikaze": cha_id,
+                "tsumo_hoora": self.allow_hoora() if status == Utils.TSUMO and model["teban"] == cha_id else False,
+                "dahai": (
+                    self.get_dahai()
+                    if (status == Utils.TSUMO or status == Utils.FUURO) and model["teban"] == cha_id
+                    else None
+                ),
+                "riichi": (
+                    {hai: self.allow_riichi(hai) for hai in self.get_dahai()}
+                    if (status == Utils.TSUMO or status == Utils.FUURO) and model["teban"] == cha_id
+                    else None
+                ),
+            }
 
         return observation
 
@@ -1015,6 +1031,13 @@ class Game:
             return Utils.allow_hoora(
                 self.rule_, model["tehai"][cha_id], hai, model["bakaze"], cha_id, yaku, self.not_friten_[cha_id]
             )
+
+    def allow_toupai(self, cha_id):
+        """
+        倒牌（ノーテン宣言）が可能か判定する
+        """
+        model = self.model_
+        return Utils.allow_toupai(self.rule_, model["tehai"][cha_id], model["yama"].haisuu())
 
     def allow_ryuukyoku(self):
         """
