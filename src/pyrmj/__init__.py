@@ -1,3 +1,4 @@
+from .random_agent import *
 from .game import *
 from .hoora import *
 from .kawa import *
