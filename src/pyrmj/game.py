@@ -73,6 +73,7 @@ class Game:
             observation[player_id]["message"] = message[cha_id]
             observation[player_id]["game_info"] = {
                 "zikaze": cha_id,
+                "tehai": model["tehai"][cha_id].clone() if status != Utils.KAIKYOKU else None,
                 "tsumo_hoora": self.allow_hoora() if status == Utils.TSUMO and model["teban"] == cha_id else False,
                 "dahai": (
                     self.get_dahai()
@@ -84,6 +85,8 @@ class Game:
                     if (status == Utils.TSUMO or status == Utils.FUURO) and model["teban"] == cha_id
                     else None
                 ),
+                "toupai": self.allow_toupai(cha_id) if status == Utils.DAHAI else False,
+                "ron_hoora": self.allow_hoora(cha_id) if status == Utils.DAHAI and model["teban"] != cha_id else False,
             }
 
         return observation
@@ -374,7 +377,7 @@ class Game:
         """
         開局する
         """
-        random.seed(1704034800)  # TODO シード値を設定（Time stamp of 1/1/2024）
+        # random.seed(1704034800)  # TODO シード値を設定（Time stamp of 1/1/2024）
         self.model_["chiicha"] = chiicha if chiicha else random.randint(0, 3)
         self.max_kyokusuu_ = 0 if self.rule_["場数"] == 0 else self.rule_["場数"] * 4 - 1
 
