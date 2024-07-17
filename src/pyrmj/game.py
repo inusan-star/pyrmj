@@ -167,7 +167,7 @@ class Game:
         """
         報酬を返す
         """
-        return {player_id: point for player_id, point in enumerate(self.haifu_["point"])}
+        return {player_id: tokuten - 25000 for player_id, tokuten in enumerate(self.haifu_["tokuten"])}
 
     def done(self):
         """
@@ -969,12 +969,12 @@ class Game:
         """
         牌譜を保存する
         """
-        self.haifu_ = Utils.transform_keys(self.haifu_)
+        transformed_haifu = Utils.transform_keys(copy.deepcopy(self.haifu_))
         save_dir = os.getcwd()
         file_path = os.path.join(save_dir, self.model_["title"] + ".json")
 
         with open(file_path, "w", encoding="utf-8") as file:
-            json.dump(self.haifu_, file, ensure_ascii=False, indent=2)
+            json.dump(transformed_haifu, file, ensure_ascii=False, indent=2)
 
     def get_reply(self, cha_id):
         """
