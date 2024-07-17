@@ -39,6 +39,7 @@ def rule(param=None):
         "数え役満あり": True,
         "役満パオあり": True,
         "切り上げ満貫あり": False,
+        "一局戦連荘なし": False,
     }
 
     for key in param:

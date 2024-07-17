@@ -813,7 +813,7 @@ class Game:
             self.no_game_ = True
             self.renchan_ = True
 
-        if self.rule_["場数"] == 0:
+        if self.rule_["場数"] == 0 and not self.rule_["一局戦連荘なし"]:
             self.renchan_ = True
 
         self.bunpai_ = bunpai
