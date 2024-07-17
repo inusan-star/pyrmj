@@ -18,25 +18,10 @@ class Game:
     ゲーム進行を管理するクラス
     """
 
-    def __init__(self, rule_json=None, title=None):
+    def __init__(self, rule_json=None):
         self.rule_ = rule_json or rule()
 
-        self.model_ = {
-            "title": title or "pyrmj_" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S"),
-            "player": ["自家", "下家", "対面", "上家"],
-            "chiicha": 0,
-            "bakaze": 0,
-            "kyokusuu": 0,
-            "tsumibou": 0,
-            "riichibou": 0,
-            "tokuten": [self.rule_["配給原点"]] * 4,
-            "yama": None,
-            "tehai": [None] * 4,
-            "kawa": [None] * 4,
-            "player_id": [0, 1, 2, 3],
-            "teban": None,
-        }
-
+        self.model_ = {}
         self.status_ = None
         self.finished_ = None
         self.reply_ = [None] * 4
@@ -99,8 +84,43 @@ class Game:
         """
         対局を開始する
         """
+        self.model_ = {
+            "title": "pyrmj_" + datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f"),
+            "player": ["自家", "下家", "対面", "上家"],
+            "chiicha": 0,
+            "bakaze": 0,
+            "kyokusuu": 0,
+            "tsumibou": 0,
+            "riichibou": 0,
+            "tokuten": [self.rule_["配給原点"]] * 4,
+            "yama": None,
+            "tehai": [None] * 4,
+            "kawa": [None] * 4,
+            "player_id": [0, 1, 2, 3],
+            "teban": None,
+        }
+        self.status_ = None
+        self.finished_ = None
+        self.reply_ = [None] * 4
+        self.save_flag_ = None
+        self.max_kyokusuu_ = None
+        self.haifu_ = {}
+        self.first_tsumo_ = None
+        self.suufuurenda_ = None
+        self.dahai_ = None
+        self.kan_ = None
+        self.riichi_ = [None] * 4
+        self.ippatsu_ = [None] * 4
+        self.n_kan_ = [None] * 4
+        self.not_friten_ = [None] * 4
+        self.hoora_ = []
+        self.hoora_option_ = None
+        self.no_game_ = None
+        self.renchan_ = None
+        self.tsumibou_ = None
+        self.bunpai_ = None
+
         self.save_flag_ = save_flag
-        self.finished_ = False
         return self.kaikyoku(chiicha)
 
     def step(self, actions):
@@ -142,6 +162,12 @@ class Game:
 
         elif self.status_ == Utils.SYUUKYOKU:
             return self.reply_syuukyoku()
+
+    def reward(self):
+        """
+        報酬を返す
+        """
+        return {player_id: point for player_id, point in enumerate(self.haifu_["point"])}
 
     def done(self):
         """
@@ -378,6 +404,7 @@ class Game:
         開局する
         """
         # random.seed(1704034800)  # TODO シード値を設定（Time stamp of 1/1/2024）
+        self.finished_ = False
         self.model_["chiicha"] = chiicha if chiicha else random.randint(0, 3)
         self.max_kyokusuu_ = 0 if self.rule_["場数"] == 0 else self.rule_["場数"] * 4 - 1
 
