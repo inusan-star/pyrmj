@@ -60,9 +60,9 @@ class Game:
                 "bakaze": model["bakaze"],
                 "zikaze": cha_id,
                 "tehai": model["tehai"][cha_id].clone() if status != Utils.KAIKYOKU else None,
-                "kawa": model["kawa"][cha_id].hai_.copy() if status != Utils.KAIKYOKU else None,
+                "kawa": [kawa.hai_.copy() for kawa in model["kawa"]] if status != Utils.KAIKYOKU else None,
                 "dora_indicator": model["yama"].dora_indicator() if status != Utils.KAIKYOKU else None,
-                "is_riichi": self.riichi_[cha_id] if status != Utils.KAIKYOKU else None,
+                "is_riichi": self.riichi_ if status != Utils.KAIKYOKU else None,
                 "tsumo_hoora": self.allow_hoora() if status == Utils.TSUMO and model["teban"] == cha_id else False,
                 "dahai": (
                     self.get_dahai()
