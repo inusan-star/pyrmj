@@ -171,7 +171,13 @@ class Game:
         """
         報酬を返す
         """
-        return {player_id: tokuten - 25000 for player_id, tokuten in enumerate(self.haifu_["tokuten"])}
+        return {player_id: (tokuten - 25000) / 100 for player_id, tokuten in enumerate(self.haifu_["tokuten"])}
+
+    def point(self):
+        """
+        ポイントを返す
+        """
+        return {player_id: (tokuten - 25000) / 100 for player_id, tokuten in enumerate(self.haifu_["tokuten"])}
 
     def done(self):
         """

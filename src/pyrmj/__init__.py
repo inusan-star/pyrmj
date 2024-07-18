@@ -1,5 +1,6 @@
 from .random_agent import *
 from .shanten_agent import *
+from .ai_agent import *
 from .game import *
 from .hoora import *
 from .kawa import *
