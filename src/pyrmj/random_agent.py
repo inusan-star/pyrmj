@@ -74,21 +74,14 @@ class RandomAgent:
         """
         # random.seed(1704034800)  # TODO シード値を設定（Time stamp of 1/1/2024）
         dahai_list = []
-        before_shanten = shanten(game_info["tehai"])
+        n_shanten = shanten(game_info["tehai"])
 
         for hai in game_info["dahai"]:
             tehai = game_info["tehai"].clone().dahai(hai)
 
-            after_shanten = shanten(tehai)
-
-            if after_shanten > before_shanten:
+            if shanten(tehai) > n_shanten:
                 continue
 
-            elif after_shanten == before_shanten:
-                dahai_list.append(hai)
-
-            else:
-                dahai_list = [hai]
-                before_shanten = after_shanten
+            dahai_list.append(hai)
 
         return random.choice(dahai_list)
