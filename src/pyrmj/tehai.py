@@ -526,7 +526,7 @@ class Tehai:
 
             if juntehai[number] == 3:
                 if number == 5:
-                    kan_mentsu = [f"{suit}{"5" * (3 - juntehai[0])}{"0" * juntehai[0]}{hai[1]}{direction.group()}"]
+                    kan_mentsu = [f"{suit}{'5' * (3 - juntehai[0])}{'0' * juntehai[0]}{hai[1]}{direction.group()}"]
 
                 else:
                     kan_mentsu = [f"{suit}{str(number) * 4}{direction.group()}"]
@@ -552,7 +552,7 @@ class Tehai:
                             continue
 
                         if number == 5:
-                            kan_mentsu.append(f"{suit}{"5" * (4 - juntehai[0])}{"0" * juntehai[0]}")
+                            kan_mentsu.append(f"{suit}{'5' * (4 - juntehai[0])}{'0' * juntehai[0]}")
 
                         else:
                             kan_mentsu.append(f"{suit}{str(number) * 4}")
@@ -636,7 +636,7 @@ class Tehai:
                 direction = re.search(r"[\+\=\-]", mentsu).group()
                 hais = [f"{suit}{number}" for number in re.findall(r"\d", mentsu)]
                 hai_r = [hais[2], hais[3]] if not_fuuro else [hais[-1]]
-                hai_l = ([hais[1], hais[2]] if not not_fuuro and len(hais) == 4 else [hais[1]])
+                hai_l = [hais[1], hais[2]] if not not_fuuro and len(hais) == 4 else [hais[1]]
 
                 if direction == "+":
                     json_output["tehai"]["fuuro"].append(
