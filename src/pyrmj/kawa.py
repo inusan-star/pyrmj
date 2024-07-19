@@ -19,7 +19,7 @@ class Kawa:
             raise ValueError(f"Invalid hai: {hai}")
 
         self.hai_.append(re.sub(r"[\+\=\-]$", "", hai))
-        self.find_[f"{hai[0]}{int(hai[1]) if hai[1] != "0" else 5}"] = True
+        self.find_[f"{hai[0]}{int(hai[1]) if hai[1] != '0' else 5}"] = True
         return self
 
     def fuuro(self, mentsu):
@@ -47,4 +47,4 @@ class Kawa:
         """
         捨て牌か判定する
         """
-        return self.find_.get(f"{hai[0]}{int(hai[1]) if hai[1] != "0" else 5}", False)
+        return self.find_.get(f"{hai[0]}{int(hai[1]) if hai[1] != '0' else 5}", False)
