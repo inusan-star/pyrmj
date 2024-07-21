@@ -1044,7 +1044,7 @@ def hoora(tehai, ron_hai, param):
             or (
                 result_value["tokuten"] == max_hoora["tokuten"]
                 and (
-                    not result_value["hansuu"]
+                    not result_value.get("hansuu", None)
                     or result_value["hansuu"] > max_hoora["hansuu"]
                     or (result_value["hansuu"] == max_hoora["hansuu"] and result_value["fu"] > max_hoora["fu"])
                 )
