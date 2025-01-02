@@ -77,7 +77,7 @@ def view_tehai(tehai, font_size=50, open_hand=True):
     margin = font_size * 0.1
 
     svg = svgwrite.Drawing(
-        size=(font_width * 20.5 + margin * 2, font_width * 2 + margin * 2),
+        size=(font_width * 105 + margin * 2, font_width * 2 + margin * 2),
         profile="full",
     )
     svg.add(
